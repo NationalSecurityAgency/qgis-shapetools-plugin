@@ -1,0 +1,17 @@
+[general]
+name=Shape Tools
+qgisMinimumVersion=2.4
+description=Tools to create various shapes
+version=0.1
+author=C. Hamilton
+email=adenaculture@gmail.com
+about=Tools to create various shapes.
+tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
+repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
+tags=ellipse,line of bearing,bearing
+homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
+category=Vector
+icon=images/ellipse.png
+experimental=False
+deprecated=False
+#changelog=

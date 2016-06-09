@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/plugins/shapetools" >
+        <file>images/ellipse.png</file>
+        <file>images/points.png</file>
+        <file>images/lob.png</file>
+    </qresource>
+</RCC>
