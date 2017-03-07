@@ -3,13 +3,9 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-# Initialize Qt resources from file resources.py
-import resources
-
 from LatLon import LatLon
-from ellipse import EllipseWidget
-from quickPoints import QuickPointsWidget
-from quicklob import QuickLOBWidget
+from vector2Shape import Vector2ShapeWidget
+from xyToLine import XYToLineWidget
 import os.path
 
 
@@ -18,42 +14,28 @@ class ShapeTools:
         self.iface = iface
 
     def initGui(self):
-        self.ellipseDialog = EllipseWidget(self.iface, self.iface.mainWindow())
-        self.quickPointsDialog = QuickPointsWidget(self.iface, self.iface.mainWindow())
-        self.lobDialog = QuickLOBWidget(self.iface, self.iface.mainWindow())
+        self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
+        self.xyLineDialog = XYToLineWidget(self.iface, self.iface.mainWindow())
 
-        # Initialize the Quick Points Dialog Box
-        pointsicon = QIcon(':/plugins/shapetools/images/points.png')
-        self.pointsAction = QAction(pointsicon, "Quick Points", 
-                    self.iface.mainWindow())
-        self.pointsAction.triggered.connect(self.pointsTool)
-        self.iface.addPluginToVectorMenu('Shape Tools', self.pointsAction)
-
-        # Initialize the Ellipse Dialog Box
-        ellipseicon = QIcon(':/plugins/shapetools/images/ellipse.png')
-        self.ellipseAction = QAction(ellipseicon, "Quick Ellipse", 
-                    self.iface.mainWindow())
-        self.ellipseAction.triggered.connect(self.ellipseTool)
-        self.iface.addPluginToVectorMenu('Shape Tools', self.ellipseAction)
-
-        # Initialize the line of bearing Dialog Box
-        lobicon = QIcon(':/plugins/shapetools/images/lob.png')
-        self.lobAction = QAction(lobicon, "Quick Line of Bearing", 
-                    self.iface.mainWindow())
-        self.lobAction.triggered.connect(self.lobTool)
-        self.iface.addPluginToVectorMenu('Shape Tools', self.lobAction)
+        # Initialize the create shape Dialog Box
+        icon = QIcon(os.path.dirname(__file__) + "/images/shapes.png")
+        self.shapeAction = QAction(icon, "Create Shapes", self.iface.mainWindow())
+        self.shapeAction.triggered.connect(self.shapeTool)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.shapeAction)
+        
+        # Initialize the XY to Line Dialog Box
+        icon = QIcon(os.path.dirname(__file__) + "/images/xyline.png")
+        self.xyLineAction = QAction(icon, "XY to Line", self.iface.mainWindow())
+        self.xyLineAction.triggered.connect(self.xyLineTool)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.xyLineAction)
 
     def unload(self):
-        self.iface.removePluginVectorMenu('Shape Tools', self.pointsAction)
-        self.iface.removePluginVectorMenu('Shape Tools', self.ellipseAction)
-        self.iface.removePluginVectorMenu('Shape Tools', self.lobAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.shapeAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         
-    def pointsTool(self):
-        self.quickPointsDialog.show()
+    def shapeTool(self):
+        self.shapeDialog.show()
         
-    def ellipseTool(self):
-        self.ellipseDialog.show()
-        
-    def lobTool(self):
-        self.lobDialog.show()
+    def xyLineTool(self):
+        self.xyLineDialog.show()
         
