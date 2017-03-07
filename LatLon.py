@@ -197,7 +197,56 @@ class LatLon():
             raise ValueError('Invalid Coordinates')
             
         return lat, lon
-    
+        
+    @staticmethod
+    def intermediatePointTo(lat1, lon1, lat2, lon2, fraction):
+        '''Return the fractional point between [lat1, lon1] and [lat2, lon2]
+           Coordinates are in degrees and fraction is between 0 and 1'''
+        phi1 = math.radians(lat1)
+        lambda1 = math.radians(lon1)
+        phi2 = math.radians(lat2)
+        lambda2 = math.radians(lon2)
+        sinphi1 = math.sin(phi1)
+        cosphi1 = math.cos(phi1)
+        sinlambda1 = math.sin(lambda1)
+        coslambda1 = math.cos(lambda1)
+        sinphi2 = math.sin(phi2)
+        cosphi2 = math.cos(phi2)
+        sinlambda2 = math.sin(lambda2)
+        coslambda2 = math.cos(lambda2)
+
+        # distance between points
+        deltaphi = phi2 - phi1
+        deltalambda = lambda2 - lambda1
+        a = math.sin(deltaphi/2.0) * math.sin(deltaphi/2.0) + math.cos(phi1) * math.cos(phi2) * math.sin(deltalambda/2.0) * math.sin(deltalambda/2.0)
+        delta = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0-a))
+
+        A = math.sin((1.0-fraction)*delta) / math.sin(delta)
+        B = math.sin(fraction*delta) / math.sin(delta)
+
+        x = A * cosphi1 * coslambda1 + B * cosphi2 * coslambda2
+        y = A * cosphi1 * sinlambda1 + B * cosphi2 * sinlambda2
+        z = A * sinphi1 + B * sinphi2
+
+        phi3 = math.atan2(z, math.sqrt(x*x + y*y))
+        lambda3 = math.atan2(y, x)
+
+        # Returns lat, lon and normalize lon from -180 to 180 degrees
+        return math.degrees(phi3), ((math.degrees(lambda3)+540.0)%360.0 - 180.0)
+        
+    @staticmethod
+    def getPointsOnLine(lat1, lon1, lat2, lon2, numPoints):
+        pts = [QgsPoint(lon1, lat1)]
+        f = 1.0 / (numPoints - 1.0)
+        i = 1
+        while i < numPoints-1:
+            newlat, newlon = LatLon.intermediatePointTo(lat1, lon1, lat2, lon2, f * i)
+            pts.append(QgsPoint(newlon, newlat))
+            i += 1
+        pts.append(QgsPoint(lon2, lat2))
+        return pts
+        
+
     # distance s is in meters
     @staticmethod
     def destinationPointVincenty(lat, lon, brng, s):
@@ -241,20 +290,20 @@ class LatLon():
     # bearing is in degrees and distances are in meters
     @staticmethod
     def getLineCoords(lat, lon, bearing, distance, maxSegments, minLength):
-        verticies = []
+        pts = []
         seglen = distance / maxSegments
         if seglen < minLength:
             seglen = minLength
-        verticies.append(QgsPoint(lon, lat))
+        pts.append(QgsPoint(lon, lat))
         pdist = seglen
         while pdist < distance:
             newlat, newlon = LatLon.destinationPointVincenty(lat, lon, bearing, pdist)
-            verticies.append(QgsPoint(newlon, newlat))
+            pts.append(QgsPoint(newlon, newlat))
             pdist += seglen
             
         newlat, newlon = LatLon.destinationPointVincenty(lat, lon, bearing, distance)
-        verticies.append(QgsPoint(newlon, newlat))
-        return verticies
+        pts.append(QgsPoint(newlon, newlat))
+        return pts
     
     @staticmethod
     def getEllipseCoords(lat, lon, sma, smi, azi):
