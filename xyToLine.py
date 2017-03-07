@@ -26,7 +26,7 @@ class XYToLineWidget(QDialog, FORM_CLASS):
         self.epsg4326 = QgsCoordinateReferenceSystem('EPSG:4326')
         self.inputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
         self.outputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
-        self.lineTypeComboBox.addItems(['Direct','Vincenty Circle'])
+        self.lineTypeComboBox.addItems(['Direct','Great Circle'])
         
     def accept(self):
         layer = self.inputMapLayerComboBox.currentLayer()
@@ -97,8 +97,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                 if lineType == 0: # Direct
                     fline.setGeometry(QgsGeometry.fromPolyline([ptStart, ptEnd]))
                 else:
-                    verticies = LatLon.getLineCoords(pt.y(), pt.x(), bearing, distance, 256, 2000)
-                    featureout.setGeometry(QgsGeometry.fromPolyline(verticies))
+                    pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x(), 151)
+                    fline.setGeometry(QgsGeometry.fromPolyline(pts))
                 fline.setAttributes(feature.attributes())
                 pline.addFeatures([fline])
                 # Add two point features
