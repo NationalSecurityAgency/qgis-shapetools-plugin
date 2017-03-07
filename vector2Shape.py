@@ -27,6 +27,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.iface = iface
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
+        self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsStarComboBox.addItems(DISTANCE_MEASURE)
         self.polygonLayer = None
 
     def apply(self):
@@ -60,6 +62,27 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.distanceComboBox.currentIndex()-1,
                 self.unitOfDistanceComboBox.currentIndex(),
                 distance)
+        elif tab == 2: # Polygon
+            try:
+                distance = float(self.distPolyLineEdit.text())
+            except:
+                self.showErrorMessage("Invalid Distance. Fix and try again")
+                return
+            self.processPoly(layer, outname,
+                self.sidesPolyComboBox.currentIndex()-1, #number of sides column
+                self.anglePolyComboBox.currentIndex()-1, #starting angle column
+                self.distPolyComboBox.currentIndex()-1, # distance column
+                self.sidesPolySpinBox.value(), # default sides
+                self.anglePolySpinBox.value(), # default starting angle
+                distance,
+                self.distUnitsPolyComboBox.currentIndex())
+        elif tab == 3: # Star
+            self.processStar(layer, outname,
+                self.starPointsSpinBox.value(),
+                self.starStartAngleSpinBox.value(),
+                self.innerStarRadiusSpinBox.value(),
+                self.outerStarRadiusSpinBox.value(),
+                self.unitsStarComboBox.currentIndex())
         
     def showEvent(self, event):
         '''The dialog is being shown. We need to initialize it.'''
@@ -91,6 +114,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         self.bearingComboBox.addItems(header)
         self.distanceComboBox.addItems(default)
+        
+        self.sidesPolyComboBox.addItems(default)
+        self.anglePolyComboBox.addItems(default)
+        self.distPolyComboBox.addItems(default)
         
         orientcol = semimajorcol = semiminorcol = -1
         bearingcol = distancecol = -1
@@ -127,6 +154,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.orientationComboBox.clear()
         self.bearingComboBox.clear()
         self.distanceComboBox.clear()
+        self.sidesPolyComboBox.clear()
+        self.anglePolyComboBox.clear()
+        self.distPolyComboBox.clear()
             
     def showErrorMessage(self, message):
         self.iface.messageBar().pushMessage("", message, level=QgsMessageBar.WARNING, duration=3)
@@ -135,7 +165,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         if semimajorcol == -1 or semiminorcol == -1 or orientcol == -1:
             self.showErrorMessage('The semi-major, semi-minor, and orientation fields must be specified')
             return
-        
+        measureFactor = 1.0
         # The ellipse calculation is done in Nautical Miles. This converts
         # the semi-major and minor axis to nautical miles
         if unitOfMeasure == 0:
@@ -186,7 +216,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         if bearingcol == -1:
             self.showErrorMessage('A Bearing field must be specified')
             return
-            
+        measureFactor = 1.0
         if unitOfDist == 0: # Nautical Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
         elif unitOfDist == 1: # Kilometers
@@ -234,6 +264,111 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsMapLayerRegistry.instance().addMapLayer(self.lineLayer)
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=QgsMessageBar.INFO, duration=3)
         
+    def processPoly(self, layer, outname, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
+        if unitOfDist == 0: # Nautical Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
+        elif unitOfDist == 1: # Kilometers
+            measureFactor = 1000.0
+        elif unitOfDist == 2: # Meters
+            measureFactor = 1.0
+        elif unitOfDist == 3: # Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
+        elif unitOfDist == 4: # Feet
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+            
+        defaultDist *= measureFactor
+ 
+        fields = layer.pendingFields()
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        for feature in iter:
+            try:
+                pt = feature.geometry().asPoint()
+                # make sure the coordinates are in EPSG:4326
+                pt = self.transform.transform(pt.x(), pt.y())
+                if sidescol != -1:
+                    s = int(feature[sidescol])
+                else:
+                    s = sides
+                if anglecol != -1:
+                    startangle = float(feature[anglecol])
+                else:
+                    startangle = angle
+                if distcol != -1:
+                    d = float(feature[distcol])*measureFactor
+                else:
+                    d = defaultDist
+                pts = []
+                i = s
+                while i >= 0:
+                    a = (i * 360.0 / s)+startangle
+                    i -= 1
+                    lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
+                    pts.append(QgsPoint(lon2, lat2))
+                    
+                featureout = QgsFeature()
+                featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+                featureout.setAttributes(feature.attributes())
+                ppolygon.addFeatures([featureout])
+            except:
+                pass
+                
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processStar(self, layer, outname, numPoints, startAngle, innerRadius, outerRadius, unitOfDist):
+        if unitOfDist == 0: # Nautical Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
+        elif unitOfDist == 1: # Kilometers
+            measureFactor = 1000.0
+        elif unitOfDist == 2: # Meters
+            measureFactor = 1.0
+        elif unitOfDist == 3: # Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
+        elif unitOfDist == 4: # Feet
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+            
+        innerRadius *= measureFactor
+        outerRadius *= measureFactor
+
+        fields = layer.pendingFields()
+        
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        half = (360.0 / numPoints) / 2.0
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            i = numPoints
+            while i >= 0:
+                i -= 1
+                angle = (i * 360.0 / numPoints) + startAngle
+                lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle, outerRadius)
+                pts.append(QgsPoint(lon2, lat2))
+                #if i != 0:
+                lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
+                pts.append(QgsPoint(lon2, lat2))
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
         
     def accept(self):
         self.apply()
