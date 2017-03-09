@@ -16,15 +16,16 @@ from LatLon import LatLon
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'vector2Shape.ui'))
 
-DISTANCE_MEASURE=["Nautical Miles","Kilometers","Meters","Miles","Feet"]
+DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent):
+    def __init__(self, iface, parent, settings):
         super(Vector2ShapeWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
         self.iface = iface
+        self.settings = settings
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
         self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
@@ -50,18 +51,17 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.semiMajorComboBox.currentIndex()-1,
                 self.semiMinorComboBox.currentIndex()-1,
                 self.orientationComboBox.currentIndex()-1,
-                self.unitOfAxisComboBox.currentIndex())
+                self.unitOfAxisComboBox.currentIndex(),
+                self.defSemiMajorSpinBox.value(),
+                self.defSemiMinorSpinBox.value(),
+                self.defOrientationSpinBox.value())
         elif tab == 1: # LOB
-            try:
-                distance = float(self.defaultDistanceLineEdit.text())
-            except:
-                self.showErrorMessage("Invalid Distance. Fix and try again")
-                return
             self.processLOB(layer, outname,
                 self.bearingComboBox.currentIndex()-1,
                 self.distanceComboBox.currentIndex()-1,
                 self.unitOfDistanceComboBox.currentIndex(),
-                distance)
+                self.defaultBearingSpinBox.value(),
+                self.defaultDistanceSpinBox.value())
         elif tab == 2: # Polygon
             try:
                 distance = float(self.distPolyLineEdit.text())
@@ -96,28 +96,30 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         if not layer:
             self.clearLayerFields()
         else:
-            header = [u"--- Select Column ---"]
-            default = [u"[ Use Default ]"]
+            header = [u"[ Use Default ]"]
             fields = layer.pendingFields()
             for field in fields.toList():
                 # force it to be lower case - makes matching easier
                 name = field.name()
                 header.append(name)
-                default.append(name)
-            self.configureLayerFields(header, default)
+            self.configureLayerFields(header)
 
-    def configureLayerFields(self, header, default):
-        self.clearLayerFields()
+    def configureLayerFields(self, header):
+        if not self.settings.guessNames:
+            self.clearLayerFields()
         self.semiMajorComboBox.addItems(header)
         self.semiMinorComboBox.addItems(header)
         self.orientationComboBox.addItems(header)
         
         self.bearingComboBox.addItems(header)
-        self.distanceComboBox.addItems(default)
+        self.distanceComboBox.addItems(header)
         
-        self.sidesPolyComboBox.addItems(default)
-        self.anglePolyComboBox.addItems(default)
-        self.distPolyComboBox.addItems(default)
+        self.sidesPolyComboBox.addItems(header)
+        self.anglePolyComboBox.addItems(header)
+        self.distPolyComboBox.addItems(header)
+        
+        if not self.settings.guessNames:
+            return
         
         orientcol = semimajorcol = semiminorcol = -1
         bearingcol = distancecol = -1
@@ -161,22 +163,19 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
     def showErrorMessage(self, message):
         self.iface.messageBar().pushMessage("", message, level=QgsMessageBar.WARNING, duration=3)
         
-    def processEllipse(self, layer, outname, semimajorcol, semiminorcol, orientcol, unitOfMeasure):
-        if semimajorcol == -1 or semiminorcol == -1 or orientcol == -1:
-            self.showErrorMessage('The semi-major, semi-minor, and orientation fields must be specified')
-            return
+    def processEllipse(self, layer, outname, semimajorcol, semiminorcol, orientcol, unitOfMeasure, defSemiMajor, defSemiMinor, defOrientation):
         measureFactor = 1.0
         # The ellipse calculation is done in Nautical Miles. This converts
         # the semi-major and minor axis to nautical miles
-        if unitOfMeasure == 0:
+        if unitOfMeasure == 2: # Nautical Miles
             measureFactor = 1.0
-        elif unitOfMeasure == 1:
+        elif unitOfMeasure == 0: # Kilometers
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Meters, QGis.NauticalMiles)*1000.0
-        elif unitOfMeasure == 2:
+        elif unitOfMeasure == 1: # Meters
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Meters, QGis.NauticalMiles)
-        elif unitOfMeasure == 3:
+        elif unitOfMeasure == 3: # Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.NauticalMiles)*5280.0
-        elif unitOfMeasure == 4:
+        elif unitOfMeasure == 4: # Feet
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.NauticalMiles)
         
         fields = layer.pendingFields()
@@ -192,9 +191,18 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         for feature in iter:
             num_features += 1
             try:
-                semi_major = float(feature[semimajorcol])
-                semi_minor = float(feature[semiminorcol])
-                orient = float(feature[orientcol])
+                if semimajorcol != -1:
+                    semi_major = float(feature[semimajorcol])
+                else:
+                    semi_major = defSemiMajor
+                if semiminorcol != -1:
+                    semi_minor = float(feature[semiminorcol])
+                else:
+                    semi_minor = defSemiMinor
+                if orientcol != -1:
+                    orient = float(feature[orientcol])
+                else:
+                    orient = defOrientation
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
@@ -212,16 +220,13 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsMapLayerRegistry.instance().addMapLayer(self.polygonLayer)
         self.iface.messageBar().pushMessage("", "{} Ellipses created from {} records".format(num_good, num_features), level=QgsMessageBar.INFO, duration=3)
         
-    def processLOB(self, layer, outname, bearingcol, distcol, unitOfDist, defaultDist):
-        if bearingcol == -1:
-            self.showErrorMessage('A Bearing field must be specified')
-            return
-        measureFactor = 1.0
-        if unitOfDist == 0: # Nautical Miles
+    def processLOB(self, layer, outname, bearingcol, distcol, unitOfDist, defaultBearing, defaultDist):
+        '''Process each layer point and create a new line layer with the associated bearings'''
+        if unitOfDist == 2: # Nautical Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 1: # Kilometers
+        elif unitOfDist == 0: # Kilometers
             measureFactor = 1000.0
-        elif unitOfDist == 2: # Meters
+        elif unitOfDist == 1: # Meters
             measureFactor = 1.0
         elif unitOfDist == 3: # Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
@@ -243,7 +248,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         for feature in iter:
             num_features += 1
             try:
-                bearing = float(feature[bearingcol])
+                if bearingcol != -1:
+                    bearing = float(feature[bearingcol])
+                else:
+                    bearing = defaultBearing
                 if distcol != -1:
                     distance = float(feature[distcol])*measureFactor
                 else:
@@ -265,11 +273,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=QgsMessageBar.INFO, duration=3)
         
     def processPoly(self, layer, outname, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
-        if unitOfDist == 0: # Nautical Miles
+        if unitOfDist == 2: # Nautical Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 1: # Kilometers
+        elif unitOfDist == 0: # Kilometers
             measureFactor = 1000.0
-        elif unitOfDist == 2: # Meters
+        elif unitOfDist == 1: # Meters
             measureFactor = 1.0
         elif unitOfDist == 3: # Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
@@ -323,11 +331,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
 
     def processStar(self, layer, outname, numPoints, startAngle, innerRadius, outerRadius, unitOfDist):
-        if unitOfDist == 0: # Nautical Miles
+        if unitOfDist == 2: # Nautical Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 1: # Kilometers
+        elif unitOfDist == 0: # Kilometers
             measureFactor = 1000.0
-        elif unitOfDist == 2: # Meters
+        elif unitOfDist == 1: # Meters
             measureFactor = 1.0
         elif unitOfDist == 3: # Miles
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
