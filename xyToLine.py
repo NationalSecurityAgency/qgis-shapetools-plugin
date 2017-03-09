@@ -11,22 +11,21 @@ from PyQt4 import uic
 
 from LatLon import LatLon
 
-
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'xyToLineDialog.ui'))
 
 class XYToLineWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent):
+    def __init__(self, iface, parent, settings):
         super(XYToLineWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self.settings = settings
         self.inputMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer | QgsMapLayerProxyModel.NoGeometry)
         self.inputMapLayerComboBox.layerChanged.connect(self.layerChanged)
         self.epsg4326 = QgsCoordinateReferenceSystem('EPSG:4326')
         self.inputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
         self.outputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
-        self.lineTypeComboBox.addItems(['Direct','Great Circle'])
+        self.lineTypeComboBox.addItems(['Great Circle','Simple Line'])
         
     def accept(self):
         layer = self.inputMapLayerComboBox.currentLayer()
@@ -69,6 +68,10 @@ class XYToLineWidget(QDialog, FORM_CLASS):
             pointLayer.updateFields()
         
         transform = QgsCoordinateTransform(inCRS, outCRS)
+        if inCRS != self.epsg4326:
+            transto4326 = QgsCoordinateTransform(inCRS, self.epsg4326)
+        if outCRS != self.epsg4326:
+            transfrom4326 = QgsCoordinateTransform(self.epsg4326, outCRS)
         
         iter = layer.getFeatures()
         num_features = 0
@@ -77,28 +80,36 @@ class XYToLineWidget(QDialog, FORM_CLASS):
             num_features += 1
             try:
                 if startUseGeom == True:
-                    pt = feature.geometry().asPoint()
-                    startx = pt.x()
-                    starty = pt.y()
+                    ptStart = feature.geometry().asPoint()
                 else:
-                    startx = float(feature[startXcol])
-                    starty = float(feature[startYcol])
-                ptStart = transform.transform(startx, starty)
+                    ptStart = QgsPoint(float(feature[startXcol]), float(feature[startYcol]))
                 if endUseGeom == True:
-                    pt = feature.geometry().asPoint()
-                    endx = pt.x()
-                    endy = pt.y()
+                    ptEnd = feature.geometry().asPoint()
                 else:
-                    endx = float(feature[endXcol])
-                    endy = float(feature[endYcol])
-                ptEnd = transform.transform(endx, endy)
-                # Add the Line Feature
+                    ptEnd = QgsPoint(float(feature[endXcol]), float(feature[endYcol]))
+                # Create a new Line Feature
                 fline = QgsFeature()
-                if lineType == 0: # Direct
-                    fline.setGeometry(QgsGeometry.fromPolyline([ptStart, ptEnd]))
-                else:
-                    pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x(), 151)
+                if lineType == 0: # Great Circle
+                    # If the input is not 4326 we need to convert it to that and then back to the output CRS
+                    if inCRS != self.epsg4326: # Convert to 4326
+                        ptStart = transto4326.transform(ptStart)
+                        ptEnd = transto4326.transform(ptEnd)
+                    pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
+                        ptEnd.y(), ptEnd.x(),
+                        self.settings.maxSegLength,
+                        self.settings.maxSegments+1)
+                    if outCRS != self.epsg4326: # Convert each point to the output CRS
+                        for x, pt in enumerate(pts):
+                            pts[x] = transfrom4326.transform(pt)
                     fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                else: # Simple line
+                    '''Transform the starting and end points if the input CRS
+                       and the output CRS are not the same and then create a 
+                       2 point polyline'''
+                    if inCRS != outCRS:
+                        ptStart = transform.transform(ptStart)
+                        ptEnd = transform.transform(ptEnd)
+                    fline.setGeometry(QgsGeometry.fromPolyline([ptStart, ptEnd]))
                 fline.setAttributes(feature.attributes())
                 pline.addFeatures([fline])
                 # Add two point features
