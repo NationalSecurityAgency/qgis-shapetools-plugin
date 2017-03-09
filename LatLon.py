@@ -197,7 +197,25 @@ class LatLon():
             raise ValueError('Invalid Coordinates')
             
         return lat, lon
-        
+    
+    @staticmethod
+    def distanceTo(lat1, lon1, lat2, lon2, R=6371000.0):
+        '''Compute the distance between two points. The average earth
+           radius is 6371000 meters. The returned distance is in the same
+           units as R which by default is meters'''
+        phi1 = math.radians(lat1)
+        lambda1 = math.radians(lon1)
+        phi2 = math.radians(lat2)
+        lambda2 = math.radians(lon2)
+        deltaphi = phi2 - phi1
+        deltalambda = lambda2 - lambda1
+        a = (math.sin(deltaphi/2.0) * math.sin(deltaphi/2.0)
+              + math.cos(phi1) * math.cos(phi2)
+              * math.sin(deltalambda/2.0) * math.sin(deltalambda/2.0))
+        c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0-a))
+        d = R * c
+        return d
+    
     @staticmethod
     def intermediatePointTo(lat1, lon1, lat2, lon2, fraction):
         '''Return the fractional point between [lat1, lon1] and [lat2, lon2]
@@ -233,9 +251,17 @@ class LatLon():
 
         # Returns lat, lon and normalize lon from -180 to 180 degrees
         return math.degrees(phi3), ((math.degrees(lambda3)+540.0)%360.0 - 180.0)
-        
+    
     @staticmethod
-    def getPointsOnLine(lat1, lon1, lat2, lon2, numPoints):
+    def getPointsOnLine(lat1, lon1, lat2, lon2, minSegLength=1000.0, maxNodes=500):
+        '''Get points along a great circle line between the two coordinates.
+           minSegLength is the minimum segment length in meters before a new
+           node point is created. maxNodes is the maximum number of points on
+           the line to create.'''
+        dist = LatLon.distanceTo(lat1, lon1, lat2, lon2)
+        numPoints = int(dist / minSegLength)
+        if numPoints > maxNodes:
+            numPoints = maxNodes
         pts = [QgsPoint(lon1, lat1)]
         f = 1.0 / (numPoints - 1.0)
         i = 1
