@@ -23,7 +23,7 @@ class SettingsWidget(QtGui.QDialog, FORM_CLASS):
         the user quits QGIS.'''
         settings = QSettings()
         self.guessNames = int(settings.value('/ShapeTools/GuessNames', 2))
-        self.maxSegLength =  float(settings.value('/ShapeTools/MaxSegLength', 1000.0))
+        self.maxSegLength =  float(settings.value('/ShapeTools/MaxSegLength', 1.0))
         self.maxSegments =  int(settings.value('/ShapeTools/MaxSegments', 400))
         
     def accept(self):

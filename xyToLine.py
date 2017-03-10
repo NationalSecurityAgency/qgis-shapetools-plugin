@@ -96,7 +96,7 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                         ptEnd = transto4326.transform(ptEnd)
                     pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
-                        self.settings.maxSegLength,
+                        self.settings.maxSegLength*1000.0, # Put it in meters
                         self.settings.maxSegments+1)
                     if outCRS != self.epsg4326: # Convert each point to the output CRS
                         for x, pt in enumerate(pts):

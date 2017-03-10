@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>441</width>
+    <width>467</width>
     <height>277</height>
    </rect>
   </property>
@@ -45,17 +45,23 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Maximum segment length before creating a new segment (in km)</string>
+         <string>Maximum segment length before creating a new segment (in kilometers)</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDoubleSpinBox" name="segLengthSpinBox">
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="minimum">
+         <double>0.010000000000000</double>
+        </property>
         <property name="maximum">
          <double>999999999.000000000000000</double>
         </property>
         <property name="value">
-         <double>1000.000000000000000</double>
+         <double>1.000000000000000</double>
         </property>
        </widget>
       </item>

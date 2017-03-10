@@ -6,6 +6,7 @@
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
+* [Settings](#settings)
 
 ## <a name="create-shapes"></a>Create Shapes
 
@@ -47,7 +48,7 @@ This creates geodetic lines based on starting and ending coordinates in each tab
 
 **Input Coordinate CRS** - CRS of the input coordinates. Note that if **Use the Layer's geometry** is specified this must match both the layer's geometry CRS as will as the table's data CRS.
 
-**Output CRS** - CRS of the output line and point layers.
+**Output Layer CRS** - CRS of the output line and point layers.
 
 **Line Type** - 1) **Great Circle** creates a *Great Circle* arc between the two points. 2) **Simple Line** creates a non-geodetic straight line between the two points. 
 
@@ -61,4 +62,11 @@ This creates geodetic lines based on starting and ending coordinates in each tab
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
+## <a name="settings"></a>Settings
 
+The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape Tools->Settings*. The following are the parameters that can be configured.
+
+* **Try to guess column names** - By default the ellipse and line of bearing shapes will try to guess the vector fields that contain the appropriate parameters such as semi-major axis, semi-minor axis, axis orientation, bearing, and distance. If it finds one of the fields that has a name similar to these it will set the drop down menu to that item. If you do not want this behavior, then uncheck this box.
+* **Great Circle Settings** - These are settings for **XY to Line** when drawing great circle lines.
+    * **Maximum segment length before creating a new segment** - In order to draw a smooth curved line, multiple line segments are required. This defines how far to travel before a new line segment is created. This parameter is in kilometers. 
+    * **Maximum number of segments per line** - This is the maximum number of line segments that will be created for any line even though it may exceed the maximum segment length. This takes precedence.
