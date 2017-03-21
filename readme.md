@@ -1,6 +1,6 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** currently has two tools. **Create Shapes** takes a point vector layer and allows the user to create ellipses, lines of bearing, polygons, and stars based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. The second tool, **XY to Line** uses pairs of coordinates from each layer's records to create geodetic lines in between. The input can be a point vector layer or just a table layer that contains pairs of coordinates.
+***Shape Tools*** currently has two tools. **Create Shapes** takes a point vector layer and allows the user to create ellipses, lines of bearing, polygons, and stars based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. The second tool, **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or just a table layer that contains pairs of coordinates.
 
 **Contents**
 
@@ -25,7 +25,7 @@ If a field in the layer represents the semi-major axis, semi-minor axis, or orie
 
 ### Line of Bearing
 
-**Bearing** is the angle measured in degrees, in a clockwise direction from the north line. A **line of bearing** is the line drawn from a starting point in the direction of the **bearing** for the selected distance. The line of bearing uses geodetic math to be accurate along the Earth's surface. 
+**Bearing** is the angle measured in degrees, in a clockwise direction from the north line. A **line of bearing** is the line drawn from a starting point in the direction of the **bearing** for the selected distance. The line of bearing uses geodesic math to be accurate along the Earth's surface. 
 
 ### Polygon
 
@@ -36,7 +36,7 @@ Create an N-sided polygon centered on the vector point. The vertices of the poly
 Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.
 
 ## <a name="xy-to-line"></a>XY to Line
-This creates geodetic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
+This creates geodesic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
 
