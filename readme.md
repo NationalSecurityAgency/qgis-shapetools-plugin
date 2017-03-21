@@ -36,7 +36,7 @@ Create an N-sided polygon centered on the vector point. The vertices of the poly
 Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.
 
 ## <a name="xy-to-line"></a>XY to Line
-This creates geodetic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself if each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
+This creates geodetic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
 
@@ -50,11 +50,11 @@ This creates geodetic lines based on starting and ending coordinates in each tab
 
 **Output Layer CRS** - CRS of the output line and point layers.
 
-**Line Type** - 1) **Great Circle** creates a *Great Circle* arc between the two points. 2) **Simple Line** creates a non-geodetic straight line between the two points. 
+**Line Type** - 1) **Geodesic** creates a highly accurate shortest path between two points. 2) **Great Circle** creates a *Great Circle* arc between the two points. 3) **Simple Line** creates a non-geodetic straight line between the two points. 
 
-**Starting Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **Start X Field** and **Start Y Field** from the layer.
+**Starting Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **Start X Field** and **Start Y Field** from the layer's fields.
 
-**Ending Point** - Specify whether to use the *Layer's geometry* (not available tables) or to specify the **End X Field** and **End Y Field** from the layer.
+**Ending Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **End X Field** and **End Y Field** from the layer's fields.
 
 **Show Starting Point** - If checked the output point layer will include an entry for the starting point.
 
@@ -67,6 +67,6 @@ If neither *Show Starting Point* nor *Show Ending Point* are checked, then a poi
 The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape Tools->Settings*. The following are the parameters that can be configured.
 
 * **Try to guess column names** - By default the ellipse and line of bearing shapes will try to guess the vector fields that contain the appropriate parameters such as semi-major axis, semi-minor axis, axis orientation, bearing, and distance. If it finds one of the fields that has a name similar to these it will set the drop down menu to that item. If you do not want this behavior, then uncheck this box.
-* **Great Circle Settings** - These are settings for **XY to Line** when drawing great circle lines.
+* **XY to Line Settings** - These are settings when drawing geodesic and great circle lines.
     * **Maximum segment length before creating a new segment** - In order to draw a smooth curved line, multiple line segments are required. This defines how far to travel before a new line segment is created. This parameter is in kilometers. 
     * **Maximum number of segments per line** - This is the maximum number of line segments that will be created for any line even though it may exceed the maximum segment length. This takes precedence.

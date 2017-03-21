@@ -11,6 +11,7 @@ deploy:
 	cp -vf $(EXTRAS) $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
 	cp -vrf images $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
 	cp -vrf doc $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
+	cp -vrf ext-libs $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
 	cp -vf helphead.html $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html
 	python -m markdown -x markdown.extensions.headerid readme.md >> $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html
 	echo '</body>' >> $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html

@@ -1,6 +1,7 @@
 import os
 import re
 import math
+from geographiclib.geodesic import Geodesic
 
 from qgis.core import *
 from qgis.gui import *
@@ -31,6 +32,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
         self.unitsStarComboBox.addItems(DISTANCE_MEASURE)
         self.polygonLayer = None
+        self.geod = Geodesic.WGS84
 
     def apply(self):
         '''process the data'''
@@ -234,6 +236,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
             
         defaultDist *= measureFactor
+        seglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
         
         fields = layer.pendingFields()
         
@@ -259,9 +262,18 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
-                verticies = LatLon.getLineCoords(pt.y(), pt.x(), bearing, distance, 256, 2000)
+                l = self.geod.Line(pt.y(), pt.x(), bearing)
+                n = int(math.ceil(distance / seglen))
+                if n > self.settings.maxSegments:
+                    n = self.settings.maxSegments
+                pts = [pt]
+                for i in range(1,n+1):
+                    s = min(seglen * i, distance)
+                    g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                    pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                #pts = LatLon.getLineCoords(pt.y(), pt.x(), bearing, distance, 256, 2000)
                 featureout  = QgsFeature()
-                featureout.setGeometry(QgsGeometry.fromPolyline(verticies))
+                featureout.setGeometry(QgsGeometry.fromPolyline(pts))
                 featureout.setAttributes(feature.attributes())
                 pline.addFeatures([featureout])
                 num_good += 1
@@ -317,8 +329,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 while i >= 0:
                     a = (i * 360.0 / s)+startangle
                     i -= 1
-                    lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
-                    pts.append(QgsPoint(lon2, lat2))
+                    g = self.geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    pts.append(QgsPoint(g['lon2'], g['lat2']))
+                    #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
+                    #pts.append(QgsPoint(lon2, lat2))
                     
                 featureout = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
@@ -365,11 +379,14 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             while i >= 0:
                 i -= 1
                 angle = (i * 360.0 / numPoints) + startAngle
-                lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle, outerRadius)
-                pts.append(QgsPoint(lon2, lat2))
-                #if i != 0:
-                lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
-                pts.append(QgsPoint(lon2, lat2))
+                g = self.geod.Direct(pt.y(), pt.x(), angle, outerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle, outerRadius)
+                #pts.append(QgsPoint(lon2, lat2))
+                g = self.geod.Direct(pt.y(), pt.x(), angle-half, innerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
+                #pts.append(QgsPoint(lon2, lat2))
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
             featureout.setAttributes(feature.attributes())

@@ -1,6 +1,7 @@
 import os
 import re
 import math
+from geographiclib.geodesic import Geodesic
 
 from qgis.core import *
 from qgis.gui import *
@@ -25,7 +26,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
         self.epsg4326 = QgsCoordinateReferenceSystem('EPSG:4326')
         self.inputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
         self.outputQgsProjectionSelectionWidget.setCrs(self.epsg4326)
-        self.lineTypeComboBox.addItems(['Great Circle','Simple Line'])
+        self.lineTypeComboBox.addItems(['Geodesic','Great Circle','Simple Line'])
+        self.geod = Geodesic.WGS84
         
     def accept(self):
         layer = self.inputMapLayerComboBox.currentLayer()
@@ -89,7 +91,28 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                     ptEnd = QgsPoint(float(feature[endXcol]), float(feature[endYcol]))
                 # Create a new Line Feature
                 fline = QgsFeature()
-                if lineType == 0: # Great Circle
+                if lineType == 0: # Geodesic
+                    # If the input is not 4326 we need to convert it to that and then back to the output CRS
+                    if inCRS != self.epsg4326: # Convert to 4326
+                        ptStart = transto4326.transform(ptStart)
+                        ptEnd = transto4326.transform(ptEnd)
+                    l = self.geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
+                    seglen = self.settings.maxSegLength*1000.0
+                    n = int(math.ceil(l.s13 / seglen))
+                    if n > self.settings.maxSegments:
+                        seglen = l.s13 / self.settings.maxSegments
+                        n = int(math.ceil(l.s13 / seglen))
+                    pts = [ptStart]
+                    for i in range(1,n):
+                        s = min(seglen * i, l.s13)
+                        g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                        pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                    pts.append(ptEnd)
+                    if outCRS != self.epsg4326: # Convert each point to the output CRS
+                        for x, pt in enumerate(pts):
+                            pts[x] = transfrom4326.transform(pt)
+                    fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                elif lineType == 1: # Great Circle
                     # If the input is not 4326 we need to convert it to that and then back to the output CRS
                     if inCRS != self.epsg4326: # Convert to 4326
                         ptStart = transto4326.transform(ptStart)
