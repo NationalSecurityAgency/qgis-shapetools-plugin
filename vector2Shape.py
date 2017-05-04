@@ -31,8 +31,28 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
         self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
         self.unitsStarComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsRoseComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsCyclodeComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsFoilComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsHeartComboBox.addItems(DISTANCE_MEASURE)
         self.polygonLayer = None
         self.geod = Geodesic.WGS84
+        icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
+        self.tabWidget.setTabIcon(0, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/line.png')
+        self.tabWidget.setTabIcon(1, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
+        self.tabWidget.setTabIcon(2, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
+        self.tabWidget.setTabIcon(3, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
+        self.tabWidget.setTabIcon(4, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
+        self.tabWidget.setTabIcon(5, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
+        self.tabWidget.setTabIcon(6, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        self.tabWidget.setTabIcon(7, icon)
 
     def apply(self):
         '''process the data'''
@@ -85,6 +105,29 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.innerStarRadiusSpinBox.value(),
                 self.outerStarRadiusSpinBox.value(),
                 self.unitsStarComboBox.currentIndex())
+        elif tab == 4: # Rose
+            self.processRose(layer, outname,
+                self.roseAngleSpinBox.value(),
+                self.rosePetalSpinBox.value(),
+                self.roseRadiusSpinBox.value(),
+                self.unitsRoseComboBox.currentIndex())
+        elif tab == 5: # Cyclode
+            self.processCyclode(layer, outname,
+                self.cyclodeAngleSpinBox.value(),
+                self.cyclodeCuspsSpinBox.value(),
+                self.cyclodeRadiusSpinBox.value(),
+                self.unitsCyclodeComboBox.currentIndex())
+        elif tab == 6: # Polyfoil
+            self.processPolyfoil(layer, outname,
+                self.foilAngleSpinBox.value(),
+                self.foilLobesSpinBox.value(),
+                self.foilRadiusSpinBox.value(),
+                self.unitsFoilComboBox.currentIndex())
+        elif tab == 7: # Heart
+            self.processHeart(layer, outname,
+                self.heartAngleSpinBox.value(),
+                self.heartSizeSpinBox.value(),
+                self.unitsHeartComboBox.currentIndex())
         
     def showEvent(self, event):
         '''The dialog is being shown. We need to initialize it.'''
@@ -224,16 +267,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
     def processLOB(self, layer, outname, bearingcol, distcol, unitOfDist, defaultBearing, defaultDist):
         '''Process each layer point and create a new line layer with the associated bearings'''
-        if unitOfDist == 2: # Nautical Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 0: # Kilometers
-            measureFactor = 1000.0
-        elif unitOfDist == 1: # Meters
-            measureFactor = 1.0
-        elif unitOfDist == 3: # Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
-        elif unitOfDist == 4: # Feet
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+        measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
         seglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
@@ -285,16 +319,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=QgsMessageBar.INFO, duration=3)
         
     def processPoly(self, layer, outname, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
-        if unitOfDist == 2: # Nautical Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 0: # Kilometers
-            measureFactor = 1000.0
-        elif unitOfDist == 1: # Meters
-            measureFactor = 1.0
-        elif unitOfDist == 3: # Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
-        elif unitOfDist == 4: # Feet
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+        measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
  
@@ -345,16 +370,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
 
     def processStar(self, layer, outname, numPoints, startAngle, innerRadius, outerRadius, unitOfDist):
-        if unitOfDist == 2: # Nautical Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
-        elif unitOfDist == 0: # Kilometers
-            measureFactor = 1000.0
-        elif unitOfDist == 1: # Meters
-            measureFactor = 1.0
-        elif unitOfDist == 3: # Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
-        elif unitOfDist == 4: # Feet
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+        measureFactor = self.conversionToMeters(unitOfDist)
             
         innerRadius *= measureFactor
         outerRadius *= measureFactor
@@ -375,7 +391,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             pt = feature.geometry().asPoint()
             # make sure the coordinates are in EPSG:4326
             pt = self.transform.transform(pt.x(), pt.y())
-            i = numPoints
+            i = numPoints - 1
             while i >= 0:
                 i -= 1
                 angle = (i * 360.0 / numPoints) + startAngle
@@ -394,6 +410,187 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     
         polygonLayer.updateExtents()
         QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processRose(self, layer, outname, startAngle, k, radius, unitOfDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+            
+        radius *= measureFactor
+        fields = layer.pendingFields()
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+        dist=[]
+        if k == 1:
+            dist.append(0.0)
+        step = 1
+        angle = -90.0 + step
+        while angle < 90.0:
+            a = math.radians(angle)
+            r = math.cos(a)
+            dist.append(r)
+            angle += step
+        cnt = len(dist)
+
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            arange = 360.0 / k
+            angle = -arange / 2.0
+            astep = arange / cnt
+            for i in range(k):
+                aoffset = arange * (k - 1)
+                index = 0
+                while index < cnt:
+                    r = dist[index] * radius
+                    g = self.geod.Direct(pt.y(), pt.x(), angle + aoffset, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    pts.append(QgsPoint(g['lon2'], g['lat2']))
+                    angle += astep
+                    index+=1
+            # repeat the very first point to close the polygon
+            pts.append(pts[0])
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processCyclode(self, layer, outname, startAngle, cusps, radius, unitOfDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+            
+        radius *= measureFactor
+        r = radius / cusps
+        fields = layer.pendingFields()
+        
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            angle = 0.0
+            while angle <= 360.0:
+                a = math.radians(angle)
+                x = r * (cusps - 1.0)*math.cos(a) + r * math.cos((cusps - 1.0) * a)
+                y = r * (cusps - 1.0)*math.sin(a) - r * math.sin((cusps - 1.0) * a)
+                a2 = math.degrees(math.atan2(y,x))+startAngle
+                dist = math.sqrt(x*x + y*y)
+                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                angle += 0.5
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processPolyfoil(self, layer, outname, startAngle, lobes, radius, unitOfDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+            
+        radius *= measureFactor
+        r = radius / lobes
+        fields = layer.pendingFields()
+        
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            angle = 0.0
+            while angle <= 360.0:
+                a = math.radians(angle-startAngle)
+                x = r * (lobes - 1.0)*math.cos(a) + r * math.cos((lobes - 1.0) * a)
+                y = r * (lobes - 1.0)*math.sin(a) - r * math.sin((lobes - 1.0) * a)
+                dist = math.sqrt(x*x + y*y)
+                g = self.geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                angle += 0.5
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processHeart(self, layer, outname, startAngle, size, unitOfDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+        # The algorithm creates the heart on its side so this rotates
+        # it so that it is upright.
+        startAngle -= 90.0
+            
+        size *= measureFactor
+
+        fields = layer.pendingFields()
+        
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            angle = 0.0
+            while angle <= 360.0:
+                a = math.radians(angle)
+                sina = math.sin(a)
+                x = 16 * sina * sina * sina
+                y = 13 * math.cos(a) - 5 * math.cos(2*a) - 2 * math.cos(3 * a)- math.cos(4*a)
+                dist = math.sqrt(x*x + y*y) * size / 17.0
+                a2 = math.degrees(math.atan2(y,x))+startAngle
+                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                angle += 0.5
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+        
+    def conversionToMeters(self, units):
+        if units == 2: # Nautical Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.NauticalMiles, QGis.Meters)
+        elif units == 0: # Kilometers
+            measureFactor = 1000.0
+        elif units == 1: # Meters
+            measureFactor = 1.0
+        elif units == 3: # Miles
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)*5280.0
+        elif units == 4: # Feet
+            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.Meters)
+        return measureFactor
         
     def accept(self):
         self.apply()

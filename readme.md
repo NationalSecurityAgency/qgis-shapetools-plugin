@@ -1,6 +1,9 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** currently has two tools. **Create Shapes** takes a point vector layer and allows the user to create ellipses, lines of bearing, polygons, and stars based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. The second tool, **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or just a table layer that contains pairs of coordinates.
+***Shape Tools*** has the following tools.
+
+* **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, and hearts based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. 
+* **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or a table layer that contains pairs of coordinates. Shape Tools is installed in the Vector menu.
 
 **Contents**
 
@@ -10,7 +13,9 @@
 
 ## <a name="create-shapes"></a>Create Shapes
 
-Ellipses, lines of bearing, multi-sided polygons, and stars can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. The following are the details for creating each. All of these shapes are created centered about the point or from the point. Common elements are:
+<div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
+
+Ellipses, lines of bearing, multi-sided polygons, stars, ellipse roses, hypocyloids, polyfoils, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. The following are the details for creating each. All of these shapes are created centered about the point or from the point. Common elements are:
 
 * **Input points layer** - Select the desired points layer.
 * **Output layer name** - Select a name for the output layer that will be created in QGIS as a memory layer.
@@ -34,6 +39,22 @@ Create an N-sided polygon centered on the vector point. The vertices of the poly
 ### Star
 
 Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.
+
+### Ellipse Rose
+
+Create an N-petal rose. The distance from the center to the outer petals are defined by the radius.
+
+### Hypocycloid
+
+Create an N-pointed hypocycloid. A hypocycloid is defained as the curve traced by a point on the circumference of a circle that is rolling on the interior of another circle. The distance from the center to the outer cusps are defined by the radius.
+
+### Polyfoil
+
+Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.
+
+### Heart
+
+Create a mathematical heart which fits within the circle defined by its radius.
 
 ## <a name="xy-to-line"></a>XY to Line
 This creates geodesic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.

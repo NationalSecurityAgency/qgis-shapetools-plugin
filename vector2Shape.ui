@@ -81,6 +81,9 @@
      </property>
      <widget class="QWidget" name="ellipse">
       <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
        <string>Ellipse</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -194,7 +197,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>50.000000000000000</double>
+            <double>40.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -207,7 +210,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>50.000000000000000</double>
+            <double>20.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -217,6 +220,9 @@
      </widget>
      <widget class="QWidget" name="lob">
       <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
        <string>Line of Bearing</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -225,28 +231,28 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Bearing Field</string>
+            <string>Bearing field</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_13">
            <property name="text">
-            <string>Distance Field</string>
+            <string>Distance field</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_14">
            <property name="text">
-            <string>Units of Distance</string>
+            <string>Units of distance</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_15">
            <property name="text">
-            <string>Default Distance</string>
+            <string>Default distance</string>
            </property>
           </widget>
          </item>
@@ -262,7 +268,7 @@
          <item row="3" column="0">
           <widget class="QLabel" name="label_27">
            <property name="text">
-            <string>Default Bearing</string>
+            <string>Default bearing</string>
            </property>
           </widget>
          </item>
@@ -298,6 +304,9 @@
      </widget>
      <widget class="QWidget" name="polygon">
       <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
        <string>Polygon</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -306,7 +315,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Number of Sides Field</string>
+            <string>Number of sides field</string>
            </property>
           </widget>
          </item>
@@ -320,32 +329,22 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Vertex Distance Field</string>
+            <string>Outer radius field</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>Default Number of Sides</string>
+            <string>Default number of sides</string>
            </property>
           </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_16">
-           <property name="text">
-            <string>Starting Angle Field</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="distPolyComboBox"/>
          </item>
          <item row="2" column="1">
-          <widget class="QComboBox" name="anglePolyComboBox"/>
+          <widget class="QComboBox" name="distPolyComboBox"/>
          </item>
          <item row="3" column="1">
           <widget class="QSpinBox" name="sidesPolySpinBox">
@@ -363,7 +362,7 @@
          <item row="4" column="0">
           <widget class="QLabel" name="label_17">
            <property name="text">
-            <string>Default Start Angle</string>
+            <string>Default starting angle</string>
            </property>
           </widget>
          </item>
@@ -380,26 +379,36 @@
          <item row="5" column="1">
           <widget class="QLineEdit" name="distPolyLineEdit">
            <property name="text">
-            <string>50</string>
+            <string>40</string>
            </property>
           </widget>
          </item>
          <item row="5" column="0">
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Default Radius</string>
+            <string>Default outer radius</string>
            </property>
           </widget>
          </item>
          <item row="6" column="0">
           <widget class="QLabel" name="label_18">
            <property name="text">
-            <string>Distance Units of Measure</string>
+            <string>Distance units of measure</string>
            </property>
           </widget>
          </item>
          <item row="6" column="1">
           <widget class="QComboBox" name="distUnitsPolyComboBox"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Starting angle field</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="anglePolyComboBox"/>
          </item>
         </layout>
        </item>
@@ -407,6 +416,9 @@
      </widget>
      <widget class="QWidget" name="star">
       <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
        <string>Star</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -415,7 +427,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_19">
            <property name="text">
-            <string>Number of Star Points</string>
+            <string>Number of star points</string>
            </property>
           </widget>
          </item>
@@ -435,21 +447,21 @@
          <item row="2" column="0">
           <widget class="QLabel" name="label_20">
            <property name="text">
-            <string>Inner Radius</string>
+            <string>Inner radius</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_21">
            <property name="text">
-            <string>Outer Radius</string>
+            <string>Outer radius</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_22">
            <property name="text">
-            <string>Radius Units of Measure</string>
+            <string>Radius units of measure</string>
            </property>
           </widget>
          </item>
@@ -468,7 +480,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>20.000000000000000</double>
+            <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -484,14 +496,14 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>50.000000000000000</double>
+            <double>40.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_23">
            <property name="text">
-            <string>Starting Angle</string>
+            <string>Starting angle</string>
            </property>
           </widget>
          </item>
@@ -506,6 +518,315 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="rose">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Ellipse Rose</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_6">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Number of petals</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="rosePetalSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>8</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_29">
+         <property name="text">
+          <string>Outer radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="roseRadiusSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>40.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_30">
+         <property name="text">
+          <string>Radius units of measure</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="unitsRoseComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_31">
+         <property name="text">
+          <string>Starting angle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="roseAngleSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="hypocycloid">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Hypocyloid</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_7">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_32">
+         <property name="text">
+          <string>Number of cusps</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="cyclodeCuspsSpinBox">
+         <property name="minimum">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <number>25</number>
+         </property>
+         <property name="value">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_33">
+         <property name="text">
+          <string>Outer radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="cyclodeRadiusSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>40.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_34">
+         <property name="text">
+          <string>Radius units of measure</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="unitsCyclodeComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_40">
+         <property name="text">
+          <string>Starting angle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="cyclodeAngleSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="foil">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Polyfoil</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_8">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_35">
+         <property name="text">
+          <string>Number of lobes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="foilLobesSpinBox">
+         <property name="minimum">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <number>25</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>5</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_36">
+         <property name="text">
+          <string>Outer radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="foilRadiusSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>40.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_37">
+         <property name="text">
+          <string>Radius units of measure</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="unitsFoilComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_41">
+         <property name="text">
+          <string>Starting angle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="foilAngleSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="heart">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Heart</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_9">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_38">
+         <property name="text">
+          <string>Maximum radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="heartSizeSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>40.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_39">
+         <property name="text">
+          <string>Units of measure</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="unitsHeartComboBox"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_42">
+         <property name="text">
+          <string>Starting angle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="heartAngleSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
