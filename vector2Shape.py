@@ -35,6 +35,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.unitsCyclodeComboBox.addItems(DISTANCE_MEASURE)
         self.unitsFoilComboBox.addItems(DISTANCE_MEASURE)
         self.unitsHeartComboBox.addItems(DISTANCE_MEASURE)
+        self.unitsEpicyclodeComboBox.addItems(DISTANCE_MEASURE)
         self.polygonLayer = None
         self.geod = Geodesic.WGS84
         icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
@@ -51,8 +52,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.tabWidget.setTabIcon(5, icon)
         icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
         self.tabWidget.setTabIcon(6, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
         self.tabWidget.setTabIcon(7, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        self.tabWidget.setTabIcon(8, icon)
 
     def apply(self):
         '''process the data'''
@@ -123,7 +126,13 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.foilLobesSpinBox.value(),
                 self.foilRadiusSpinBox.value(),
                 self.unitsFoilComboBox.currentIndex())
-        elif tab == 7: # Heart
+        elif tab == 7: # Epicycloid
+            self.processEpicycloid(layer, outname,
+                self.epicyclodeAngleSpinBox.value(),
+                self.epicyclodeLobesSpinBox.value(),
+                self.epicyclodeRadiusSpinBox.value(),
+                self.unitsEpicyclodeComboBox.currentIndex())
+        elif tab == 8: # Heart
             self.processHeart(layer, outname,
                 self.heartAngleSpinBox.value(),
                 self.heartSizeSpinBox.value(),
@@ -487,6 +496,44 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 a = math.radians(angle)
                 x = r * (cusps - 1.0)*math.cos(a) + r * math.cos((cusps - 1.0) * a)
                 y = r * (cusps - 1.0)*math.sin(a) - r * math.sin((cusps - 1.0) * a)
+                a2 = math.degrees(math.atan2(y,x))+startAngle
+                dist = math.sqrt(x*x + y*y)
+                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                angle += 0.5
+            featureout = QgsFeature()
+            featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+            featureout.setAttributes(feature.attributes())
+            ppolygon.addFeatures([featureout])
+                    
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+
+    def processEpicycloid(self, layer, outname, startAngle, lobes, radius, unitOfDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+            
+        radius *= measureFactor
+        r = radius / (lobes + 2.0)
+        fields = layer.pendingFields()
+        
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+
+        for feature in iter:
+            pts = []
+            pt = feature.geometry().asPoint()
+            # make sure the coordinates are in EPSG:4326
+            pt = self.transform.transform(pt.x(), pt.y())
+            angle = 0.0
+            while angle <= 360.0:
+                a = math.radians(angle)
+                x = r * (lobes + 1.0)*math.cos(a) - r * math.cos((lobes + 1.0) * a)
+                y = r * (lobes + 1.0)*math.sin(a) - r * math.sin((lobes + 1.0) * a)
                 a2 = math.degrees(math.atan2(y,x))+startAngle
                 dist = math.sqrt(x*x + y*y)
                 g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)

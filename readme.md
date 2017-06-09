@@ -2,7 +2,7 @@
 
 ***Shape Tools*** has the following tools.
 
-* **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, and hearts based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. 
+* **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. 
 * **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or a table layer that contains pairs of coordinates. Shape Tools is installed in the Vector menu.
 
 **Contents**
@@ -15,7 +15,7 @@
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
-Ellipses, lines of bearing, multi-sided polygons, stars, ellipse roses, hypocyloids, polyfoils, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. The following are the details for creating each. All of these shapes are created centered about the point or from the point. Common elements are:
+Ellipses, lines of bearing, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. The following are the details for creating each. All of these shapes are created centered about the point or from the point. Common elements are:
 
 * **Input points layer** - Select the desired points layer.
 * **Output layer name** - Select a name for the output layer that will be created in QGIS as a memory layer.
@@ -30,7 +30,7 @@ If a field in the layer represents the semi-major axis, semi-minor axis, or orie
 
 ### Line of Bearing
 
-**Bearing** is the angle measured in degrees, in a clockwise direction from the north line. A **line of bearing** is the line drawn from a starting point in the direction of the **bearing** for the selected distance. The line of bearing uses geodesic math to be accurate along the Earth's surface. 
+**Bearing** is the angle measured in degrees, in a clockwise direction from the north line. A **line of bearing** is the line drawn from a starting point in the direction of the **bearing** for the selected distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. 
 
 ### Polygon
 
@@ -51,6 +51,10 @@ Create an N-pointed hypocycloid. A hypocycloid is defained as the curve traced b
 ### Polyfoil
 
 Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.
+
+### Epicycloid
+
+Create an N-leafed epicycloid. The distance form the center to the outer edge is defined by the radius.
 
 ### Heart
 
