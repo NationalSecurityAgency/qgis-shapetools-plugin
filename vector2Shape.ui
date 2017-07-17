@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
+    <width>575</width>
     <height>410</height>
    </rect>
   </property>
@@ -299,6 +299,119 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pie">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Pie Wedge</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_11">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_47">
+         <property name="text">
+          <string>Starting bearing field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="pieBearingStartComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_48">
+         <property name="text">
+          <string>Ending bearing field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="pieBearingEndComboBox"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_49">
+         <property name="text">
+          <string>Radius field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="pieDistanceComboBox"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_50">
+         <property name="text">
+          <string>Radius units</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="pieUnitOfDistanceComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_51">
+         <property name="text">
+          <string>Default starting bearing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QDoubleSpinBox" name="pieBearingStartSpinBox">
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>-20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_52">
+         <property name="text">
+          <string>Default ending bearing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QDoubleSpinBox" name="pieBearingEndSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_53">
+         <property name="text">
+          <string>Default radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QDoubleSpinBox" name="pieDefaultDistanceSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

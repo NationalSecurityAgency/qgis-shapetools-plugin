@@ -36,26 +36,29 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.unitsFoilComboBox.addItems(DISTANCE_MEASURE)
         self.unitsHeartComboBox.addItems(DISTANCE_MEASURE)
         self.unitsEpicyclodeComboBox.addItems(DISTANCE_MEASURE)
+        self.pieUnitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
         self.polygonLayer = None
         self.geod = Geodesic.WGS84
         icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
         self.tabWidget.setTabIcon(0, icon)
         icon = QIcon(os.path.dirname(__file__) + '/images/line.png')
         self.tabWidget.setTabIcon(1, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/pie.png')
         self.tabWidget.setTabIcon(2, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
         self.tabWidget.setTabIcon(3, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
         self.tabWidget.setTabIcon(4, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
         self.tabWidget.setTabIcon(5, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
         self.tabWidget.setTabIcon(6, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
         self.tabWidget.setTabIcon(7, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
         self.tabWidget.setTabIcon(8, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        self.tabWidget.setTabIcon(9, icon)
 
     def apply(self):
         '''process the data'''
@@ -87,7 +90,16 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.unitOfDistanceComboBox.currentIndex(),
                 self.defaultBearingSpinBox.value(),
                 self.defaultDistanceSpinBox.value())
-        elif tab == 2: # Polygon
+        elif tab == 2: # Pie shape
+            self.processPie(layer, outname,
+                self.pieBearingStartComboBox.currentIndex()-1,
+                self.pieBearingEndComboBox.currentIndex()-1,
+                self.pieDistanceComboBox.currentIndex()-1,
+                self.pieUnitOfDistanceComboBox.currentIndex(),
+                self.pieBearingStartSpinBox.value(),
+                self.pieBearingEndSpinBox.value(),
+                self.pieDefaultDistanceSpinBox.value())
+        elif tab == 3: # Polygon
             try:
                 distance = float(self.distPolyLineEdit.text())
             except:
@@ -101,38 +113,38 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.anglePolySpinBox.value(), # default starting angle
                 distance,
                 self.distUnitsPolyComboBox.currentIndex())
-        elif tab == 3: # Star
+        elif tab == 4: # Star
             self.processStar(layer, outname,
                 self.starPointsSpinBox.value(),
                 self.starStartAngleSpinBox.value(),
                 self.innerStarRadiusSpinBox.value(),
                 self.outerStarRadiusSpinBox.value(),
                 self.unitsStarComboBox.currentIndex())
-        elif tab == 4: # Rose
+        elif tab == 5: # Rose
             self.processRose(layer, outname,
                 self.roseAngleSpinBox.value(),
                 self.rosePetalSpinBox.value(),
                 self.roseRadiusSpinBox.value(),
                 self.unitsRoseComboBox.currentIndex())
-        elif tab == 5: # Cyclode
+        elif tab == 6: # Cyclode
             self.processCyclode(layer, outname,
                 self.cyclodeAngleSpinBox.value(),
                 self.cyclodeCuspsSpinBox.value(),
                 self.cyclodeRadiusSpinBox.value(),
                 self.unitsCyclodeComboBox.currentIndex())
-        elif tab == 6: # Polyfoil
+        elif tab == 7: # Polyfoil
             self.processPolyfoil(layer, outname,
                 self.foilAngleSpinBox.value(),
                 self.foilLobesSpinBox.value(),
                 self.foilRadiusSpinBox.value(),
                 self.unitsFoilComboBox.currentIndex())
-        elif tab == 7: # Epicycloid
+        elif tab == 8: # Epicycloid
             self.processEpicycloid(layer, outname,
                 self.epicyclodeAngleSpinBox.value(),
                 self.epicyclodeLobesSpinBox.value(),
                 self.epicyclodeRadiusSpinBox.value(),
                 self.unitsEpicyclodeComboBox.currentIndex())
-        elif tab == 8: # Heart
+        elif tab == 9: # Heart
             self.processHeart(layer, outname,
                 self.heartAngleSpinBox.value(),
                 self.heartSizeSpinBox.value(),
@@ -147,9 +159,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         if not self.isVisible():
             return
         layer = self.mMapLayerComboBox.currentLayer()
-        if not layer:
-            self.clearLayerFields()
-        else:
+        self.clearLayerFields()
+        if layer:
             header = [u"[ Use Default ]"]
             fields = layer.pendingFields()
             for field in fields.toList():
@@ -167,6 +178,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         self.bearingComboBox.addItems(header)
         self.distanceComboBox.addItems(header)
+        
+        self.pieBearingStartComboBox.addItems(header)
+        self.pieBearingEndComboBox.addItems(header)
+        self.pieDistanceComboBox.addItems(header)
         
         self.sidesPolyComboBox.addItems(header)
         self.anglePolyComboBox.addItems(header)
@@ -210,6 +225,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.orientationComboBox.clear()
         self.bearingComboBox.clear()
         self.distanceComboBox.clear()
+        self.pieBearingStartComboBox.clear()
+        self.pieBearingEndComboBox.clear()
+        self.pieDistanceComboBox.clear()
         self.sidesPolyComboBox.clear()
         self.anglePolyComboBox.clear()
         self.distPolyComboBox.clear()
@@ -327,6 +345,72 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsMapLayerRegistry.instance().addMapLayer(self.lineLayer)
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=QgsMessageBar.INFO, duration=3)
         
+    def processPie(self, layer, outname, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist):
+        measureFactor = self.conversionToMeters(unitOfDist)
+            
+        defaultDist *= measureFactor
+ 
+        fields = layer.pendingFields()
+        
+        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        ppolygon = polygonLayer.dataProvider()
+        ppolygon.addAttributes(fields)
+        polygonLayer.updateFields()
+        
+        iter = layer.getFeatures()
+        
+        for feature in iter:
+            try:
+                pts = []
+                pt = feature.geometry().asPoint()
+                # make sure the coordinates are in EPSG:4326
+                pt = self.transform.transform(pt.x(), pt.y())
+                pts.append(pt)
+                print "before sangle"
+                print "startanglecol ", startanglecol
+                print "startangle ", startangle
+                if startanglecol == -1:
+                    sangle = startangle
+                else:
+                    sangle = float(feature[startanglecol])
+                print "before eangle"
+                if endanglecol == -1:
+                    eangle = endangle
+                else:
+                    eangle = float(feature[endanglecol])
+                print "before dist"
+                if distcol == -1:
+                    dist = defaultDist
+                else:
+                    dist = float(feature[distcol]) * measureFactor
+                    
+                sangle = sangle % 360
+                eangle = eangle % 360
+                
+                if sangle > eangle:
+                    # We are crossing the 0 boundry so lets just subtract
+                    # 360 from it.
+                    sangle -= 360.0
+                while sangle < eangle:
+                    g = self.geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    pts.append(QgsPoint(g['lon2'], g['lat2']))
+                    sangle += 4 # add this number of degrees to the angle
+                    
+                g = self.geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPoint(g['lon2'], g['lat2']))
+                pts.append(pt)
+                print "num points ", len(pts)
+                    
+                featureout = QgsFeature()
+                featureout.setGeometry(QgsGeometry.fromPolygon([pts]))
+                featureout.setAttributes(feature.attributes())
+                ppolygon.addFeatures([featureout])
+            except:
+                pass
+                
+        polygonLayer.updateExtents()
+        QgsMapLayerRegistry.instance().addMapLayer(polygonLayer)
+                
     def processPoly(self, layer, outname, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
         measureFactor = self.conversionToMeters(unitOfDist)
             
