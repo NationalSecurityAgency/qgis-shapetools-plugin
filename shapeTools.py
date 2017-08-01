@@ -1,12 +1,10 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import QUrl
+from PyQt4.QtGui import QIcon, QAction
 
-from LatLon import LatLon
-from vector2Shape import Vector2ShapeWidget
-from xyToLine import XYToLineWidget
-from settings import SettingsWidget
+from .LatLon import LatLon
+from .vector2Shape import Vector2ShapeWidget
+from .xyToLine import XYToLineWidget
+from .settings import SettingsWidget
 import os.path
 import webbrowser
 

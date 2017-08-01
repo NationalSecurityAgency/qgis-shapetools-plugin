@@ -3,16 +3,15 @@ import re
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import *
-from qgis.gui import *
+from qgis.core import (QgsFeature, QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform, QgsVectorLayer, QgsPoint, QgsFeature,
+    QgsGeometry, QgsMapLayerRegistry, QGis)
+from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QIcon, QDialog, QDialogButtonBox
 from PyQt4 import uic
 
-from LatLon import LatLon
-
-
+from .LatLon import LatLon
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'vector2Shape.ui'))
@@ -366,19 +365,14 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
                 pts.append(pt)
-                print "before sangle"
-                print "startanglecol ", startanglecol
-                print "startangle ", startangle
                 if startanglecol == -1:
                     sangle = startangle
                 else:
                     sangle = float(feature[startanglecol])
-                print "before eangle"
                 if endanglecol == -1:
                     eangle = endangle
                 else:
                     eangle = float(feature[endanglecol])
-                print "before dist"
                 if distcol == -1:
                     dist = defaultDist
                 else:
@@ -399,7 +393,6 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 g = self.geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPoint(g['lon2'], g['lat2']))
                 pts.append(pt)
-                print "num points ", len(pts)
                     
                 featureout = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolygon([pts]))

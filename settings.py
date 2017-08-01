@@ -1,9 +1,7 @@
 import os
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import QSettings
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

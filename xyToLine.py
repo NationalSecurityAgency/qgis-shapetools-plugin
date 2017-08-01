@@ -3,14 +3,15 @@ import re
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import *
-from qgis.gui import *
+from qgis.core import (QgsCoordinateReferenceSystem, QgsVectorLayer,
+    QgsCoordinateTransform, QgsPoint, QgsFeature, QgsGeometry, 
+    QgsMapLayerRegistry, QGis)
+from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QDialog
 from PyQt4 import uic
 
-from LatLon import LatLon
+from .LatLon import LatLon
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'xyToLineDialog.ui'))
