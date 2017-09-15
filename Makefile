@@ -1,7 +1,7 @@
 PLUGINNAME = shapetools
-PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py
+PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py line2Geodesic.py
 EXTRAS = metadata.txt
-UI_FILES = vector2Shape.ui xyToLineDialog.ui settings.ui
+UI_FILES = vector2Shape.ui xyToLineDialog.ui settings.ui line2GeodesicDialog.ui
 
 deploy:
 	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)

@@ -1,17 +1,19 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** has the following tools.
+***Shape Tools*** has the following tools that are installed in the Vector menu or can be accessed from the toolbar.
 
-* **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. 
-* **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or a table layer that contains pairs of coordinates. Shape Tools is installed in the Vector menu.
+* <img src="images/shapes.png" alt="Create Shapes"> **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
+* <img src="images/xyline.png" alt="XY to Line"> **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
+* <img src="images/line2geodesic.png" alt="Line to Geodesic Line"> **Line to Geodesic Line** processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance.
 
 **Contents**
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
+* [Line to Geodesic Line](#line-to-geodesic-line)
 * [Settings](#settings)
 
-## <a name="create-shapes"></a>Create Shapes
+## <a name="create-shapes"></a><img src="images/shapes.png" alt="Create Shapes"> Create Shapes
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
@@ -64,7 +66,7 @@ Create an N-leafed epicycloid. The distance form the center to the outer edge is
 
 Create a mathematical heart which fits within the circle defined by its radius.
 
-## <a name="xy-to-line"></a>XY to Line
+## <a name="xy-to-line"></a><img src="images/xyline.png" alt="XY to Line"> XY to Line
 This creates geodesic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
@@ -79,7 +81,7 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 **Output Layer CRS** - CRS of the output line and point layers.
 
-**Line Type** - 1) **Geodesic** creates a highly accurate shortest path between two points. 2) **Great Circle** creates a *Great Circle* arc between the two points. 3) **Simple Line** creates a non-geodetic straight line between the two points. 
+**Line Type** - 1) **Geodesic** creates a highly accurate shortest path between two points. 2) **Great Circle** creates a *Great Circle* arc between the two points. 3) **Simple Line** creates a non-geodesic straight line between the two points. 
 
 **Starting Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **Start X Field** and **Start Y Field** from the layer's fields.
 
@@ -90,6 +92,17 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 **Show Ending Point** - If checked the output point layer will include an entry for the ending point.
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
+
+## <a name="line-to-geodesic-line"></a><img src="images/line2geodesic.png" alt="Line to Geodesic Line"> Line to Geodesic Line
+
+This processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
+
+<div style="text-align:center"><img src="doc/geodesicline.jpg" alt="Line to Geodesic Line"></div>
+
+* **Input Layer** - Select an existing line layer.
+* **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
+* **Line Type** - The options are either a *Geodesic* line or a *Great Circle* line.
+* **Discard inner vertices of the line and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
 
 ## <a name="settings"></a>Settings
 

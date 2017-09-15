@@ -1,22 +1,23 @@
 [general]
 name=Shape Tools
-qgisMinimumVersion=2.8
-description=Create ellipse, line of bearing, pie wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes based on the data. 'XY to Line' creates a geodetic line from pairs of points in the table.
-version=0.4.2
+qgisMinimumVersion=2.12
+description=Create ellipse, line of bearing, pie wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes based on the data. Create geodesic lines or shortest paths between points.
+version=0.5
 author=C Hamilton
 email=adenaculture@gmail.com
-about="Create Shapes" processes a point vector layer to create ellipses, pies, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and parameters from the dialog box. All use geodetic math to calculate the shapes. "XY to Line" uses pairs of coordinates from each layer's records to create geodetic lines inbetween. The input can be a point vector layer or a table layer that contains pairs of coordinates. Shape Tools is installed in the Vector menu.
+about="Create Shapes" processes a point vector layer to create ellipses, pies, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. "XY to Line" uses pairs of coordinates from each layer's records to create geodesic lines inbetween. The input can be a point vector layer or a table layer that contains pairs of coordinates. "Line to Geodesic Line" processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance. Shape Tools is installed in the Vector menu.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
-tags=ellipse,line of bearing,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line
+tags=ellipse,line of bearing,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line
 homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 category=Vector
 icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    0.5 Added a line to Geodesic line tool
     0.4.2 Added a pie shape
     0.4.1 Added an epicyloid shape
     0.4 Added additional shapes to draw - Ellipse rose, hypocyloid, polyfoil, and heart
-    0.3 Added Geodetic math for XY to Line function
+    0.3 Added Geodesic math for XY to Line function
     0.2 First public release of the plugin.
