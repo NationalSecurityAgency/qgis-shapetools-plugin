@@ -14,7 +14,7 @@ from PyQt4 import uic
 from .LatLon import LatLon
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'vector2Shape.ui'))
+    os.path.dirname(__file__), 'ui/vector2Shape.ui'))
 
 DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
@@ -296,7 +296,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
-        seglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
+        maxseglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
+        maxSegments = self.settings.maxSegments
         
         fields = layer.pendingFields()
         
@@ -322,16 +323,16 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
-                l = self.geod.Line(pt.y(), pt.x(), bearing)
-                n = int(math.ceil(distance / seglen))
-                if n > self.settings.maxSegments:
-                    n = self.settings.maxSegments
                 pts = [pt]
+                l = self.geod.Line(pt.y(), pt.x(), bearing)
+                n = int(math.ceil(distance / maxseglen))
+                if n > maxSegments:
+                    n = maxSegments
+                seglen = distance / n
                 for i in range(1,n+1):
-                    s = min(seglen * i, distance)
+                    s = seglen * i
                     g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
                     pts.append( QgsPoint(g['lon2'], g['lat2']) )
-                #pts = LatLon.getLineCoords(pt.y(), pt.x(), bearing, distance, 256, 2000)
                 featureout  = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolyline(pts))
                 featureout.setAttributes(feature.attributes())

@@ -14,7 +14,7 @@ from PyQt4 import uic
 from .LatLon import LatLon
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'xyToLineDialog.ui'))
+    os.path.dirname(__file__), 'ui/xyToLineDialog.ui'))
 
 class XYToLineWidget(QDialog, FORM_CLASS):
     def __init__(self, iface, parent, settings):
@@ -79,6 +79,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
         iter = layer.getFeatures()
         num_features = 0
         num_bad = 0
+        maxseglen = self.settings.maxSegLength*1000.0
+        maxSegments = self.settings.maxSegments
         for feature in iter:
             num_features += 1
             try:
@@ -97,17 +99,18 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                     if inCRS != self.epsg4326: # Convert to 4326
                         ptStart = transto4326.transform(ptStart)
                         ptEnd = transto4326.transform(ptEnd)
-                    l = self.geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                    seglen = self.settings.maxSegLength*1000.0
-                    n = int(math.ceil(l.s13 / seglen))
-                    if n > self.settings.maxSegments:
-                        seglen = l.s13 / self.settings.maxSegments
-                        n = int(math.ceil(l.s13 / seglen))
                     pts = [ptStart]
-                    for i in range(1,n):
-                        s = min(seglen * i, l.s13)
-                        g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                        pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                    l = self.geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
+                    if l.s13 > maxseglen:
+                        n = int(math.ceil(l.s13 / maxseglen))
+                        if n > maxSegments:
+                            n = maxSegments
+                            
+                        seglen = l.s13 / n
+                        for i in range(1,n):
+                            s = seglen * i
+                            g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                            pts.append( QgsPoint(g['lon2'], g['lat2']) )
                     pts.append(ptEnd)
                     if outCRS != self.epsg4326: # Convert each point to the output CRS
                         for x, pt in enumerate(pts):
