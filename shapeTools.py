@@ -6,6 +6,7 @@ from .vector2Shape import Vector2ShapeWidget
 from .xyToLine import XYToLineWidget
 from .settings import SettingsWidget
 from .line2Geodesic import Line2GeodesicWidget
+from .poly2Geodesic import Poly2GeodesicWidget
 import os.path
 import webbrowser
 
@@ -28,18 +29,25 @@ class ShapeTools:
         self.toolbar.addAction(self.shapeAction)
         
         # Initialize the XY to Line Dialog Box
-        icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/xyline.svg')
         self.xyLineAction = QAction(icon, u'XY to Line', self.iface.mainWindow())
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
         
         # Initialize the Line to Geodesic Line Dialog Box
-        icon = QIcon(os.path.dirname(__file__) + '/images/line2geodesic.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/line2geodesic.svg')
         self.line2GeodesicAction = QAction(icon, u'Line to Geodesic Line', self.iface.mainWindow())
         self.line2GeodesicAction.triggered.connect(self.line2GeodesicTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.line2GeodesicAction)
         self.toolbar.addAction(self.line2GeodesicAction)
+        
+        # Initialize the Polygon to Geodesic Polygon Dialog Box
+        icon = QIcon(os.path.dirname(__file__) + '/images/poly2geodesic.svg')
+        self.poly2GeodesicAction = QAction(icon, u'Polygon to Geodesic Polygon', self.iface.mainWindow())
+        self.poly2GeodesicAction.triggered.connect(self.poly2GeodesicTool)
+        self.iface.addPluginToVectorMenu(u'Shape Tools', self.poly2GeodesicAction)
+        self.toolbar.addAction(self.poly2GeodesicAction)
         
         # Settings
         icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
@@ -60,18 +68,21 @@ class ShapeTools:
             self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
             self.xyLineDialog = XYToLineWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
             self.geodesicLineDialog = Line2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
+            self.geodesicPolyDialog = Poly2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
 
     def unload(self):
         # remove from menu
         self.iface.removePluginVectorMenu(u'Shape Tools', self.shapeAction)
         self.iface.removePluginVectorMenu(u'Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu(u'Shape Tools', self.line2GeodesicAction)
+        self.iface.removePluginVectorMenu(u'Shape Tools', self.poly2GeodesicAction)
         self.iface.removePluginVectorMenu(u'Shape Tools', self.settingsAction)
         self.iface.removePluginVectorMenu(u'Shape Tools', self.helpAction)
         # Remove from toolbar
         self.iface.removeToolBarIcon(self.shapeAction)
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.line2GeodesicAction)
+        self.iface.removeToolBarIcon(self.poly2GeodesicAction)
         # remove the toolbar
         del self.toolbar
         
@@ -86,6 +97,10 @@ class ShapeTools:
     def line2GeodesicTool(self):
         self.initDialogs()
         self.geodesicLineDialog.show()
+        
+    def poly2GeodesicTool(self):
+        self.initDialogs()
+        self.geodesicPolyDialog.show()
         
     def settings(self):
         self.initDialogs()
