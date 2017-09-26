@@ -29,21 +29,21 @@ class ShapeTools:
         self.toolbar.addAction(self.shapeAction)
         
         # Initialize the XY to Line Dialog Box
-        icon = QIcon(os.path.dirname(__file__) + '/images/xyline.svg')
+        icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
         self.xyLineAction = QAction(icon, u'XY to Line', self.iface.mainWindow())
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
         
         # Initialize the Line to Geodesic Line Dialog Box
-        icon = QIcon(os.path.dirname(__file__) + '/images/line2geodesic.svg')
+        icon = QIcon(os.path.dirname(__file__) + '/images/line2geodesic.png')
         self.line2GeodesicAction = QAction(icon, u'Line to Geodesic Line', self.iface.mainWindow())
         self.line2GeodesicAction.triggered.connect(self.line2GeodesicTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.line2GeodesicAction)
         self.toolbar.addAction(self.line2GeodesicAction)
         
         # Initialize the Polygon to Geodesic Polygon Dialog Box
-        icon = QIcon(os.path.dirname(__file__) + '/images/poly2geodesic.svg')
+        icon = QIcon(os.path.dirname(__file__) + '/images/poly2geodesic.png')
         self.poly2GeodesicAction = QAction(icon, u'Polygon to Geodesic Polygon', self.iface.mainWindow())
         self.poly2GeodesicAction.triggered.connect(self.poly2GeodesicTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.poly2GeodesicAction)

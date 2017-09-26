@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="geodesic polygon.svg"
+   sodipodi:docname="poly2geodesic.svg"
    inkscape:export-filename="C:\Users\cjhamil\Documents\GitHub\qgis-shapetools-plugin\images\poly2geodesic.png"
    inkscape:export-xdpi="2.0320001"
    inkscape:export-ydpi="2.0320001">
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-569.42632"
+     inkscape:cx="-1046.5692"
      inkscape:cy="560"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -66,46 +66,46 @@
        cy="41.26133"
        cx="256.34332"
        id="circle12"
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
     <circle
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="circle822"
        cx="43.542877"
        cy="254.66655"
        r="13.607142" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 71.891076,104.45893 C 104.72917,36.847015 208.19541,25.606976 263.14704,40.958929"
+       d="M 71.891076,104.45893 C 108.5456,31.853572 182.32719,13.474928 256.34347,40.958929"
        id="path826"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <circle
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="circle822-0"
        cx="226.02977"
        cy="216.86905"
        r="13.607142" />
     <circle
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="circle822-01"
        cx="72.571426"
        cy="103.47619"
        r="13.607142" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 39.690427,252.04379 C 113.34995,195.77117 176.75072,189.06684 227.16664,214.24617"
+       d="M 44.226141,252.04379 C 93.497109,197.21705 161.67295,188.07266 224.89878,216.51403"
        id="path826-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 44.982094,255.82356 C 55.654673,183.0249 58.272469,145.31315 74.464249,102.36522"
+       d="M 43.470189,253.5557 C 44.315387,193.60823 53.736755,148.33696 69.928535,105.38903"
        id="path826-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 228.99788,218.49333 C 227.68425,126.77816 241.39989,81.075886 257.72407,43.868327"
+       d="m 226.73002,216.22547 c 0.19828,-63.74493 8.62225,-113.98292 30.99405,-172.357143"
        id="path826-9-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />

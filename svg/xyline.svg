@@ -14,8 +14,8 @@
    viewBox="0 0 300 300"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r15371"
-   sodipodi:docname="xytoline.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="xyline.svg"
    inkscape:export-filename="C:\Users\cjhamil\Documents\GitHub\qgis-shapetools-plugin\images\xyline.png"
    inkscape:export-xdpi="2.0320001"
    inkscape:export-ydpi="2.0320001">
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-77.142857"
+     inkscape:cx="-554.28571"
      inkscape:cy="560"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -52,7 +52,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,22 +62,22 @@
      id="layer1"
      transform="translate(0,3)">
     <circle
-       r="13.607142"
-       cy="41.26133"
-       cx="256.34332"
-       id="circle12"
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
-    <circle
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="circle822"
        cx="44.072044"
        cy="254.13739"
        r="13.607142" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#1f78b4;stroke-width:24;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
        d="M 36.36131,264.72084 C 57.527977,145.28035 133.87917,44.738692 267.68275,28.863691"
        id="path826"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
+    <circle
+       r="13.607142"
+       cy="41.26133"
+       cx="256.34332"
+       id="circle12"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

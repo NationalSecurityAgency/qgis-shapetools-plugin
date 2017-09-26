@@ -14,8 +14,8 @@
    viewBox="0 0 300 300"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r15371"
-   sodipodi:docname="line 2 geodesic line.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="line2geodesic.svg"
    inkscape:export-filename="C:\Users\cjhamil\Documents\GitHub\qgis-shapetools-plugin\images\line2geodesic.png"
    inkscape:export-xdpi="2.0320001"
    inkscape:export-ydpi="2.0320001">
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-554.28571"
+     inkscape:cx="-569.42632"
      inkscape:cy="560"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -72,9 +72,9 @@
        cy="41.26133"
        cx="256.34332"
        id="circle12"
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
     <circle
-       style="fill:#006dff;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#1f78b4;fill-opacity:1;stroke:#1f78b4;stroke-width:44;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="circle822"
        cx="43.542877"
        cy="254.66655"

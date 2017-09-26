@@ -2,18 +2,20 @@
 
 ***Shape Tools*** has the following tools that are installed in the Vector menu or can be accessed from the toolbar.
 
-* <img src="images/shapes.png" alt="Create Shapes"> **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
-* <img src="images/xyline.png" alt="XY to Line"> **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
-* <img src="images/line2geodesic.png" alt="Line to Geodesic Line"> **Line to Geodesic Line** processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance.
+* ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
+* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
+* ![Line to Geodesic Line](images/line2geodesic.png) **Line to Geodesic Line** processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance.
+* ![Polygon to Geodesic Polygon](images/poly2geodesic.png) **Polygon to Geodesic Polygon** processes an existing polygon vector layer and inserts vertices so that all polygon edges follow a geodesic path.
 
 **Contents**
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
 * [Line to Geodesic Line](#line-to-geodesic-line)
+* [Polygon to Geodesic Polygon](#polygon-to-geodesic-polygon)
 * [Settings](#settings)
 
-## <a name="create-shapes"></a><img src="images/shapes.png" alt="Create Shapes"> Create Shapes
+## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
@@ -66,7 +68,7 @@ Create an N-leafed epicycloid. The distance form the center to the outer edge is
 
 Create a mathematical heart which fits within the circle defined by its radius.
 
-## <a name="xy-to-line"></a><img src="images/xyline.png" alt="XY to Line"> XY to Line
+## <a name="xy-to-line"></a> ![XY to Line](images/xyline.png) XY to Line
 This creates geodesic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
@@ -93,16 +95,28 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
-## <a name="line-to-geodesic-line"></a><img src="images/line2geodesic.png" alt="Line to Geodesic Line"> Line to Geodesic Line
+## <a name="line-to-geodesic-line"></a> ![Line to Geodesic Line](images/line2geodesic.png) Line to Geodesic Line
 
-This processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
+This processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or when ever line segment distances are too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
 
 <div style="text-align:center"><img src="doc/geodesicline.jpg" alt="Line to Geodesic Line"></div>
 
 * **Input Layer** - Select an existing line layer.
 * **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
-* **Line Type** - The options are either a *Geodesic* line or a *Great Circle* line.
 * **Discard inner vertices of the line and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
+
+## <a name="polygon-to-geodesic-polygon"></a> ![Polygon to Geodesic Polygon](images/poly2geodesic.png) Polygon to Geodesic Polygon
+
+This processes an existing polygon vector layer and will insert additional vertices along a geodesic path in line segments that are too long. The distance between two points before adding additional vertices is set from the **Settings** menu.
+
+<div style="text-align:center"><img src="doc/geodesicpoly.jpg" alt="Polygon to Geodesic Polygon"></div>
+
+* **Input Layer** - Select an existing polygon layer.
+* **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
+
+The following shows the before and after results of running this function.
+
+<div style="text-align:center"><img src="doc/geodesicpolygon.jpg" alt="Geodesic Polygon"></div>
 
 ## <a name="settings"></a>Settings
 
