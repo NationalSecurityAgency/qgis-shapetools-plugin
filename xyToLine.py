@@ -12,16 +12,16 @@ from PyQt4.QtGui import QDialog
 from PyQt4 import uic
 
 from .LatLon import LatLon
+from .settings import settings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/xyToLineDialog.ui'))
 
 class XYToLineWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent, settings):
+    def __init__(self, iface, parent):
         super(XYToLineWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
-        self.settings = settings
         self.inputMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer | QgsMapLayerProxyModel.NoGeometry)
         self.inputMapLayerComboBox.layerChanged.connect(self.layerChanged)
         self.epsg4326 = QgsCoordinateReferenceSystem('EPSG:4326')
@@ -79,8 +79,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
         iter = layer.getFeatures()
         num_features = 0
         num_bad = 0
-        maxseglen = self.settings.maxSegLength*1000.0
-        maxSegments = self.settings.maxSegments
+        maxseglen = settings.maxSegLength*1000.0
+        maxSegments = settings.maxSegments
         for feature in iter:
             num_features += 1
             try:
@@ -123,8 +123,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                         ptEnd = transto4326.transform(ptEnd)
                     pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
-                        self.settings.maxSegLength*1000.0, # Put it in meters
-                        self.settings.maxSegments+1)
+                        settings.maxSegLength*1000.0, # Put it in meters
+                        settings.maxSegments+1)
                     if outCRS != self.epsg4326: # Convert each point to the output CRS
                         for x, pt in enumerate(pts):
                             pts[x] = transfrom4326.transform(pt)

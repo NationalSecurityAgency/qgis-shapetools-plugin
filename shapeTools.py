@@ -10,6 +10,13 @@ from .poly2Geodesic import Poly2GeodesicWidget
 import os.path
 import webbrowser
 
+try:
+    from processing.core.Processing import Processing
+    from .provider import ShapeToolsProvider
+    processingOk = True
+except:
+    processingOk = False
+
 class ShapeTools:
     def __init__(self, iface):
         self.iface = iface
@@ -19,6 +26,8 @@ class ShapeTools:
         self.geodesicLineDialog = None
         self.toolbar = self.iface.addToolBar(u'Shape Tools Toolbar')
         self.toolbar.setObjectName(u'ShapeToolsToolbar')
+        if processingOk:
+            self.provider = ShapeToolsProvider()
 
     def initGui(self):
         # Initialize the create shape Dialog Box
@@ -60,12 +69,15 @@ class ShapeTools:
         self.helpAction = QAction(icon, u'Shape Tools Help', self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.helpAction)
+
+        if processingOk:
+            Processing.addProvider(self.provider)
         
     def initDialogs(self):
-        '''We will not allocate resources to the plugin uless it is used.'''
+        '''We will not allocate resources to the plugin unless it is used.'''
         if self.settingsDialog is None:
             self.settingsDialog = SettingsWidget(self.iface, self.iface.mainWindow())
-            self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
+            self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
             self.xyLineDialog = XYToLineWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
             self.geodesicLineDialog = Line2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
             self.geodesicPolyDialog = Poly2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
@@ -85,6 +97,9 @@ class ShapeTools:
         self.iface.removeToolBarIcon(self.poly2GeodesicAction)
         # remove the toolbar
         del self.toolbar
+
+        if processingOk:
+            Processing.removeProvider(self.provider)
         
     def shapeTool(self):
         self.initDialogs()

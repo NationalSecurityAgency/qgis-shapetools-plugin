@@ -18,14 +18,13 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent, settings):
+    def __init__(self, iface, parent):
         super(Vector2ShapeWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
         self.iface = iface
-        self.settings = settings
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
         self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
@@ -169,7 +168,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             self.configureLayerFields(header)
 
     def configureLayerFields(self, header):
-        if not self.settings.guessNames:
+        if not settings.guessNames:
             self.clearLayerFields()
         self.semiMajorComboBox.addItems(header)
         self.semiMinorComboBox.addItems(header)
@@ -186,7 +185,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.anglePolyComboBox.addItems(header)
         self.distPolyComboBox.addItems(header)
         
-        if not self.settings.guessNames:
+        if not settings.guessNames:
             return
         
         orientcol = semimajorcol = semiminorcol = -1
@@ -296,8 +295,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
-        maxseglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
-        maxSegments = self.settings.maxSegments
+        maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
+        maxSegments = settings.maxSegments
         
         fields = layer.pendingFields()
         
