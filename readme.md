@@ -3,16 +3,18 @@
 ***Shape Tools*** has the following tools that are installed in the Vector menu or can be accessed from the toolbar.
 
 * ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
-* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines inbetween. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
-* ![Line to Geodesic Line](images/line2geodesic.png) **Line to Geodesic Line** processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or where ever line segment distance is too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance.
-* ![Polygon to Geodesic Polygon](images/poly2geodesic.png) **Polygon to Geodesic Polygon** processes an existing polygon vector layer and inserts vertices so that all polygon edges follow a geodesic path.
+* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
+* ![Geodesic Line Densifier](images/line2geodesic.png) **Geodesic Line Densifier** densifies a line vector layer by either drawing a geodesic line between the beginning and ending points or by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path to give it a nice smooth curved appearance.
+* ![Geodesic Polygon Densifier](images/poly2geodesic.png) **Geodesic Polygon Densifier** processes a polygon vector layer and insert vertices so that all polygon edges follow a geodesic path.
+* ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 
 **Contents**
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
-* [Line to Geodesic Line](#line-to-geodesic-line)
-* [Polygon to Geodesic Polygon](#polygon-to-geodesic-polygon)
+* [Geodesic Line Densifier](#geodesic-line-densifier)
+* [Geodesic Polygon Densifier](#geodesic-polygon-densifier)
+* [Geodesic Measure Tool](#geodesic-measure)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
@@ -95,21 +97,21 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
-## <a name="line-to-geodesic-line"></a> ![Line to Geodesic Line](images/line2geodesic.png) Line to Geodesic Line
+## <a name="geodesic-line-densifier"></a> ![Geodesic Line Densifier](images/line2geodesic.png) Geodesic Line Densifier
 
-This processes an existing line vector layer and will either draw a geodesic line between the beginning and ending points or when ever line segment distances are too great, it inserts additional vertices along a geodesic path to give it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
+Densify a line vector layer by either drawing a geodesic line between the beginning and ending points or add geodesic points in between each line segment where the distance is too great. This gives it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
 
-<div style="text-align:center"><img src="doc/geodesicline.jpg" alt="Line to Geodesic Line"></div>
+<div style="text-align:center"><img src="doc/geodesicline.jpg" alt="Geodesic Line Densifier"></div>
 
 * **Input Layer** - Select an existing line layer.
 * **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
 * **Discard inner vertices of the line and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
 
-## <a name="polygon-to-geodesic-polygon"></a> ![Polygon to Geodesic Polygon](images/poly2geodesic.png) Polygon to Geodesic Polygon
+## <a name="geodesic-polygon-densifier"></a> ![Geodesic Polygon Densifier](images/poly2geodesic.png) Geodesic Polygon Densifier
 
-This processes an existing polygon vector layer and will insert additional vertices along a geodesic path in line segments that are too long. The distance between two points before adding additional vertices is set from the **Settings** menu.
+This processes a polygon vector layer and inserts additional vertices along a geodesic path in line segments that are too long. The distance between two points before adding additional vertices is set from the **Settings** menu.
 
-<div style="text-align:center"><img src="doc/geodesicpoly.jpg" alt="Polygon to Geodesic Polygon"></div>
+<div style="text-align:center"><img src="doc/geodesicpoly.jpg" alt="Geodesic Polygon Densifier"></div>
 
 * **Input Layer** - Select an existing polygon layer.
 * **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
@@ -117,6 +119,13 @@ This processes an existing polygon vector layer and will insert additional verti
 The following shows the before and after results of running this function.
 
 <div style="text-align:center"><img src="doc/geodesicpolygon.jpg" alt="Geodesic Polygon"></div>
+
+
+## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
+
+This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are the same as those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be meters, kilometers, feet, yards, miles, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. 
+
+<div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
 
 ## <a name="settings"></a>Settings
 

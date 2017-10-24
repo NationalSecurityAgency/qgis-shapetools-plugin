@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Line to Geodesic Line</string>
+   <string>Geodesic Line Densifier</string>
   </property>
   <property name="modal">
    <bool>true</bool>

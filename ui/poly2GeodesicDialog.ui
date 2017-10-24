@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Polygon to Geodesic Polygon</string>
+   <string>Geodesic Polygon Densifier</string>
   </property>
   <property name="modal">
    <bool>true</bool>

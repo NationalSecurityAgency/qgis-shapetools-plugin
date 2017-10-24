@@ -1,5 +1,5 @@
 PLUGINNAME = shapetools
-PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py line2Geodesic.py poly2Geodesic.py
+PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py line2Geodesic.py poly2Geodesic.py geodesicMeasureTool.py
 EXTRAS = metadata.txt
 
 deploy:
