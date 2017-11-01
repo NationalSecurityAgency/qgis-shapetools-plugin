@@ -23,10 +23,12 @@ class GeodesicMeasureTool(QgsMapTool):
         self.measureDialog.show()
         
     def closeDialog(self):
+        '''Close the geodesic measure tool dialog box.'''
         if self.measureDialog.isVisible():
             self.measureDialog.closeDialog()
         
     def canvasPressEvent(self, event):
+        '''Capture the coordinates when the user click on the mouse for measurements.'''
         if not self.measureDialog.isVisible():
             self.measureDialog.show()
             return
