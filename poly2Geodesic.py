@@ -12,16 +12,16 @@ from PyQt4.QtGui import QDialog
 from PyQt4 import uic
 
 from .LatLon import LatLon
+from .settings import settings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/poly2GeodesicDialog.ui'))
 
 class Poly2GeodesicWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent, settings):
+    def __init__(self, iface, parent):
         super(Poly2GeodesicWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
-        self.settings = settings
         self.inputPolyComboBox.setFilters(QgsMapLayerProxyModel.PolygonLayer)
         self.epsg4326 = QgsCoordinateReferenceSystem('EPSG:4326')
         self.geod = Geodesic.WGS84
@@ -53,8 +53,8 @@ class Poly2GeodesicWidget(QDialog, FORM_CLASS):
         iter = layer.getFeatures()
         num_features = 0
         num_bad = 0
-        maxseglen = self.settings.maxSegLength*1000.0
-        maxSegments = self.settings.maxSegments
+        maxseglen = settings.maxSegLength*1000.0
+        maxSegments = settings.maxSegments
         for feature in iter:
             num_features += 1
             try:
