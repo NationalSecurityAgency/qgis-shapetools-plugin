@@ -19,32 +19,33 @@ class ShapeTools:
         self.shapeDialog = None
         self.xyLineDialog = None
         self.geodesicLineDialog = None
+        self.geodesicPolyDialog = None
         self.toolbar = self.iface.addToolBar(u'Shape Tools Toolbar')
         self.toolbar.setObjectName(u'ShapeToolsToolbar')
 
     def initGui(self):
-        # Initialize the create shape Dialog Box
+        # Initialize the create shape menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
         self.shapeAction = QAction(icon, u'Create Shapes', self.iface.mainWindow())
         self.shapeAction.triggered.connect(self.shapeTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.shapeAction)
         self.toolbar.addAction(self.shapeAction)
         
-        # Initialize the XY to Line Dialog Box
+        # Initialize the XY to Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
         self.xyLineAction = QAction(icon, u'XY to Line', self.iface.mainWindow())
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
         
-        # Initialize the Line to Geodesic Line Dialog Box
+        # Initialize the Line to Geodesic Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/line2geodesic.png')
         self.line2GeodesicAction = QAction(icon, u'Geodesic Line Densifier', self.iface.mainWindow())
         self.line2GeodesicAction.triggered.connect(self.line2GeodesicTool)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.line2GeodesicAction)
         self.toolbar.addAction(self.line2GeodesicAction)
         
-        # Initialize the Polygon to Geodesic Polygon Dialog Box
+        # Initialize the Polygon to Geodesic Polygon menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/poly2geodesic.png')
         self.poly2GeodesicAction = QAction(icon, u'Geodesic Polygon Densifier', self.iface.mainWindow())
         self.poly2GeodesicAction.triggered.connect(self.poly2GeodesicTool)
@@ -80,15 +81,6 @@ class ShapeTools:
                 self.geodesicMeasureTool.closeDialog()
         except:
             pass
-            
-    def initDialogs(self):
-        '''We will not allocate resources to the plugin uless it is used.'''
-        if self.settingsDialog is None:
-            self.settingsDialog = SettingsWidget(self.iface, self.iface.mainWindow())
-            self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
-            self.xyLineDialog = XYToLineWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
-            self.geodesicLineDialog = Line2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
-            self.geodesicPolyDialog = Poly2GeodesicWidget(self.iface, self.iface.mainWindow(), self.settingsDialog)
 
     def unload(self):
         # remove from menu
@@ -109,19 +101,23 @@ class ShapeTools:
         del self.toolbar
         
     def shapeTool(self):
-        self.initDialogs()
+        if self.shapeDialog is None:
+            self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
         self.shapeDialog.show()
         
     def xyLineTool(self):
-        self.initDialogs()
+        if self.xyLineDialog is None:
+            self.xyLineDialog = XYToLineWidget(self.iface, self.iface.mainWindow())
         self.xyLineDialog.show()
         
     def line2GeodesicTool(self):
-        self.initDialogs()
+        if self.geodesicLineDialog is None:
+            self.geodesicLineDialog = Line2GeodesicWidget(self.iface, self.iface.mainWindow())
         self.geodesicLineDialog.show()
         
     def poly2GeodesicTool(self):
-        self.initDialogs()
+        if self.geodesicPolyDialog is None:
+            self.geodesicPolyDialog = Poly2GeodesicWidget(self.iface, self.iface.mainWindow())
         self.geodesicPolyDialog.show()
         
     def measureTool(self):
@@ -129,7 +125,8 @@ class ShapeTools:
         self.canvas.setMapTool(self.geodesicMeasureTool)
         
     def settings(self):
-        self.initDialogs()
+        if self.settingsDialog is None:
+            self.settingsDialog = SettingsWidget(self.iface, self.iface.mainWindow())
         self.settingsDialog.show()
     
     def help(self):

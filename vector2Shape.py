@@ -3,7 +3,7 @@ import re
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsFeature, QgsCoordinateReferenceSystem,
+from qgis.core import (QgsFeature,
     QgsCoordinateTransform, QgsVectorLayer, QgsPoint, QgsFeature,
     QgsGeometry, QgsMapLayerRegistry, QGis)
 from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
@@ -12,20 +12,20 @@ from PyQt4.QtGui import QIcon, QDialog, QDialogButtonBox
 from PyQt4 import uic
 
 from .LatLon import LatLon
+from .settings import settings, epsg4326
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/vector2Shape.ui'))
 
 DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent, settings):
+    def __init__(self, iface, parent):
         super(Vector2ShapeWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
         self.iface = iface
-        self.settings = settings
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
         self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
@@ -70,7 +70,6 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         # We need to make sure all the points in the layer are transformed to EPSG:4326
         layerCRS = layer.crs()
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform(layerCRS, epsg4326)
         
         if tab == 0: # Ellipse
@@ -169,7 +168,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             self.configureLayerFields(header)
 
     def configureLayerFields(self, header):
-        if not self.settings.guessNames:
+        if not settings.guessNames:
             self.clearLayerFields()
         self.semiMajorComboBox.addItems(header)
         self.semiMinorComboBox.addItems(header)
@@ -186,7 +185,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.anglePolyComboBox.addItems(header)
         self.distPolyComboBox.addItems(header)
         
-        if not self.settings.guessNames:
+        if not settings.guessNames:
             return
         
         orientcol = semimajorcol = semiminorcol = -1
@@ -296,8 +295,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
-        maxseglen = self.settings.maxSegLength*1000.0 # Needs to be in meters
-        maxSegments = self.settings.maxSegments
+        maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
+        maxSegments = settings.maxSegments
         
         fields = layer.pendingFields()
         

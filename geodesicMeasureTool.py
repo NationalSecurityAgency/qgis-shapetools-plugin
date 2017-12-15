@@ -4,9 +4,11 @@ from geographiclib.geodesic import Geodesic
 
 from PyQt4.QtCore import Qt, QSettings, QByteArray
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QColor
-from qgis.core import QgsCoordinateTransform, QgsPoint, QgsCoordinateReferenceSystem, QGis, QgsGeometry
+from qgis.core import QgsCoordinateTransform, QgsPoint, QGis, QgsGeometry
 from qgis.gui import QgsMapTool, QgsMessageBar, QgsRubberBand
 from PyQt4 import uic
+
+from .settings import epsg4326
 
 class GeodesicMeasureTool(QgsMapTool):
     
@@ -15,7 +17,6 @@ class GeodesicMeasureTool(QgsMapTool):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.measureDialog = GeodesicMeasureDialog(iface, parent)
-        self.epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
         
     def activate(self):
         '''When activated set the cursor to a crosshair.'''
@@ -37,8 +38,8 @@ class GeodesicMeasureTool(QgsMapTool):
         pt = event.mapPoint()
         button = event.button()
         canvasCRS = self.canvas.mapSettings().destinationCrs()
-        if canvasCRS != self.epsg4326:
-            transform = QgsCoordinateTransform(canvasCRS, self.epsg4326)
+        if canvasCRS != epsg4326:
+            transform = QgsCoordinateTransform(canvasCRS, epsg4326)
             pt = transform.transform(pt.x(), pt.y())
         self.measureDialog.addPoint(pt, button)
         if button == 2:
@@ -51,8 +52,8 @@ class GeodesicMeasureTool(QgsMapTool):
             try:
                 pt = event.mapPoint()
                 canvasCRS = self.canvas.mapSettings().destinationCrs()
-                if canvasCRS != self.epsg4326:
-                    transform = QgsCoordinateTransform(canvasCRS, self.epsg4326)
+                if canvasCRS != epsg4326:
+                    transform = QgsCoordinateTransform(canvasCRS, epsg4326)
                     pt = transform.transform(pt.x(), pt.y())
                 self.measureDialog.inMotion(pt)
             except:
@@ -73,7 +74,6 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
 
         self.restoreGeometry(settings.value("ShapeTools/MeasureDialogGeometry",
                                         QByteArray(), type=QByteArray))
-        self.epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
         self.closeButton.clicked.connect(self.closeDialog)
         self.newButton.clicked.connect(self.newDialog)
 
@@ -148,7 +148,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.capturedPoints.append(pt)
         # Add rubber band points
         canvasCrs = self.canvas.mapSettings().destinationCrs()
-        transform = QgsCoordinateTransform(self.epsg4326, canvasCrs)
+        transform = QgsCoordinateTransform(epsg4326, canvasCrs)
         ptCanvas = transform.transform(pt.x(), pt.y())
         self.pointRb.addPoint(ptCanvas, True)
         # If there is more than 1 point add it to the table
@@ -181,7 +181,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
     def getLinePts(self, distance, pt1, pt2):
         canvasCrs = self.canvas.mapSettings().destinationCrs()
-        transform = QgsCoordinateTransform(self.epsg4326, canvasCrs)
+        transform = QgsCoordinateTransform(epsg4326, canvasCrs)
         pt1c = transform.transform(pt1.x(), pt1.y())
         pt2c = transform.transform(pt2.x(), pt2.y())
         if distance < 10000:

@@ -3,10 +3,27 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import QSettings
 
+from qgis.core import QgsCoordinateReferenceSystem
+
+epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/settings.ui'))
 
+class Settings():
+
+    def __init__(self):
+        self.readSettings()
+
+    def readSettings(self):
+        '''Load the user selected settings. The settings are retained even when
+        the user quits QGIS.'''
+        qset = QSettings()
+        self.guessNames = int(qset.value('/ShapeTools/GuessNames', 2))
+        self.maxSegLength =  float(qset.value('/ShapeTools/MaxSegLength', 20.0)) # In km
+        self.maxSegments =  int(qset.value('/ShapeTools/MaxSegments', 1000))
+
+settings = Settings()
 
 class SettingsWidget(QtGui.QDialog, FORM_CLASS):
     '''Settings Dialog box.'''
@@ -14,31 +31,23 @@ class SettingsWidget(QtGui.QDialog, FORM_CLASS):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
-        self.readSettings()
-
-    def readSettings(self):
-        '''Load the user selected settings. The settings are retained even when
-        the user quits QGIS.'''
-        settings = QSettings()
-        self.guessNames = int(settings.value('/ShapeTools/GuessNames', 2))
-        self.maxSegLength =  float(settings.value('/ShapeTools/MaxSegLength', 20.0)) # In km
-        self.maxSegments =  int(settings.value('/ShapeTools/MaxSegments', 1000))
+        settings.readSettings()
         
     def accept(self):
         '''Accept the settings and save them for next time.'''
-        settings = QSettings()
-        settings.setValue('/ShapeTools/GuessNames', self.guessCheckBox.checkState())
-        settings.setValue('/ShapeTools/MaxSegments', self.maxSegmentsSpinBox.value())
-        settings.setValue('/ShapeTools/MaxSegLength', self.segLengthSpinBox.value())
-        self.readSettings()
+        qset = QSettings()
+        qset.setValue('/ShapeTools/GuessNames', self.guessCheckBox.checkState())
+        qset.setValue('/ShapeTools/MaxSegments', self.maxSegmentsSpinBox.value())
+        qset.setValue('/ShapeTools/MaxSegLength', self.segLengthSpinBox.value())
+        settings.readSettings()
         self.close()
         
     def showEvent(self, e):
         '''The user has selected the settings dialog box so we need to
         read the settings and update the dialog box with the previously
         selected settings.'''
-        self.readSettings()
-        self.guessCheckBox.setCheckState(self.guessNames)
-        self.maxSegmentsSpinBox.setValue(self.maxSegments)
-        self.segLengthSpinBox.setValue(self.maxSegLength)
+        settings.readSettings()
+        self.guessCheckBox.setCheckState(settings.guessNames)
+        self.maxSegmentsSpinBox.setValue(settings.maxSegments)
+        self.segLengthSpinBox.setValue(settings.maxSegLength)
         
