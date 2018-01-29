@@ -4,16 +4,14 @@
 
 * ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
-* ![Geodesic Line Densifier](images/line2geodesic.png) **Geodesic Line Densifier** densifies a line vector layer by either drawing a geodesic line between the beginning and ending points or by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path to give it a nice smooth curved appearance.
-* ![Geodesic Polygon Densifier](images/poly2geodesic.png) **Geodesic Polygon Densifier** processes a polygon vector layer and insert vertices so that all polygon edges follow a geodesic path.
+* ![Geodesic Shape Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
 * ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 
 **Contents**
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
-* [Geodesic Line Densifier](#geodesic-line-densifier)
-* [Geodesic Polygon Densifier](#geodesic-polygon-densifier)
+* [Geodesic Shape Densifier](#geodesic-shape-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Settings](#settings)
 
@@ -97,29 +95,25 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
-## <a name="geodesic-line-densifier"></a> ![Geodesic Line Densifier](images/line2geodesic.png) Geodesic Line Densifier
+## <a name="geodesic-shape-densifier"></a> ![Geodesic Shape Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
 
-Densify a line vector layer by either drawing a geodesic line between the beginning and ending points or add geodesic points in between each line segment where the distance is too great. This gives it a nice smooth curved appearance. The distance between two points before adding additional vertices is set from the **Settings** menu.
+Densify a line or polygon vector layer by adding geodesic points inbetween individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.
 
-<div style="text-align:center"><img src="doc/geodesicline.jpg" alt="Geodesic Line Densifier"></div>
+The distance between two points before adding additional vertices is set from the **Settings** menu.
 
-* **Input Layer** - Select an existing line layer.
+<div style="text-align:center"><img src="doc/geodesicshape.jpg" alt="Geodesic Shape Densifier"></div>
+
+* **Input Layer** - Select an existing line or polygon layer.
 * **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
-* **Discard inner vertices of the line and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
+* **Discard inner vertices of the line vectors and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
 
-## <a name="geodesic-polygon-densifier"></a> ![Geodesic Polygon Densifier](images/poly2geodesic.png) Geodesic Polygon Densifier
-
-This processes a polygon vector layer and inserts additional vertices along a geodesic path in line segments that are too long. The distance between two points before adding additional vertices is set from the **Settings** menu.
-
-<div style="text-align:center"><img src="doc/geodesicpoly.jpg" alt="Geodesic Polygon Densifier"></div>
-
-* **Input Layer** - Select an existing polygon layer.
-* **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
-
-The following shows the before and after results of running this function.
+The following shows the before and after results of running this function on a polygon layer.
 
 <div style="text-align:center"><img src="doc/geodesicpolygon.jpg" alt="Geodesic Polygon"></div>
 
+This function can also be accessed from the **Processing Toolbox**.
+
+<div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
 ## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
 

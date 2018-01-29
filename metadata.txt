@@ -1,11 +1,11 @@
 [general]
 name=Shape Tools
-qgisMinimumVersion=2.12
+qgisMinimumVersion=2.14
 description=Shape Tools is all about geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. Implements an "XY to Line" tool. Densify lines and polygons along geodesic paths. Includes geodesic measure tool.
-version=0.6.1
+version=0.7
 author=C Hamilton
 email=adenaculture@gmail.com
-about=Shape Tools is all about geodesic shapes and functions. "Create Shapes" processes a point vector layer to create ellipses, pies, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and parameters from the dialog box. "XY to Line" uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates. "Line Geodesic Densifier" and "Polygon Geodesic Densifier" create geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" uses WGS 84 ellipsoid measurements and includes the bearing or heading between points. Shape Tools is installed in the Vector menu.
+about=Shape Tools is all about geodesic shapes and functions. "Create Shapes" processes a point vector layer to create ellipses, pies, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and parameters from the dialog box. "XY to Line" uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates. "Geodesic Shape Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" uses WGS 84 ellipsoid measurements and includes the bearing or heading between points. Shape Tools is installed in the Vector menu.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 tags=ellipse,line of bearing,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,measure,measurements
@@ -15,6 +15,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    0.7 Merged line and polygon densifier and made it available in the processing toolbox.
     0.6.1 Bug fixes and renamed functions for better clarity, updated documentation
     0.6 Added geodesic polygon tool
     0.5 Added a line to Geodesic line tool
