@@ -47,24 +47,23 @@ class GeodesicDensifyWidget(QDialog, FORM_CLASS):
         fields = layer.pendingFields()
         
         # Create the points and line output layers
-        isline = False
-        if wkbtype == QGis.WKBLineString or discardVertices:
-            newLayer = QgsVectorLayer("LineString?crs={}".format(layercrs.authid()), newlayername, "memory")
-            isline = True
-        elif wkbtype == QGis.WKBMultiLineString:
-            newLayer = QgsVectorLayer("MultiLineString?crs={}".format(layercrs.authid()), newlayername, "memory")
-            isline = True
-        elif wkbtype == QGis.WKBPolygon:
-            newLayer = QgsVectorLayer("Polygon?crs={}".format(layercrs.authid()), newlayername, "memory")
-        else:
-            newLayer = QgsVectorLayer("MultiPolygon?crs={}".format(layercrs.authid()), newlayername, "memory")
-        dp = newLayer.dataProvider()
-        dp.addAttributes(fields)
-        newLayer.updateFields()
-        
-        if isline:
+        if (wkbtype == QGis.WKBLineString) or (wkbtype == QGis.WKBMultiLineString):
+            if wkbtype == QGis.WKBLineString or discardVertices:
+                newLayer = QgsVectorLayer("LineString?crs={}".format(layercrs.authid()), newlayername, "memory")
+            elif wkbtype == QGis.WKBMultiLineString:
+                newLayer = QgsVectorLayer("MultiLineString?crs={}".format(layercrs.authid()), newlayername, "memory")
+            dp = newLayer.dataProvider()
+            dp.addAttributes(fields)
+            newLayer.updateFields()
             num_bad = processLine(layer, dp, discardVertices, False)
         else:
+            if wkbtype == QGis.WKBPolygon:
+                newLayer = QgsVectorLayer("Polygon?crs={}".format(layercrs.authid()), newlayername, "memory")
+            else:
+                newLayer = QgsVectorLayer("MultiPolygon?crs={}".format(layercrs.authid()), newlayername, "memory")
+            dp = newLayer.dataProvider()
+            dp.addAttributes(fields)
+            newLayer.updateFields()
             num_bad = processPoly(layer, dp, False)
         
         newLayer.updateExtents()
@@ -121,7 +120,6 @@ def processPoly(layer, writerLines, isProcessing):
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326)
         transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs)
     
-    wkbtype = layer.wkbType()
     iterator = layer.getFeatures()
     num_features = 0
     num_bad = 0
@@ -130,6 +128,7 @@ def processPoly(layer, writerLines, isProcessing):
     for feature in iterator:
         num_features += 1
         try:
+            wkbtype = feature.geometry().wkbType()
             if wkbtype == QGis.WKBPolygon:
                 poly = feature.geometry().asPolygon()
                 numpolygons = len(poly)
@@ -235,7 +234,6 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326)
         transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs)
     
-    wkbtype = layer.wkbType()
     iterator = layer.getFeatures()
     num_features = 0
     num_bad = 0
@@ -244,6 +242,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
     for feature in iterator:
         num_features += 1
         try:
+            wkbtype = feature.geometry().wkbType()
             if wkbtype == QGis.WKBLineString:
                 seg = [feature.geometry().asPolyline()]
             else:
