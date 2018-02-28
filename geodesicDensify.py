@@ -115,7 +115,7 @@ class GeodesicDensifyAlgorithm(GeoAlgorithm):
         self.addParameter(ParameterBoolean(self.DISCARDVERTICES, "Discard inner line vertices"))
 
 def processPoly(layer, writerLines, isProcessing):
-    layercrs = layer.crs()    
+    layercrs = layer.crs()
     if layercrs != epsg4326:
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326)
         transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs)
@@ -162,9 +162,9 @@ def processPoly(layer, writerLines, isProcessing):
                         pts.append(ptEnd)
                         ptStart = ptEnd
      
-                        if layercrs != epsg4326: # Convert each point to the output CRS
-                            for x, pt in enumerate(pts):
-                                pts[x] = transfrom4326.transform(pt)
+                    if layercrs != epsg4326: # Convert each point to the output CRS
+                        for x, pt in enumerate(pts):
+                            pts[x] = transfrom4326.transform(pt)
                     ptset.append(pts)
                         
                 if len(ptset) > 0:
@@ -207,9 +207,9 @@ def processPoly(layer, writerLines, isProcessing):
                             pts.append(ptEnd)
                             ptStart = ptEnd
          
-                            if layercrs != epsg4326: # Convert each point to the output CRS
-                                for x, pt in enumerate(pts):
-                                    pts[x] = transfrom4326.transform(pt)
+                        if layercrs != epsg4326: # Convert each point to the output CRS
+                            for x, pt in enumerate(pts):
+                                pts[x] = transfrom4326.transform(pt)
                         ptset.append(pts)
                     multiset.append(ptset)
                         
