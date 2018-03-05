@@ -115,6 +115,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                         for x, pt in enumerate(pts):
                             pts[x] = transfrom4326.transform(pt)
                     fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                    ptStart = pts[0]
+                    ptEnd = pts[len(pts)-1]
                 elif lineType == 1: # Great Circle
                     # If the input is not 4326 we need to convert it to that and then back to the output CRS
                     if inCRS != epsg4326: # Convert to 4326
@@ -128,6 +130,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                         for x, pt in enumerate(pts):
                             pts[x] = transfrom4326.transform(pt)
                     fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                    ptStart = pts[0]
+                    ptEnd = pts[len(pts)-1]
                 else: # Simple line
                     '''Transform the starting and end points if the input CRS
                        and the output CRS are not the same and then create a 
