@@ -1,5 +1,6 @@
-from PyQt4.QtCore import QUrl
-from PyQt4.QtGui import QIcon, QAction
+from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
 
 from .LatLon import LatLon
 from .vector2Shape import Vector2ShapeWidget
@@ -9,13 +10,13 @@ from .geodesicDensify import GeodesicDensifyWidget
 from .geodesicMeasureTool import GeodesicMeasureTool
 import os.path
 import webbrowser
-
+'''
 try:
     from processing.core.Processing import Processing
     from .provider import ShapeToolsProvider
     processingOk = True
 except:
-    processingOk = False
+    processingOk = False'''
 
 class ShapeTools:
     def __init__(self, iface):
@@ -25,57 +26,57 @@ class ShapeTools:
         self.shapeDialog = None
         self.xyLineDialog = None
         self.geodesicDensifyDialog = None
-        self.toolbar = self.iface.addToolBar(u'Shape Tools Toolbar')
-        self.toolbar.setObjectName(u'ShapeToolsToolbar')
-        if processingOk:
-            self.provider = ShapeToolsProvider()
+        self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
+        self.toolbar.setObjectName('ShapeToolsToolbar')
+        #if processingOk:
+        #    self.provider = ShapeToolsProvider()
 
     def initGui(self):
         # Initialize the create shape menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
-        self.shapeAction = QAction(icon, u'Create Shapes', self.iface.mainWindow())
+        self.shapeAction = QAction(icon, 'Create Shapes', self.iface.mainWindow())
         self.shapeAction.triggered.connect(self.shapeTool)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.shapeAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.shapeAction)
         self.toolbar.addAction(self.shapeAction)
         
         # Initialize the XY to Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
-        self.xyLineAction = QAction(icon, u'XY to Line', self.iface.mainWindow())
+        self.xyLineAction = QAction(icon, 'XY to Line', self.iface.mainWindow())
         self.xyLineAction.triggered.connect(self.xyLineTool)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.xyLineAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
         
         # Initialize the Geodesic Densifier menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
-        self.geodesicDensifyAction = QAction(icon, u'Geodesic Shape Densifier', self.iface.mainWindow())
+        self.geodesicDensifyAction = QAction(icon, 'Geodesic Shape Densifier', self.iface.mainWindow())
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.geodesicDensifyAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.toolbar.addAction(self.geodesicDensifyAction)
         
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
         self.canvas.mapToolSet.connect(self.unsetTool)
         icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
-        self.measureAction = QAction(icon, u'Geodesic Measure Tool', self.iface.mainWindow())
+        self.measureAction = QAction(icon, 'Geodesic Measure Tool', self.iface.mainWindow())
         self.measureAction.triggered.connect(self.measureTool)
         self.measureAction.setCheckable(True)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.measureAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.measureAction)
         self.toolbar.addAction(self.measureAction)
         
         # Settings
         icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
-        self.settingsAction = QAction(icon, u'Settings', self.iface.mainWindow())
+        self.settingsAction = QAction(icon, 'Settings', self.iface.mainWindow())
         self.settingsAction.triggered.connect(self.settings)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.settingsAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.settingsAction)
         
         # Help
         icon = QIcon(os.path.dirname(__file__) + '/images/help.png')
-        self.helpAction = QAction(icon, u'Shape Tools Help', self.iface.mainWindow())
+        self.helpAction = QAction(icon, 'Shape Tools Help', self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
-        self.iface.addPluginToVectorMenu(u'Shape Tools', self.helpAction)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.helpAction)
         
-        if processingOk:
-            Processing.addProvider(self.provider)
+        '''if processingOk:
+            Processing.addProvider(self.provider)'''
         
     def unsetTool(self, tool):
         try:
@@ -87,12 +88,12 @@ class ShapeTools:
 
     def unload(self):
         # remove from menu
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.shapeAction)
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.xyLineAction)
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.geodesicDensifyAction)
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.measureAction)
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.settingsAction)
-        self.iface.removePluginVectorMenu(u'Shape Tools', self.helpAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.shapeAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.helpAction)
         # Remove from toolbar
         self.iface.removeToolBarIcon(self.shapeAction)
         self.iface.removeToolBarIcon(self.xyLineAction)
@@ -101,8 +102,8 @@ class ShapeTools:
         # remove the toolbar
         del self.toolbar
 
-        if processingOk:
-            Processing.removeProvider(self.provider)
+        '''if processingOk:
+            Processing.removeProvider(self.provider)'''
         
     def shapeTool(self):
         if self.shapeDialog is None:

@@ -1,5 +1,5 @@
 from processing.core.AlgorithmProvider import AlgorithmProvider
-from geodesicDensify import GeodesicDensifyAlgorithm
+from .geodesicDensify import GeodesicDensifyAlgorithm
 
 class ShapeToolsProvider(AlgorithmProvider):
 

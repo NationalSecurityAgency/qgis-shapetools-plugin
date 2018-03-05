@@ -1,7 +1,8 @@
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QSettings
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt.QtWidgets import QDialog
 
 from qgis.core import QgsCoordinateReferenceSystem
 
@@ -25,7 +26,7 @@ class Settings():
 
 settings = Settings()
 
-class SettingsWidget(QtGui.QDialog, FORM_CLASS):
+class SettingsWidget(QDialog, FORM_CLASS):
     '''Settings Dialog box.'''
     def __init__(self, iface, parent):
         super(SettingsWidget, self).__init__(parent)

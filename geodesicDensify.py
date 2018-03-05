@@ -3,20 +3,21 @@ import re
 import math
 import sys
 from geographiclib.geodesic import Geodesic
+#import traceback
 
 from qgis.core import (QgsVectorLayer,
-    QgsCoordinateTransform, QgsPoint, QgsFeature, QgsGeometry, 
-    QgsMapLayerRegistry, QGis)
-from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
+    QgsCoordinateTransform, QgsPointXY, QgsFeature, QgsGeometry, 
+    QgsProject, Qgis, QgsMapLayerProxyModel, QgsWkbTypes)
 
-from processing.core.GeoAlgorithm import GeoAlgorithm
+'''from processing.core.GeoAlgorithm import GeoAlgorithm
 from processing.core.parameters import ParameterVector, ParameterBoolean
 from processing.core.outputs import OutputVector
 from processing.tools import dataobjects, vector, raster
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException'''
 
-from PyQt4.QtGui import QDialog, QIcon
-from PyQt4 import uic
+from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt import uic
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
@@ -36,7 +37,7 @@ class GeodesicDensifyWidget(QDialog, FORM_CLASS):
     def accept(self):
         layer = self.inputLineComboBox.currentLayer()
         if not layer:
-            self.iface.messageBar().pushMessage("", "No Valid Layer", level=QgsMessageBar.WARNING, duration=4)
+            self.iface.messageBar().pushMessage("", "No Valid Layer", level=Qgis.Warning, duration=4)
         discardVertices = self.discardVerticesCheckBox.isChecked()
         
         layercrs = layer.crs()
@@ -44,20 +45,20 @@ class GeodesicDensifyWidget(QDialog, FORM_CLASS):
         newlayername = self.geodesicLineNameLineEdit.text()
                 
         # Get the field names for the input layer. The will be copied to the output layers
-        fields = layer.pendingFields()
+        fields = layer.fields()
         
         # Create the points and line output layers
-        if (wkbtype == QGis.WKBLineString) or (wkbtype == QGis.WKBMultiLineString):
-            if wkbtype == QGis.WKBLineString or discardVertices:
+        if (wkbtype == QgsWkbTypes.LineString) or (wkbtype == QgsWkbTypes.MultiLineString):
+            if wkbtype == QgsWkbTypes.LineString or discardVertices:
                 newLayer = QgsVectorLayer("LineString?crs={}".format(layercrs.authid()), newlayername, "memory")
-            elif wkbtype == QGis.WKBMultiLineString:
+            elif wkbtype == QgsWkbTypes.MultiLineString:
                 newLayer = QgsVectorLayer("MultiLineString?crs={}".format(layercrs.authid()), newlayername, "memory")
             dp = newLayer.dataProvider()
             dp.addAttributes(fields)
             newLayer.updateFields()
             num_bad = processLine(layer, dp, discardVertices, False)
         else:
-            if wkbtype == QGis.WKBPolygon:
+            if wkbtype == QgsWkbTypes.Polygon:
                 newLayer = QgsVectorLayer("Polygon?crs={}".format(layercrs.authid()), newlayername, "memory")
             else:
                 newLayer = QgsVectorLayer("MultiPolygon?crs={}".format(layercrs.authid()), newlayername, "memory")
@@ -67,13 +68,13 @@ class GeodesicDensifyWidget(QDialog, FORM_CLASS):
             num_bad = processPoly(layer, dp, False)
         
         newLayer.updateExtents()
-        QgsMapLayerRegistry.instance().addMapLayer(newLayer)
+        QgsProject.instance().addMapLayer(newLayer)
         if num_bad != 0:
-            self.iface.messageBar().pushMessage("", "{} features failed".format(num_bad), level=QgsMessageBar.WARNING, duration=3)
+            self.iface.messageBar().pushMessage("", "{} features failed".format(num_bad), level=Qgis.Warning, duration=3)
        
         self.close()
 
-class GeodesicDensifyAlgorithm(GeoAlgorithm):
+'''class GeodesicDensifyAlgorithm(GeoAlgorithm):
 
     LAYER = 'LAYER'
     OUTPUT = 'OUTPUT'
@@ -87,16 +88,16 @@ class GeodesicDensifyAlgorithm(GeoAlgorithm):
         output = self.getOutputFromName(self.OUTPUT)
 
         wkbtype = layer.wkbType()
-        if wkbtype == QGis.WKBLineString or wkbtype == QGis.WKBMultiLineString:
-            outputType = QGis.WKBLineString if (wkbtype == QGis.WKBLineString 
-                or discardVertices) else QGis.WKBMultiLineString
+        if wkbtype == QgsWkbTypes.LineString or wkbtype == QgsWkbTypes.MultiLineString:
+            outputType = QgsWkbTypes.LineString if (wkbtype == QgsWkbTypes.LineString 
+                or discardVertices) else QgsWkbTypes.MultiLineString
             
-            writerLines = output.getVectorWriter(layer.pendingFields(), outputType, self.crs)
+            writerLines = output.getVectorWriter(layer.fields(), outputType, self.crs)
 
             processLine(layer, writerLines, discardVertices, True)
         else:
-            outputType = QGis.WKBPolygon if wkbtype == QGis.WKBPolygon else QGis.WKBMultiPolygon
-            writerLines = output.getVectorWriter(layer.pendingFields(), outputType, self.crs)
+            outputType = QgsWkbTypes.Polygon if wkbtype == QgsWkbTypes.Polygon else QgsWkbTypes.MultiPolygon
+            writerLines = output.getVectorWriter(layer.fields(), outputType, self.crs)
             processPoly(layer, writerLines, True)
             
 
@@ -112,13 +113,13 @@ class GeodesicDensifyAlgorithm(GeoAlgorithm):
         self.i18n_group = self.group
         self.addParameter(ParameterVector(self.LAYER, 'Line or polygon layer', [ParameterVector.VECTOR_TYPE_LINE, ParameterVector.VECTOR_TYPE_POLYGON]))
         self.addOutput(OutputVector(self.OUTPUT, 'Output layer'))
-        self.addParameter(ParameterBoolean(self.DISCARDVERTICES, "Discard inner line vertices"))
+        self.addParameter(ParameterBoolean(self.DISCARDVERTICES, "Discard inner line vertices"))'''
 
 def processPoly(layer, writerLines, isProcessing):
     layercrs = layer.crs()
     if layercrs != epsg4326:
-        transto4326 = QgsCoordinateTransform(layercrs, epsg4326)
-        transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs)
+        transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
+        transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs, QgsProject.instance())
     
     iterator = layer.getFeatures()
     num_features = 0
@@ -129,7 +130,7 @@ def processPoly(layer, writerLines, isProcessing):
         num_features += 1
         try:
             wkbtype = feature.geometry().wkbType()
-            if wkbtype == QGis.WKBPolygon:
+            if wkbtype == QgsWkbTypes.Polygon:
                 poly = feature.geometry().asPolygon()
                 numpolygons = len(poly)
                 if numpolygons < 1:
@@ -141,12 +142,12 @@ def processPoly(layer, writerLines, isProcessing):
                     if numpoints < 2:
                         continue
                     # If the input is not 4326 we need to convert it to that and then back to the output CRS
-                    ptStart = QgsPoint(points[0][0], points[0][1])
+                    ptStart = QgsPointXY(points[0][0], points[0][1])
                     if layercrs != epsg4326: # Convert to 4326
                         ptStart = transto4326.transform(ptStart)
                     pts = [ptStart]
                     for x in range(1,numpoints):
-                        ptEnd = QgsPoint(points[x][0], points[x][1])
+                        ptEnd = QgsPointXY(points[x][0], points[x][1])
                         if layercrs != epsg4326: # Convert to 4326
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
@@ -158,7 +159,7 @@ def processPoly(layer, writerLines, isProcessing):
                         for i in range(1,n):
                             s = seglen * i
                             g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                            pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                            pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                         pts.append(ptEnd)
                         ptStart = ptEnd
      
@@ -169,7 +170,7 @@ def processPoly(layer, writerLines, isProcessing):
                         
                 if len(ptset) > 0:
                     featureout = QgsFeature()
-                    featureout.setGeometry(QgsGeometry.fromPolygon(ptset))
+                    featureout.setGeometry(QgsGeometry.fromPolygonXY(ptset))
                                 
                     featureout.setAttributes(feature.attributes())
                     if isProcessing:
@@ -186,12 +187,12 @@ def processPoly(layer, writerLines, isProcessing):
                         if numpoints < 2:
                             continue
                         # If the input is not 4326 we need to convert it to that and then back to the output CRS
-                        ptStart = QgsPoint(points[0][0], points[0][1])
+                        ptStart = QgsPointXY(points[0][0], points[0][1])
                         if layercrs != epsg4326: # Convert to 4326
                             ptStart = transto4326.transform(ptStart)
                         pts = [ptStart]
                         for x in range(1,numpoints):
-                            ptEnd = QgsPoint(points[x][0], points[x][1])
+                            ptEnd = QgsPointXY(points[x][0], points[x][1])
                             if layercrs != epsg4326: # Convert to 4326
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
@@ -203,7 +204,7 @@ def processPoly(layer, writerLines, isProcessing):
                             for i in range(1,n):
                                 s = seglen * i
                                 g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                                pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                                pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                             pts.append(ptEnd)
                             ptStart = ptEnd
          
@@ -215,7 +216,7 @@ def processPoly(layer, writerLines, isProcessing):
                         
                 if len(multiset) > 0:
                     featureout = QgsFeature()
-                    featureout.setGeometry(QgsGeometry.fromMultiPolygon(multiset))
+                    featureout.setGeometry(QgsGeometry.fromMultiPolygonXY(multiset))
                                 
                     featureout.setAttributes(feature.attributes())
                     if isProcessing:
@@ -224,6 +225,7 @@ def processPoly(layer, writerLines, isProcessing):
                         writerLines.addFeatures([featureout])
         except:
             num_bad += 1
+            #traceback.print_exc()
             pass
                 
     return num_bad
@@ -231,8 +233,8 @@ def processPoly(layer, writerLines, isProcessing):
 def processLine(layer, writerLines, discardVertices, isProcessing):
     layercrs = layer.crs()    
     if layercrs != epsg4326:
-        transto4326 = QgsCoordinateTransform(layercrs, epsg4326)
-        transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs)
+        transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
+        transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs, QgsProject.instance())
     
     iterator = layer.getFeatures()
     num_features = 0
@@ -243,7 +245,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
         num_features += 1
         try:
             wkbtype = feature.geometry().wkbType()
-            if wkbtype == QGis.WKBLineString:
+            if wkbtype == QgsWkbTypes.LineString:
                 seg = [feature.geometry().asPolyline()]
             else:
                 seg = feature.geometry().asMultiPolyline()
@@ -254,12 +256,12 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
             fline = QgsFeature()
             # If the input is not 4326 we need to convert it to that and then back to the output CRS
             if discardVertices:
-                ptStart = QgsPoint(seg[0][0][0], seg[0][0][1])
+                ptStart = QgsPointXY(seg[0][0][0], seg[0][0][1])
                 if layercrs != epsg4326: # Convert to 4326
                     ptStart = transto4326.transform(ptStart)
                 pts = [ptStart]
                 numpoints = len(seg[numseg-1])
-                ptEnd = QgsPoint(seg[numseg-1][numpoints-1][0], seg[numseg-1][numpoints-1][1])
+                ptEnd = QgsPointXY(seg[numseg-1][numpoints-1][0], seg[numseg-1][numpoints-1][1])
                 if layercrs != epsg4326: # Convert to 4326
                     ptEnd = transto4326.transform(ptEnd)
                 l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
@@ -271,23 +273,23 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                     for i in range(1,n):
                         s = seglen * i
                         g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                        pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                        pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                 pts.append(ptEnd)
                 
                 if layercrs != epsg4326: # Convert each point back to the output CRS
                     for x, pt in enumerate(pts):
                         pts[x] = transfrom4326.transform(pt)
-                fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                fline.setGeometry(QgsGeometry.fromPolylineXY(pts))
             else:
-                if wkbtype == QGis.WKBLineString:
+                if wkbtype == QgsWkbTypes.LineString:
                     line = seg[0]
                     numpoints = len(line)
-                    ptStart = QgsPoint(line[0][0], line[0][1])
+                    ptStart = QgsPointXY(line[0][0], line[0][1])
                     if layercrs != epsg4326: # Convert to 4326
                         ptStart = transto4326.transform(ptStart)
                     pts = [ptStart]
                     for x in range(1,numpoints):
-                        ptEnd = QgsPoint(line[x][0], line[x][1])
+                        ptEnd = QgsPointXY(line[x][0], line[x][1])
                         if layercrs != epsg4326: # Convert to 4326
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
@@ -299,24 +301,24 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                             for i in range(1,n):
                                 s = seglen * i
                                 g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                                pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                                pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                         pts.append(ptEnd)
                         ptStart = ptEnd
                 
                     if layercrs != epsg4326: # Convert each point back to the output CRS
                         for x, pt in enumerate(pts):
                             pts[x] = transfrom4326.transform(pt)
-                    fline.setGeometry(QgsGeometry.fromPolyline(pts))
+                    fline.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 else: # MultiLineString
                     outseg = []
                     for line in seg:
                         numpoints = len(line)
-                        ptStart = QgsPoint(line[0][0], line[0][1])
+                        ptStart = QgsPointXY(line[0][0], line[0][1])
                         if layercrs != epsg4326: # Convert to 4326
                             ptStart = transto4326.transform(ptStart)
                         pts = [ptStart]
                         for x in range(1,numpoints):
-                            ptEnd = QgsPoint(line[x][0], line[x][1])
+                            ptEnd = QgsPointXY(line[x][0], line[x][1])
                             if layercrs != epsg4326: # Convert to 4326
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
@@ -328,7 +330,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                                 for i in range(1,n):
                                     s = seglen * i
                                     g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                                    pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                                    pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                             pts.append(ptEnd)
                             ptStart = ptEnd
                             
@@ -337,7 +339,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                                 pts[x] = transfrom4326.transform(pt)
                         outseg.append(pts)
                 
-                    fline.setGeometry(QgsGeometry.fromMultiPolyline(outseg))
+                    fline.setGeometry(QgsGeometry.fromMultiPolylineXY(outseg))
                     
             fline.setAttributes(feature.attributes())
             if isProcessing:
@@ -346,6 +348,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                 writerLines.addFeatures([fline])
         except:
             num_bad += 1
+            #traceback.print_exc()
             pass
             
     return num_bad

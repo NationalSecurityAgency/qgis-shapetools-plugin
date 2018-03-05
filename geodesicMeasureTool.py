@@ -2,11 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from PyQt4.QtCore import Qt, QSettings, QByteArray
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QColor
-from qgis.core import QgsCoordinateTransform, QgsPoint, QGis, QgsGeometry
-from qgis.gui import QgsMapTool, QgsMessageBar, QgsRubberBand
-from PyQt4 import uic
+from qgis.PyQt.QtCore import Qt, QSettings, QByteArray
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog
+from qgis.core import QgsCoordinateTransform, QgsPointXY, QgsUnitTypes, QgsWkbTypes, QgsGeometry, QgsProject
+from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.PyQt import uic
 
 from .settings import epsg4326
 
@@ -39,7 +40,7 @@ class GeodesicMeasureTool(QgsMapTool):
         button = event.button()
         canvasCRS = self.canvas.mapSettings().destinationCrs()
         if canvasCRS != epsg4326:
-            transform = QgsCoordinateTransform(canvasCRS, epsg4326)
+            transform = QgsCoordinateTransform(canvasCRS, epsg4326, QgsProject.instance())
             pt = transform.transform(pt.x(), pt.y())
         self.measureDialog.addPoint(pt, button)
         if button == 2:
@@ -53,7 +54,7 @@ class GeodesicMeasureTool(QgsMapTool):
                 pt = event.mapPoint()
                 canvasCRS = self.canvas.mapSettings().destinationCrs()
                 if canvasCRS != epsg4326:
-                    transform = QgsCoordinateTransform(canvasCRS, epsg4326)
+                    transform = QgsCoordinateTransform(canvasCRS, epsg4326, QgsProject.instance())
                     pt = transform.transform(pt.x(), pt.y())
                 self.measureDialog.inMotion(pt)
             except:
@@ -93,13 +94,13 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.currentDistance = 0.0
         
         color = QColor(222, 167, 67, 150)
-        self.pointRb = QgsRubberBand(self.canvas, QGis.Point)
+        self.pointRb = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.pointRb.setColor(color)
         self.pointRb.setIconSize(10)
-        self.lineRb = QgsRubberBand(self.canvas, QGis.Line)
+        self.lineRb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
         self.lineRb.setColor(color)
         self.lineRb.setWidth(3)
-        self.tempRb = QgsRubberBand(self.canvas, QGis.Line)
+        self.tempRb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
         self.tempRb.setColor(color)
         self.tempRb.setWidth(3)
 
@@ -148,7 +149,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.capturedPoints.append(pt)
         # Add rubber band points
         canvasCrs = self.canvas.mapSettings().destinationCrs()
-        transform = QgsCoordinateTransform(epsg4326, canvasCrs)
+        transform = QgsCoordinateTransform(epsg4326, canvasCrs, QgsProject.instance())
         ptCanvas = transform.transform(pt.x(), pt.y())
         self.pointRb.addPoint(ptCanvas, True)
         # If there is more than 1 point add it to the table
@@ -158,7 +159,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             self.insertParams(index, distance, startAngle, endAngle)
             # Add Rubber Band Line
             linePts = self.getLinePts(distance, self.capturedPoints[index-1], self.capturedPoints[index])
-            self.lineRb.addGeometry(QgsGeometry.fromPolyline( linePts ), None)
+            self.lineRb.addGeometry(QgsGeometry.fromPolylineXY( linePts ), None)
         self.formatTotal()
             
     def inMotion(self, pt):
@@ -169,7 +170,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.insertParams(index, self.currentDistance, startAngle, endAngle)
         self.formatTotal()
         linePts = self.getLinePts(self.currentDistance, self.capturedPoints[index-1], pt)
-        self.tempRb.setToGeometry(QgsGeometry.fromPolyline( linePts ), None)
+        self.tempRb.setToGeometry(QgsGeometry.fromPolylineXY( linePts ), None)
         
     def calcParameters(self, pt1, pt2):
         l = self.geod.Inverse(pt1.y(), pt1.x(), pt2.y(), pt2.x())
@@ -181,7 +182,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
     def getLinePts(self, distance, pt1, pt2):
         canvasCrs = self.canvas.mapSettings().destinationCrs()
-        transform = QgsCoordinateTransform(epsg4326, canvasCrs)
+        transform = QgsCoordinateTransform(epsg4326, canvasCrs, QgsProject.instance())
         pt1c = transform.transform(pt1.x(), pt1.y())
         pt2c = transform.transform(pt2.x(), pt2.y())
         if distance < 10000:
@@ -231,9 +232,9 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.activeMeasuring = True
         self.currentDistance = 0.0
         self.distanceLineEdit.setText('')
-        self.pointRb.reset(QGis.Point)
-        self.lineRb.reset(QGis.Line)
-        self.tempRb.reset(QGis.Line)
+        self.pointRb.reset(QgsWkbTypes.PointGeometry)
+        self.lineRb.reset(QgsWkbTypes.LineGeometry)
+        self.tempRb.reset(QgsWkbTypes.LineGeometry)
         
     def unitDistance(self, distance):
         units = self.unitsComboBox.currentIndex()
@@ -242,11 +243,11 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         elif units == 1: # kilometers
             return distance / 1000.0
         elif units == 2: # feet
-            return distance * QGis.fromUnitToUnitFactor(QGis.Meters, QGis.Feet)
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet)
         elif units == 3: # yards
-            return distance * QGis.fromUnitToUnitFactor(QGis.Meters, QGis.Feet) / 3.0
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet) / 3.0
         elif units == 4: # miles
-            return distance * QGis.fromUnitToUnitFactor(QGis.Meters, QGis.Miles)
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles)
         else: # nautical miles
-            return distance * QGis.fromUnitToUnitFactor(QGis.Meters, QGis.NauticalMiles)
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
         

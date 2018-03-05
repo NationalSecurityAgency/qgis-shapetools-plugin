@@ -1,5 +1,5 @@
 import sys, math, re, string
-from qgis.core import QgsPoint
+from qgis.core import QgsPointXY
 
 class LatLon():
     '''LatLon is a class of useful functions to do conversions handle
@@ -262,14 +262,14 @@ class LatLon():
         numPoints = int(dist / minSegLength)
         if numPoints > maxNodes:
             numPoints = maxNodes
-        pts = [QgsPoint(lon1, lat1)]
+        pts = [QgsPointXY(lon1, lat1)]
         f = 1.0 / (numPoints - 1.0)
         i = 1
         while i < numPoints-1:
             newlat, newlon = LatLon.intermediatePointTo(lat1, lon1, lat2, lon2, f * i)
-            pts.append(QgsPoint(newlon, newlat))
+            pts.append(QgsPointXY(newlon, newlat))
             i += 1
-        pts.append(QgsPoint(lon2, lat2))
+        pts.append(QgsPointXY(lon2, lat2))
         return pts
         
 
@@ -320,15 +320,15 @@ class LatLon():
         seglen = distance / maxSegments
         if seglen < minLength:
             seglen = minLength
-        pts.append(QgsPoint(lon, lat))
+        pts.append(QgsPointXY(lon, lat))
         pdist = seglen
         while pdist < distance:
             newlat, newlon = LatLon.destinationPointVincenty(lat, lon, bearing, pdist)
-            pts.append(QgsPoint(newlon, newlat))
+            pts.append(QgsPointXY(newlon, newlat))
             pdist += seglen
             
         newlat, newlon = LatLon.destinationPointVincenty(lat, lon, bearing, distance)
-        pts.append(QgsPoint(newlon, newlat))
+        pts.append(QgsPointXY(newlon, newlat))
         return pts
     
     @staticmethod
@@ -414,7 +414,7 @@ class LatLon():
                 tmplat = math.degrees(-1.0 * math.pi - (center_lat - rad))
                 tmplon = math.degrees(center_lon + math.pi)'''
                        
-            c.append( QgsPoint(tmplon, tmplat) )
+            c.append( QgsPointXY(tmplon, tmplat) )
             cnt += 1
             delo = delta / (rad * rad)
             if maxang < delo:

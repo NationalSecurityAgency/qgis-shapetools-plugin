@@ -1,16 +1,17 @@
 PLUGINNAME = shapetools
-PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py geodesicDensify.py geodesicMeasureTool.py provider.py
+PLUGINS = "$(HOME)"/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/$(PLUGINNAME)
+PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py geodesicDensify.py geodesicMeasureTool.py
 EXTRAS = metadata.txt
 
 deploy:
-	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/images
-	cp -vf $(PY_FILES) $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vf $(EXTRAS) $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vrf images $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vrf ui $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vrf doc $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vrf ext-libs $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
-	cp -vf helphead.html $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html
-	python -m markdown -x markdown.extensions.headerid readme.md >> $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html
-	echo '</body>' >> $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)/index.html
+	mkdir -p $(PLUGINS)
+	mkdir -p $(PLUGINS)/images
+	cp -vf $(PY_FILES) $(PLUGINS)
+	cp -vf $(EXTRAS) $(PLUGINS)
+	cp -vrf images $(PLUGINS)
+	cp -vrf ui $(PLUGINS)
+	cp -vrf doc $(PLUGINS)
+	cp -vrf ext-libs $(PLUGINS)
+	cp -vf helphead.html $(PLUGINS)/index.html
+	python -m markdown -x markdown.extensions.headerid readme.md >> $(PLUGINS)/index.html
+	echo '</body>' >> $(PLUGINS)/index.html

@@ -106,7 +106,7 @@
      <item row="7" column="1">
       <widget class="QCheckBox" name="startCheckBox">
        <property name="text">
-        <string>Use the Layer's geometry</string>
+        <string>Use the input layer's geometry</string>
        </property>
       </widget>
      </item>
@@ -140,7 +140,7 @@
      <item row="10" column="1">
       <widget class="QCheckBox" name="endCheckBox">
        <property name="text">
-        <string>Use the Layer's geometry</string>
+        <string>Use the input layer's geometry</string>
        </property>
       </widget>
      </item>
