@@ -6,6 +6,7 @@
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
 * ![Geodesic Shape Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
 * ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
+* ![Azimuth, Distance Tool](images/dazdigitize.png) **Azimuth, Distance Tool** digitizes points at an azimuth, and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a certain distance
 
 **Contents**
 
@@ -13,6 +14,7 @@
 * [XY to Line](#xy-to-line)
 * [Geodesic Shape Densifier](#geodesic-shape-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
+* [Azimuth, Distance Tool](#asimuth-distance)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
@@ -120,6 +122,17 @@ This function can also be accessed from the **Processing Toolbox**.
 This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are the same as those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be meters, kilometers, feet, yards, miles, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. 
 
 <div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
+
+## <a name="azimuth-distance"></a> ![Azimuth, Distance Tool](images/dazdigitize.png) Azimuth, Distance Tool
+
+This tool works on point and line vector layers and is enabled when they are selected and in edit mode. In either case this dialog box is displayed when the tool is enabled and a point on the map is clicked on.
+
+<div style="text-align:center"><img src="doc/azimuth-distance.jpg" alt="Azimuth, Distance Tool"></div>
+
+Azimuth is in degrees and distance is in the selected *Distance units of measure*. The following is how it interacts on point and line layers. 
+
+* **Point Vector Layer** - If an editable point vector layer is selected and the map is click on, the tool will create a point in the azimuth direction and at the specified distance. The point clicked on can be also included in the output layer.
+* **Line Vector Layer** - If an editable line vector layer is selected and the map is click on, the tool will create a geodesic line from the clicked point along the azimuth and distance path.
 
 ## <a name="settings"></a>Settings
 

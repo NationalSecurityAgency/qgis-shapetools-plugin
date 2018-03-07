@@ -231,7 +231,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Bearing field</string>
+            <string>Azimuth/Bearing field</string>
            </property>
           </widget>
          </item>
@@ -268,7 +268,7 @@
          <item row="3" column="0">
           <widget class="QLabel" name="label_27">
            <property name="text">
-            <string>Default bearing</string>
+            <string>Default azimuth/bearing</string>
            </property>
           </widget>
          </item>
@@ -313,7 +313,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_47">
          <property name="text">
-          <string>Starting bearing field</string>
+          <string>Starting angle field</string>
          </property>
         </widget>
        </item>
@@ -323,7 +323,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_48">
          <property name="text">
-          <string>Ending bearing field</string>
+          <string>Ending angle field</string>
          </property>
         </widget>
        </item>
@@ -353,7 +353,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="label_51">
          <property name="text">
-          <string>Default starting bearing</string>
+          <string>Default starting angle</string>
          </property>
         </widget>
        </item>
@@ -373,7 +373,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="label_52">
          <property name="text">
-          <string>Default ending bearing</string>
+          <string>Default ending angle</string>
          </property>
         </widget>
        </item>
