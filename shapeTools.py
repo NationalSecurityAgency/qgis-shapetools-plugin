@@ -1,6 +1,7 @@
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+from qgis.core import QgsVectorLayer, QgsWkbTypes
 
 from .LatLon import LatLon
 from .vector2Shape import Vector2ShapeWidget
@@ -8,6 +9,8 @@ from .xyToLine import XYToLineWidget
 from .settings import SettingsWidget
 from .geodesicDensify import GeodesicDensifyWidget
 from .geodesicMeasureTool import GeodesicMeasureTool
+from .azDigitizer import AzDigitizerTool
+
 import os.path
 import webbrowser
 '''
@@ -26,12 +29,16 @@ class ShapeTools:
         self.shapeDialog = None
         self.xyLineDialog = None
         self.geodesicDensifyDialog = None
+        self.azDigitizerTool = None
+        self.previousLayer = None
         self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
         self.toolbar.setObjectName('ShapeToolsToolbar')
         #if processingOk:
         #    self.provider = ShapeToolsProvider()
 
     def initGui(self):
+        self.azDigitizerTool = AzDigitizerTool(self.iface)
+        
         # Initialize the create shape menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
         self.shapeAction = QAction(icon, 'Create Shapes', self.iface.mainWindow())
@@ -55,13 +62,21 @@ class ShapeTools:
         
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
-        self.canvas.mapToolSet.connect(self.unsetTool)
         icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
         self.measureAction = QAction(icon, 'Geodesic Measure Tool', self.iface.mainWindow())
         self.measureAction.triggered.connect(self.measureTool)
         self.measureAction.setCheckable(True)
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureAction)
         self.toolbar.addAction(self.measureAction)
+        
+        # Initialize the Azimuth Distance Digitize function
+        icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
+        self.digitizeAction = QAction(icon, "Azimuth Distance Digitizer", self.iface.mainWindow())
+        self.digitizeAction.triggered.connect(self.setShowAzDigitizerTool)
+        self.digitizeAction.setCheckable(True)
+        self.digitizeAction.setEnabled(False)
+        self.iface.addPluginToVectorMenu(u'Shape Tools', self.digitizeAction)
+        self.toolbar.addAction(self.digitizeAction)
         
         # Settings
         icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
@@ -78,20 +93,29 @@ class ShapeTools:
         '''if processingOk:
             Processing.addProvider(self.provider)'''
         
+        self.iface.currentLayerChanged.connect(self.currentLayerChanged)
+        self.canvas.mapToolSet.connect(self.unsetTool)
+        self.enableDigitizeTool()
+        
     def unsetTool(self, tool):
         try:
             if not isinstance(tool, GeodesicMeasureTool):
                 self.measureAction.setChecked(False)
                 self.geodesicMeasureTool.closeDialog()
+            if not isinstance(tool, AzDigitizerTool):
+                self.digitizeAction.setChecked(False)
         except:
             pass
 
     def unload(self):
+        self.canvas.unsetMapTool(self.azDigitizerTool)
+        
         # remove from menu
         self.iface.removePluginVectorMenu('Shape Tools', self.shapeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.digitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.helpAction)
         # Remove from toolbar
@@ -99,6 +123,8 @@ class ShapeTools:
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.geodesicDensifyAction)
         self.iface.removeToolBarIcon(self.measureAction)
+        self.iface.removeToolBarIcon(self.digitizeAction)
+        self.azDigitizerTool = None
         # remove the toolbar
         del self.toolbar
 
@@ -109,6 +135,10 @@ class ShapeTools:
         if self.shapeDialog is None:
             self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
         self.shapeDialog.show()
+        
+    def setShowAzDigitizerTool(self):
+        self.digitizeAction.setChecked(True)
+        self.canvas.setMapTool(self.azDigitizerTool)
         
     def xyLineTool(self):
         if self.xyLineDialog is None:
@@ -134,3 +164,34 @@ class ShapeTools:
         url = QUrl.fromLocalFile(os.path.dirname(__file__) + '/index.html').toString()
         webbrowser.open(url, new=2)
         
+    def currentLayerChanged(self):
+        layer = self.iface.activeLayer()
+        if self.previousLayer != None:
+            try:
+                self.previousLayer.editingStarted.disconnect(self.layerEditingChanged)
+            except:
+                pass
+            try:
+                self.previousLayer.editingStopped.disconnect(self.layerEditingChanged)
+            except:
+                pass
+        self.previousLayer = None
+        if layer != None:
+            if isinstance(layer, QgsVectorLayer) and ((layer.wkbType() == QgsWkbTypes.Point) or (layer.wkbType() == QgsWkbTypes.LineString) or (layer.wkbType() == QgsWkbTypes.MultiLineString)):
+                layer.editingStarted.connect(self.layerEditingChanged)
+                layer.editingStopped.connect(self.layerEditingChanged)
+                self.previousLayer = layer
+        self.enableDigitizeTool()
+
+    def layerEditingChanged(self):
+        self.enableDigitizeTool()
+
+    def enableDigitizeTool(self):
+        self.digitizeAction.setEnabled(False)
+        layer = self.iface.activeLayer()
+        
+        if layer != None and isinstance(layer, QgsVectorLayer) and ((layer.wkbType() == QgsWkbTypes.Point) or (layer.wkbType() == QgsWkbTypes.LineString) or (layer.wkbType() == QgsWkbTypes.MultiLineString)) and layer.isEditable():
+            self.digitizeAction.setEnabled(True)
+        else:
+            self.digitizeAction.setChecked(False)
+
