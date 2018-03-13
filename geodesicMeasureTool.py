@@ -2,10 +2,13 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.PyQt.QtCore import Qt, QSettings, QByteArray
+from qgis.PyQt.QtCore import Qt, QSettings, QVariant, QByteArray
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog
-from qgis.core import QgsCoordinateTransform, QgsPointXY, QgsUnitTypes, QgsWkbTypes, QgsGeometry, QgsProject
+from qgis.core import (QgsCoordinateTransform, 
+    QgsUnitTypes, QgsWkbTypes, QgsGeometry, QgsFields, QgsField, 
+    QgsProject, QgsVectorLayer, QgsFeature, 
+    QgsPalLayerSettings, QgsVectorLayerSimpleLabeling)
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.PyQt import uic
 
@@ -77,6 +80,8 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
                                         QByteArray(), type=QByteArray))
         self.closeButton.clicked.connect(self.closeDialog)
         self.newButton.clicked.connect(self.newDialog)
+        self.saveToLayerButton.clicked.connect(self.saveToLayer)
+        self.saveToLayerButton.setEnabled(False)
 
         self.unitsComboBox.addItems(UNITS)
 
@@ -154,6 +159,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.pointRb.addPoint(ptCanvas, True)
         # If there is more than 1 point add it to the table
         if index > 0:
+            self.saveToLayerButton.setEnabled(True)
             (distance, startAngle, endAngle) = self.calcParameters(self.capturedPoints[index-1], self.capturedPoints[index])
             self.distances.append(distance)
             self.insertParams(index, distance, startAngle, endAngle)
@@ -201,6 +207,45 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         pts.append(pt2c)
         return pts
         
+    def saveToLayer(self):
+        units = self.unitDesignator()
+        canvasCrs = self.canvas.mapSettings().destinationCrs()
+        fields = QgsFields()
+        fields.append(QgsField("label", QVariant.String))
+        fields.append(QgsField("value", QVariant.Double))
+        fields.append(QgsField("units", QVariant.String))
+        fields.append(QgsField("heading_to", QVariant.Double))
+        fields.append(QgsField("heading_from", QVariant.Double))
+        
+        layer = QgsVectorLayer("LineString?crs={}".format(canvasCrs.authid()), "Measurements", "memory")
+        dp = layer.dataProvider()
+        dp.addAttributes(fields)
+        layer.updateFields()
+        
+        num = len(self.capturedPoints)
+        for i in range(1,num):
+            (distance, startA, endA) = self.calcParameters(self.capturedPoints[i-1], self.capturedPoints[i])
+            pts = self.getLinePts(distance, self.capturedPoints[i-1], self.capturedPoints[i])
+            distance = self.unitDistance(distance)
+            feat = QgsFeature(layer.fields())
+            feat.setAttribute(0, "{:.2f} {}".format(distance, units))
+            feat.setAttribute(1, distance)
+            feat.setAttribute(2, units)
+            feat.setAttribute(3, startA)
+            feat.setAttribute(4, endA)
+            feat.setGeometry(QgsGeometry.fromPolylineXY(pts))
+            dp.addFeatures([feat])
+                
+        label = QgsPalLayerSettings()
+        label.fieldName = 'label'
+        label.placement = QgsPalLayerSettings.AboveLine
+        labeling = QgsVectorLayerSimpleLabeling(label)
+        layer.setLabeling(labeling)
+        layer.setLabelsEnabled(True)
+        
+        layer.updateExtents()
+        QgsProject.instance().addMapLayer(layer)
+
     def insertParams(self, position, distance, startAngle, endAngle):
         if position > self.tableWidget.rowCount():
             self.tableWidget.insertRow(position-1)
@@ -235,6 +280,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.pointRb.reset(QgsWkbTypes.PointGeometry)
         self.lineRb.reset(QgsWkbTypes.LineGeometry)
         self.tempRb.reset(QgsWkbTypes.LineGeometry)
+        self.saveToLayerButton.setEnabled(False)
         
     def unitDistance(self, distance):
         units = self.unitsComboBox.currentIndex()
@@ -250,4 +296,19 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles)
         else: # nautical miles
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
-        
+    
+    def unitDesignator(self):
+        units = self.unitsComboBox.currentIndex()
+        if units == 0: # meters
+            return 'm'
+        elif units == 1: # kilometers
+            return 'km'
+        elif units == 2: # feet
+            return 'ft'
+        elif units == 3: # yards
+            return 'yd'
+        elif units == 4: # miles
+            return 'mi'
+        else: # nautical miles
+            return 'nm'
+            
