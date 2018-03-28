@@ -123,6 +123,14 @@ This provides the ability to measure distances using geodesic (shortest path) al
 
 <div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
 
+The **Save to Layer** button will create a **Measurement** layer that contains the distance and by default the distance label will be displayed.
+
+<div style="text-align:center"><img src="doc/geodesicmeasure2.jpg" alt="Geodesic Measure Tool"></div>
+
+By right-mouse clicking on the **Measurement** layer and selecting **Open Attribute Table,** the following attributes are available for each measured line segment; label, value, units, heading_to, and heading_from.
+
+<div style="text-align:center"><img src="doc/geodesicmeasure3.jpg" alt="Geodesic Measure Tool"></div>
+
 ## <a name="azimuth-distance"></a> ![Azimuth, Distance Tool](images/dazdigitize.png) Azimuth, Distance Tool
 
 This tool works on point and line vector layers and is enabled when they are selected and in edit mode. In either case this dialog box is displayed when the tool is enabled and a point on the map is clicked on.
