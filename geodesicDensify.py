@@ -42,26 +42,25 @@ class GeodesicDensifyWidget(QDialog, FORM_CLASS):
         
         layercrs = layer.crs()
         wkbtype = layer.wkbType()
+        geomtype = layer.geometryType()
         newlayername = self.geodesicLineNameLineEdit.text()
                 
         # Get the field names for the input layer. The will be copied to the output layers
         fields = layer.fields()
         
         # Create the points and line output layers
-        if (wkbtype == QgsWkbTypes.LineString) or (wkbtype == QgsWkbTypes.MultiLineString):
-            if wkbtype == QgsWkbTypes.LineString or discardVertices:
-                newLayer = QgsVectorLayer("LineString?crs={}".format(layercrs.authid()), newlayername, "memory")
-            elif wkbtype == QgsWkbTypes.MultiLineString:
-                newLayer = QgsVectorLayer("MultiLineString?crs={}".format(layercrs.authid()), newlayername, "memory")
+        if geomtype == QgsWkbTypes.LineGeometry:
+            if discardVertices:
+                wkbtype = QgsWkbTypes.singleType(wkbtype)
+            wkbtypename = QgsWkbTypes.displayString(wkbtype)
+            newLayer = QgsVectorLayer("{}?crs={}".format(wkbtypename, layercrs.authid()), newlayername, "memory")
             dp = newLayer.dataProvider()
             dp.addAttributes(fields)
             newLayer.updateFields()
             num_bad = processLine(layer, dp, discardVertices, False)
         else:
-            if wkbtype == QgsWkbTypes.Polygon:
-                newLayer = QgsVectorLayer("Polygon?crs={}".format(layercrs.authid()), newlayername, "memory")
-            else:
-                newLayer = QgsVectorLayer("MultiPolygon?crs={}".format(layercrs.authid()), newlayername, "memory")
+            wkbtypename = QgsWkbTypes.displayString(wkbtype)
+            newLayer = QgsVectorLayer("{}?crs={}".format(wkbtypename, layercrs.authid()), newlayername, "memory")
             dp = newLayer.dataProvider()
             dp.addAttributes(fields)
             newLayer.updateFields()
@@ -129,8 +128,7 @@ def processPoly(layer, writerLines, isProcessing):
     for feature in iterator:
         num_features += 1
         try:
-            wkbtype = feature.geometry().wkbType()
-            if wkbtype == QgsWkbTypes.Polygon:
+            if not feature.geometry().isMultipart():
                 poly = feature.geometry().asPolygon()
                 numpolygons = len(poly)
                 if numpolygons < 1:
@@ -244,11 +242,10 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
     for feature in iterator:
         num_features += 1
         try:
-            wkbtype = feature.geometry().wkbType()
-            if wkbtype == QgsWkbTypes.LineString:
-                seg = [feature.geometry().asPolyline()]
-            else:
+            if feature.geometry().isMultipart():
                 seg = feature.geometry().asMultiPolyline()
+            else:
+                seg = [feature.geometry().asPolyline()]
             numseg = len(seg)
             if numseg < 1 or len(seg[0]) < 2:
                 continue
@@ -281,7 +278,7 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                         pts[x] = transfrom4326.transform(pt)
                 fline.setGeometry(QgsGeometry.fromPolylineXY(pts))
             else:
-                if wkbtype == QgsWkbTypes.LineString:
+                if not feature.geometry().isMultipart():
                     line = seg[0]
                     numpoints = len(line)
                     ptStart = QgsPointXY(line[0][0], line[0][1])
