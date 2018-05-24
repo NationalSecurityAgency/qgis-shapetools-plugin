@@ -26,6 +26,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
+        self.outputCRSComboBox.addItems(['Layer CRS', 'Project CRS', 'WGS 84'])
         self.iface = iface
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
@@ -72,6 +73,17 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         # We need to make sure all the points in the layer are transformed to EPSG:4326
         layerCRS = layer.crs()
         self.transform = QgsCoordinateTransform(layerCRS, epsg4326, QgsProject.instance())
+        
+        outCrsMode = self.outputCRSComboBox.currentIndex()
+        self.outputCRS = epsg4326
+        if outCrsMode == 0: # Layer CRS
+            if layerCRS != epsg4326:
+                self.outputCRS = layerCRS
+                self.transformOut = QgsCoordinateTransform(epsg4326, layerCRS, QgsProject.instance())
+        elif outCrsMode == 1: # Project CRS
+            self.outputCRS = self.iface.mapCanvas().mapSettings().destinationCrs()
+            if self.outputCRS != epsg4326:
+                self.transformOut = QgsCoordinateTransform(epsg4326, self.outputCRS, QgsProject.instance())
         
         if tab == 0: # Ellipse
             self.processEllipse(layer, outname,
@@ -251,7 +263,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         fields = layer.fields()
         
-        self.polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        self.polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = self.polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         self.polygonLayer.updateFields()
@@ -277,10 +289,16 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
-                geom = LatLon.getEllipseCoords(pt.y(), pt.x(), semi_major*measureFactor,
+                pts = LatLon.getEllipseCoords(pt.y(), pt.x(), semi_major*measureFactor,
                     semi_minor*measureFactor, orient)
+                    
+                # If the Output crs is not 4326 transform the points to the proper crs
+                if self.outputCRS != epsg4326:
+                    for x, ptout in enumerate(pts):
+                        pts[x] = self.transformOut.transform(ptout)
+                        
                 featureout = QgsFeature()
-                featureout.setGeometry(QgsGeometry.fromPolygonXY([geom]))
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
                 featureout.setAttributes(feature.attributes())
                 ppolygon.addFeatures([featureout])
                 num_good += 1
@@ -302,7 +320,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         fields = layer.fields()
         
-        self.lineLayer = QgsVectorLayer("LineString?crs=epsg:4326", outname, "memory")
+        self.lineLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
         pline = self.lineLayer.dataProvider()
         pline.addAttributes(fields)
         self.lineLayer.updateFields()
@@ -334,6 +352,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     s = seglen * i
                     g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
                     pts.append( QgsPointXY(g['lon2'], g['lat2']) )
+                    
+                # If the Output crs is not 4326 transform the points to the proper crs
+                if self.outputCRS != epsg4326:
+                    for x, ptout in enumerate(pts):
+                        pts[x] = self.transformOut.transform(ptout)
+                            
                 featureout  = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 featureout.setAttributes(feature.attributes())
@@ -353,7 +377,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
  
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -396,6 +420,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 pts.append(pt)
                     
+                # If the Output crs is not 4326 transform the points to the proper crs
+                if self.outputCRS != epsg4326:
+                    for x, ptout in enumerate(pts):
+                        pts[x] = self.transformOut.transform(ptout)
+                        
                 featureout = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
                 featureout.setAttributes(feature.attributes())
@@ -413,7 +442,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
  
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -447,6 +476,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
                     #pts.append(QgsPointXY(lon2, lat2))
                     
+                # If the Output crs is not 4326 transform the points to the proper crs
+                if self.outputCRS != epsg4326:
+                    for x, ptout in enumerate(pts):
+                        pts[x] = self.transformOut.transform(ptout)
+
                 featureout = QgsFeature()
                 featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
                 featureout.setAttributes(feature.attributes())
@@ -466,7 +500,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         fields = layer.fields()
         
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -491,6 +525,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
                 #pts.append(QgsPointXY(lon2, lat2))
+                
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
@@ -505,7 +545,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         radius *= measureFactor
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -542,6 +582,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     index+=1
             # repeat the very first point to close the polygon
             pts.append(pts[0])
+            
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
@@ -558,7 +604,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         fields = layer.fields()
         
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -580,6 +626,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
+                
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
@@ -596,7 +648,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         fields = layer.fields()
         
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -618,6 +670,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
+                
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
@@ -634,7 +692,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         fields = layer.fields()
         
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -655,6 +713,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 g = self.geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
+                
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
@@ -674,7 +738,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         fields = layer.fields()
         
         
-        polygonLayer = QgsVectorLayer("Polygon?crs=epsg:4326", outname, "memory")
+        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
         ppolygon = polygonLayer.dataProvider()
         ppolygon.addAttributes(fields)
         polygonLayer.updateFields()
@@ -697,6 +761,12 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
+                
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.outputCRS != epsg4326:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.transformOut.transform(ptout)
+                    
             featureout = QgsFeature()
             featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             featureout.setAttributes(feature.attributes())
