@@ -21,10 +21,13 @@
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
-Ellipses, lines of bearing, pie wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. The following are the details for creating each. All of these shapes are created centered about the point or from the point. Common elements are:
+Ellipses, lines of bearing, pie wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that the layer created is a memory layer and will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
+
+All of the shapes are created centered around the input points. Common elements are:
 
 * **Input points layer** - Select the desired points layer.
 * **Output layer name** - Select a name for the output layer that will be created in QGIS as a memory layer.
+* **Output CRS** - Specify the output layer's coordinate reference system (CRS). This can either be the same as that of the input layer, the same as the project CRS, or WGS 84. It defaults to the input layer's CRS.
 
 ### Ellipse
 

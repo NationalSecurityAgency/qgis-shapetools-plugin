@@ -2,7 +2,7 @@
 name=Shape Tools
 qgisMinimumVersion=2.14
 description=Shape Tools features geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic measure tool, and digitize points at an azimuth & distance. 
-version=0.7.7
+version=0.7.8
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools features geodesic shapes and tools. "Create Shapes" processes a point vector layer to create ellipses, pie wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. "Geodesic Shape Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer. "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance. Shape Tools is installed in the Vector menu.
@@ -15,6 +15,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    0.7.8 Added CRS selection for the output layer of the "Create Shapes" tool.
     0.7.7 Added save to layer for measure tool
     0.7.6 Added azimuth, distance tool for line layers
     0.7.5 Bug fix
@@ -23,11 +24,3 @@ changelog=
     0.7.2 Bug fix
     0.7.1 Fixed bug when polgons and multi polygons are mixed in the same layer
     0.7 Merged line and polygon densifier and made it available in the processing toolbox.
-    0.6.1 Bug fixes and renamed functions for better clarity, updated documentation
-    0.6 Added geodesic polygon tool
-    0.5 Added a line to Geodesic line tool
-    0.4.2 Added a pie shape
-    0.4.1 Added an epicyloid shape
-    0.4 Added additional shapes to draw - Ellipse rose, hypocyloid, polyfoil, and heart
-    0.3 Added Geodesic math for XY to Line function
-    0.2 First public release of the plugin.
