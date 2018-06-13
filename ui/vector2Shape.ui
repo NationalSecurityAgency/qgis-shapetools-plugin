@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>421</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,7 +87,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="ellipse">
       <attribute name="title">
@@ -420,6 +420,26 @@
          </property>
          <property name="value">
           <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_55">
+         <property name="text">
+          <string>Arc point spacing (degrees)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QDoubleSpinBox" name="pointSpacingSpinBox">
+         <property name="minimum">
+          <double>0.250000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>30.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>4.000000000000000</double>
          </property>
         </widget>
        </item>

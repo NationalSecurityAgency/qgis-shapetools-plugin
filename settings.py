@@ -23,6 +23,7 @@ class Settings():
         self.guessNames = int(qset.value('/ShapeTools/GuessNames', 2))
         self.maxSegLength =  float(qset.value('/ShapeTools/MaxSegLength', 20.0)) # In km
         self.maxSegments =  int(qset.value('/ShapeTools/MaxSegments', 1000))
+        self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
 
 settings = Settings()
 
@@ -32,6 +33,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self.mtAzComboBox.addItems(['Azimuth Range -180 to 180', 'Azimuth Range 0 tp 360'])
         settings.readSettings()
         
     def accept(self):
@@ -40,6 +42,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/GuessNames', self.guessCheckBox.checkState())
         qset.setValue('/ShapeTools/MaxSegments', self.maxSegmentsSpinBox.value())
         qset.setValue('/ShapeTools/MaxSegLength', self.segLengthSpinBox.value())
+        qset.setValue('/ShapeTools/MtAzMode', self.mtAzComboBox.currentIndex())
         settings.readSettings()
         self.close()
         
@@ -51,4 +54,5 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.guessCheckBox.setCheckState(settings.guessNames)
         self.maxSegmentsSpinBox.setValue(settings.maxSegments)
         self.segLengthSpinBox.setValue(settings.maxSegLength)
+        self.mtAzComboBox.setCurrentIndex(settings.mtAzMode)
         

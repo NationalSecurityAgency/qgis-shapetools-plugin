@@ -42,6 +42,7 @@ class ShapeTools:
         # Initialize the create shape menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
         self.shapeAction = QAction(icon, 'Create Shapes', self.iface.mainWindow())
+        self.shapeAction.setObjectName('stCreateShapes')
         self.shapeAction.triggered.connect(self.shapeTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.shapeAction)
         self.toolbar.addAction(self.shapeAction)
@@ -49,6 +50,7 @@ class ShapeTools:
         # Initialize the XY to Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
         self.xyLineAction = QAction(icon, 'XY to Line', self.iface.mainWindow())
+        self.xyLineAction.setObjectName('stXYtoLine')        
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
@@ -56,6 +58,7 @@ class ShapeTools:
         # Initialize the Geodesic Densifier menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
         self.geodesicDensifyAction = QAction(icon, 'Geodesic Shape Densifier', self.iface.mainWindow())
+        self.geodesicDensifyAction.setObjectName('stGeodesicDensifier')        
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.toolbar.addAction(self.geodesicDensifyAction)
@@ -64,6 +67,7 @@ class ShapeTools:
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
         icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
         self.measureAction = QAction(icon, 'Geodesic Measure Tool', self.iface.mainWindow())
+        self.measureAction.setObjectName('stGeodesicMeasureTool')        
         self.measureAction.triggered.connect(self.measureTool)
         self.measureAction.setCheckable(True)
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureAction)
@@ -72,6 +76,7 @@ class ShapeTools:
         # Initialize the Azimuth Distance Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
         self.digitizeAction = QAction(icon, "Azimuth Distance Digitizer", self.iface.mainWindow())
+        self.digitizeAction.setObjectName('stAzDistanceDigitizer')        
         self.digitizeAction.triggered.connect(self.setShowAzDigitizerTool)
         self.digitizeAction.setCheckable(True)
         self.digitizeAction.setEnabled(False)
@@ -81,12 +86,14 @@ class ShapeTools:
         # Settings
         icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
         self.settingsAction = QAction(icon, 'Settings', self.iface.mainWindow())
+        self.settingsAction.setObjectName('shapeToolsSettings')        
         self.settingsAction.triggered.connect(self.settings)
         self.iface.addPluginToVectorMenu('Shape Tools', self.settingsAction)
         
         # Help
         icon = QIcon(os.path.dirname(__file__) + '/images/help.png')
         self.helpAction = QAction(icon, 'Shape Tools Help', self.iface.mainWindow())
+        self.helpAction.setObjectName('shapeToolsHelp')        
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToVectorMenu('Shape Tools', self.helpAction)
         

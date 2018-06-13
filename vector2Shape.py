@@ -9,6 +9,7 @@ from qgis.core import (QgsFeature,
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 #import traceback
 
@@ -70,6 +71,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             self.showErrorMessage("No valid layer to process")
             return
         
+        # Apply any environment variable settings
+        qset = QSettings()
+        qset.setValue('/ShapeTools/PieArcPtSpacing', self.pointSpacingSpinBox.value())
+        
         # We need to make sure all the points in the layer are transformed to EPSG:4326
         layerCRS = layer.crs()
         self.transform = QgsCoordinateTransform(layerCRS, epsg4326, QgsProject.instance())
@@ -109,7 +114,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.pieUnitOfDistanceComboBox.currentIndex(),
                 self.pieBearingStartSpinBox.value(),
                 self.pieBearingEndSpinBox.value(),
-                self.pieDefaultDistanceSpinBox.value())
+                self.pieDefaultDistanceSpinBox.value(),
+                self.pointSpacingSpinBox.value())
         elif tab == 3: # Polygon
             try:
                 distance = float(self.distPolyLineEdit.text())
@@ -164,6 +170,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
     def showEvent(self, event):
         '''The dialog is being shown. We need to initialize it.'''
         super(Vector2ShapeWidget, self).showEvent(event)
+        # read  environment variables required for setting up the dialog
+        qset = QSettings()
+        arcPtSpace = int(qset.value('/ShapeTools/PieArcPtSpacing', 6))
+        self.pointSpacingSpinBox.setValue(arcPtSpace)
+        
         self.findFields()
         
     def findFields(self):
@@ -370,7 +381,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsProject.instance().addMapLayer(self.lineLayer)
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=Qgis.Info, duration=3)
         
-    def processPie(self, layer, outname, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist):
+    def processPie(self, layer, outname, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist, arcPtSpacing):
         measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
@@ -414,7 +425,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 while sangle < eangle:
                     g = self.geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    sangle += 4 # add this number of degrees to the angle
+                    sangle += arcPtSpacing # add this number of degrees to the angle
                     
                 g = self.geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))

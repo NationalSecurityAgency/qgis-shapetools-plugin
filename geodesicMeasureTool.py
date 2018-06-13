@@ -12,7 +12,7 @@ from qgis.core import (QgsCoordinateTransform,
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.PyQt import uic
 
-from .settings import epsg4326
+from .settings import epsg4326, settings
 
 class GeodesicMeasureTool(QgsMapTool):
     
@@ -183,8 +183,16 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         az2 = (l['azi2'] + 180) %360.0
         if az2 > 180:
             az2 = az2 - 360.0
-        l2 = self.geod.Inverse(pt2.y(), pt2.x(), pt1.y(), pt1.x())
-        return (l['s12'], l['azi1'], az2)
+        az1 = l['azi1']
+        
+        # Check to see if the azimuth values should be in the range or 0 to 360
+        # The default is -180 to 180
+        if settings.mtAzMode:
+            if az1 < 0:
+                az1 += 360.0
+            if az2 < 0:
+                az2 += 360
+        return (l['s12'], az1, az2)
         
     def getLinePts(self, distance, pt1, pt2):
         canvasCrs = self.canvas.mapSettings().destinationCrs()
