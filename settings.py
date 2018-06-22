@@ -3,6 +3,7 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtGui import QColor
 
 from qgis.core import QgsCoordinateReferenceSystem
 
@@ -15,6 +16,7 @@ class Settings():
 
     def __init__(self):
         self.readSettings()
+        self.rubberBandColor = QColor(222, 167, 67, 150)
 
     def readSettings(self):
         '''Load the user selected settings. The settings are retained even when
@@ -34,6 +36,8 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.mtAzComboBox.addItems(['Azimuth Range -180 to 180', 'Azimuth Range 0 tp 360'])
+        self.rubberBandColor.setAllowOpacity(True)
+        self.rubberBandColor.setColor(settings.rubberBandColor)
         settings.readSettings()
         
     def accept(self):
@@ -44,6 +48,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/MaxSegLength', self.segLengthSpinBox.value())
         qset.setValue('/ShapeTools/MtAzMode', self.mtAzComboBox.currentIndex())
         settings.readSettings()
+        settings.rubberBandColor = self.rubberBandColor.color()
         self.close()
         
     def showEvent(self, e):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>319</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -94,6 +94,28 @@
       <item>
        <widget class="QComboBox" name="mtAzComboBox"/>
       </item>
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Rubber band color </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QgsColorButton" name="rubberBandColor">
+          <property name="color">
+           <color alpha="255">
+            <red>222</red>
+            <green>167</green>
+            <blue>67</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -122,6 +144,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsColorButton</class>
+   <extends>QPushButton</extends>
+   <header>qgis.gui</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

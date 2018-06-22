@@ -2,7 +2,7 @@
 name=Shape Tools
 qgisMinimumVersion=3.0.0
 description=Shape Tools features geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic measure tool, and digitize points at an azimuth & distance.
-version=3.0.5
+version=3.0.6
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools features geodesic shapes and tools. "Create Shapes" processes a point vector layer to create ellipses, pie wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. "Geodesic Shape Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer. "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance. Shape Tools is installed in the Vector menu.
@@ -15,6 +15,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    3.0.6 - Geodesic measure tool color now selectable
     3.0.5 - Made number of points in pie wedge arc selectable & measure tool bearing coordinate range selectable
     3.0.4 - Added CRS selection for the output layer of the "Create Shapes" tool.
     3.0.3 - Expanded geodesic densifier geometry support

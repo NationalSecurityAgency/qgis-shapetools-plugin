@@ -36,6 +36,7 @@ class GeodesicMeasureTool(QgsMapTool):
         '''Capture the coordinates when the user click on the mouse for measurements.'''
         if not self.measureDialog.isVisible():
             self.measureDialog.show()
+            self.measureDialog.updateRBColor()
             return
         if not self.measureDialog.ready():
             return
@@ -74,9 +75,9 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        settings = QSettings()
+        qset = QSettings()
 
-        self.restoreGeometry(settings.value("ShapeTools/MeasureDialogGeometry",
+        self.restoreGeometry(qset.value("ShapeTools/MeasureDialogGeometry",
                                         QByteArray(), type=QByteArray))
         self.closeButton.clicked.connect(self.closeDialog)
         self.newButton.clicked.connect(self.newDialog)
@@ -98,15 +99,14 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.unitsChanged()
         self.currentDistance = 0.0
         
-        color = QColor(222, 167, 67, 150)
         self.pointRb = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        self.pointRb.setColor(color)
+        self.pointRb.setColor(settings.rubberBandColor)
         self.pointRb.setIconSize(10)
         self.lineRb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
-        self.lineRb.setColor(color)
+        self.lineRb.setColor(settings.rubberBandColor)
         self.lineRb.setWidth(3)
         self.tempRb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
-        self.tempRb.setColor(color)
+        self.tempRb.setColor(settings.rubberBandColor)
         self.tempRb.setWidth(3)
 
     def ready(self):
@@ -276,7 +276,11 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
                 total += self.distances[i]
                 i += 1
         self.distanceLineEdit.setText('{:.2f}'.format(self.unitDistance(total)))
-        
+    
+    def updateRBColor(self):
+        self.pointRb.setColor(settings.rubberBandColor)
+        self.lineRb.setColor(settings.rubberBandColor)
+        self.tempRb.setColor(settings.rubberBandColor)
         
     def clear(self):
         self.tableWidget.setRowCount(0)
@@ -289,6 +293,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.lineRb.reset(QgsWkbTypes.LineGeometry)
         self.tempRb.reset(QgsWkbTypes.LineGeometry)
         self.saveToLayerButton.setEnabled(False)
+        self.updateRBColor()
         
     def unitDistance(self, distance):
         units = self.unitsComboBox.currentIndex()
