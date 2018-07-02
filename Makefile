@@ -1,6 +1,6 @@
 PLUGINNAME = shapetools
 PLUGINS = "$(HOME)"/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/$(PLUGINNAME)
-PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py geodesicDensify.py geodesicMeasureTool.py azDigitizer.py
+PY_FILES = shapeTools.py __init__.py LatLon.py vector2Shape.py xyToLine.py settings.py geodesicDensify.py geodesicMeasureTool.py azDigitizer.py provider.py
 EXTRAS = metadata.txt
 
 deploy:

@@ -1,132 +1,132 @@
 import os
-import re
 import math
-import sys
 from geographiclib.geodesic import Geodesic
 #import traceback
 
 from qgis.core import (QgsVectorLayer,
     QgsCoordinateTransform, QgsPointXY, QgsFeature, QgsGeometry, 
     QgsProject, Qgis, QgsMapLayerProxyModel, QgsWkbTypes)
+    
+from qgis.core import (QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink)
 
-'''from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.parameters import ParameterVector, ParameterBoolean
-from processing.core.outputs import OutputVector
-from processing.tools import dataobjects, vector, raster
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException'''
-
-from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QUrl
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/geodesicDensifyDialog.ui'))
     
 geod = Geodesic.WGS84
 
-class GeodesicDensifyWidget(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent):
-        super(GeodesicDensifyWidget, self).__init__(parent)
-        self.setupUi(self)
-        self.iface = iface
-        self.inputLineComboBox.setFilters(QgsMapLayerProxyModel.LineLayer | QgsMapLayerProxyModel.PolygonLayer)
-        
-    def accept(self):
-        layer = self.inputLineComboBox.currentLayer()
-        if not layer:
-            self.iface.messageBar().pushMessage("", "No Valid Layer", level=Qgis.Warning, duration=4)
-        discardVertices = self.discardVerticesCheckBox.isChecked()
-        
-        layercrs = layer.crs()
-        wkbtype = layer.wkbType()
-        geomtype = layer.geometryType()
-        newlayername = self.geodesicLineNameLineEdit.text()
-                
-        # Get the field names for the input layer. The will be copied to the output layers
-        fields = layer.fields()
-        
-        # Create the points and line output layers
-        if geomtype == QgsWkbTypes.LineGeometry:
-            if discardVertices:
-                wkbtype = QgsWkbTypes.singleType(wkbtype)
-            wkbtypename = QgsWkbTypes.displayString(wkbtype)
-            newLayer = QgsVectorLayer("{}?crs={}".format(wkbtypename, layercrs.authid()), newlayername, "memory")
-            dp = newLayer.dataProvider()
-            dp.addAttributes(fields)
-            newLayer.updateFields()
-            num_bad = processLine(layer, dp, discardVertices, False)
-        else:
-            wkbtypename = QgsWkbTypes.displayString(wkbtype)
-            newLayer = QgsVectorLayer("{}?crs={}".format(wkbtypename, layercrs.authid()), newlayername, "memory")
-            dp = newLayer.dataProvider()
-            dp.addAttributes(fields)
-            newLayer.updateFields()
-            num_bad = processPoly(layer, dp, False)
-        
-        newLayer.updateExtents()
-        QgsProject.instance().addMapLayer(newLayer)
-        if num_bad != 0:
-            self.iface.messageBar().pushMessage("", "{} features failed".format(num_bad), level=Qgis.Warning, duration=3)
-       
-        self.close()
+class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
+    """
+    Algorithm to densify lines and polygons using geodesic calculations.
+    """
 
-'''class GeodesicDensifyAlgorithm(GeoAlgorithm):
+    # Constants used to refer to parameters and outputs. They will be
+    # used when calling the algorithm from another algorithm, or when
+    # calling from the QGIS console.
+    PrmInputLayer = 'InputLayer'
+    PrmOutputLayer = 'OutputLayer'
+    PrmDiscardVertices = 'DiscardVertices'
 
-    LAYER = 'LAYER'
-    OUTPUT = 'OUTPUT'
-    DISCARDVERTICES = 'DISCARDVERTICES'
-
-    def processAlgorithm(self, progress):
-        filename = self.getParameterValue(self.LAYER)
-        layer = dataobjects.getObjectFromUri(filename)     
-        discardVertices = self.getParameterValue(self.DISCARDVERTICES)
-              
-        output = self.getOutputFromName(self.OUTPUT)
-
-        wkbtype = layer.wkbType()
+    def initAlgorithm(self, config):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.PrmInputLayer,
+                'Line or polygon layer',
+                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon])
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.PrmOutputLayer,
+                'Output layer')
+            )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmDiscardVertices,
+                'Discard inner line vertices',
+                False,
+                optional=True)
+            )
+    
+    def processAlgorithm(self, parameters, context, feedback):
+        source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
+        discardVertices = self.parameterAsBool(parameters, self.PrmDiscardVertices, context)
+        
+        wkbtype = source.wkbType()
+        
         if wkbtype == QgsWkbTypes.LineString or wkbtype == QgsWkbTypes.MultiLineString:
             outputType = QgsWkbTypes.LineString if (wkbtype == QgsWkbTypes.LineString 
                 or discardVertices) else QgsWkbTypes.MultiLineString
-            
-            writerLines = output.getVectorWriter(layer.fields(), outputType, self.crs)
+                
+            (sink, dest_id) = self.parameterAsSink(parameters, self.PrmOutputLayer,
+                context, source.fields(), outputType, source.sourceCrs())
 
-            processLine(layer, writerLines, discardVertices, True)
+            num_bad = processLine(source, sink, feedback, discardVertices)
         else:
             outputType = QgsWkbTypes.Polygon if wkbtype == QgsWkbTypes.Polygon else QgsWkbTypes.MultiPolygon
-            writerLines = output.getVectorWriter(layer.fields(), outputType, self.crs)
-            processPoly(layer, writerLines, True)
             
+            (sink, dest_id) = self.parameterAsSink(parameters, self.PrmOutputLayer,
+                context, source.fields(), outputType, source.sourceCrs())
+                
+            num_bad = processPoly(source, sink, feedback)
+            
+        if num_bad > 0:
+            feedback.pushInfo("{} out of {} features from input layer failed to process correctly.".format(num_bad, source.featureCount()))
+            
+        return {self.PrmOutputLayer: dest_id}
+        
+    def name(self):
+        return 'geodesicdensifier'
 
-        del writerLines
-
-    def getIcon(self):
+    def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
+    
+    def displayName(self):
+        return 'Geodesic densifier'
+    
+    def group(self):
+        return 'Vector geometry'
+        
+    def groupId(self):
+        return 'vectorgeometry'
+        
+    def helpUrl(self):
+        file = os.path.dirname(__file__)+'/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
+    
+    def shortHelpString(self):
+        file = os.path.dirname(__file__)+'/doc/GeodesicDensifyAlgorithm.help'
+        if not os.path.exists(file):
+            return ''
+        with open(file) as helpf:
+            help=helpf.read()
+        return help
+        
+    def createInstance(self):
+        return GeodesicDensifyAlgorithm()
 
-    def defineCharacteristics(self):
-        self.name = 'Geodesic Shape Densifier'
-        self.i18n_name = self.name
-        self.group = 'Vector geometry tools'
-        self.i18n_group = self.group
-        self.addParameter(ParameterVector(self.LAYER, 'Line or polygon layer', [ParameterVector.VECTOR_TYPE_LINE, ParameterVector.VECTOR_TYPE_POLYGON]))
-        self.addOutput(OutputVector(self.OUTPUT, 'Output layer'))
-        self.addParameter(ParameterBoolean(self.DISCARDVERTICES, "Discard inner line vertices"))'''
-
-def processPoly(layer, writerLines, isProcessing):
-    layercrs = layer.crs()
+def processPoly(source, sink, feedback):
+    layercrs = source.sourceCrs()
     if layercrs != epsg4326:
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
         transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs, QgsProject.instance())
     
-    iterator = layer.getFeatures()
-    num_features = 0
+    total = 100.0 / source.featureCount() if source.featureCount() else 0
+    iterator = source.getFeatures()
     num_bad = 0
     maxseglen = settings.maxSegLength*1000.0
     maxSegments = settings.maxSegments
-    for feature in iterator:
-        num_features += 1
+    for cnt, feature in enumerate(iterator):
+        if feedback.isCanceled():
+            break
         try:
             if not feature.geometry().isMultipart():
                 poly = feature.geometry().asPolygon()
@@ -171,10 +171,7 @@ def processPoly(layer, writerLines, isProcessing):
                     featureout.setGeometry(QgsGeometry.fromPolygonXY(ptset))
                                 
                     featureout.setAttributes(feature.attributes())
-                    if isProcessing:
-                        writerLines.addFeature(featureout)
-                    else:
-                        writerLines.addFeatures([featureout])
+                    sink.addFeature(featureout)
             else:
                 multipoly = feature.geometry().asMultiPolygon()
                 multiset = []
@@ -217,30 +214,28 @@ def processPoly(layer, writerLines, isProcessing):
                     featureout.setGeometry(QgsGeometry.fromMultiPolygonXY(multiset))
                                 
                     featureout.setAttributes(feature.attributes())
-                    if isProcessing:
-                        writerLines.addFeature(featureout)
-                    else:
-                        writerLines.addFeatures([featureout])
+                    sink.addFeature(featureout)
         except:
             num_bad += 1
             #traceback.print_exc()
             pass
-                
+        feedback.setProgress(int(cnt * total))
     return num_bad
         
-def processLine(layer, writerLines, discardVertices, isProcessing):
-    layercrs = layer.crs()    
+def processLine(source, sink, feedback, discardVertices):
+    layercrs = source.sourceCrs()
     if layercrs != epsg4326:
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
         transfrom4326 = QgsCoordinateTransform(epsg4326, layercrs, QgsProject.instance())
     
-    iterator = layer.getFeatures()
-    num_features = 0
+    total = 100.0 / source.featureCount() if source.featureCount() else 0
+    iterator = source.getFeatures()
     num_bad = 0
     maxseglen = settings.maxSegLength*1000.0
     maxSegments = settings.maxSegments
-    for feature in iterator:
-        num_features += 1
+    for cnt, feature in enumerate(iterator):
+        if feedback.isCanceled():
+            break
         try:
             if feature.geometry().isMultipart():
                 seg = feature.geometry().asMultiPolyline()
@@ -339,13 +334,11 @@ def processLine(layer, writerLines, discardVertices, isProcessing):
                     fline.setGeometry(QgsGeometry.fromMultiPolylineXY(outseg))
                     
             fline.setAttributes(feature.attributes())
-            if isProcessing:
-                writerLines.addFeature(fline)
-            else:
-                writerLines.addFeatures([fline])
+            sink.addFeature(fline)
         except:
             num_bad += 1
             #traceback.print_exc()
             pass
+        feedback.setProgress(int(cnt * total))
             
     return num_bad

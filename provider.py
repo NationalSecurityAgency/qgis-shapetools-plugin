@@ -1,32 +1,31 @@
-from processing.core.AlgorithmProvider import AlgorithmProvider
+import os
+from qgis.core import QgsProcessingProvider
+from qgis.PyQt.QtGui import QIcon
 from .geodesicDensify import GeodesicDensifyAlgorithm
 
-class ShapeToolsProvider(AlgorithmProvider):
+class ShapeToolsProvider(QgsProcessingProvider):
 
     def __init__(self):
-        AlgorithmProvider.__init__(self)
+        QgsProcessingProvider.__init__(self)
 
-        self.activate = True
-
-        # New algorithms should be added to this list
+        # Load algorithms
         self.alglist = [GeodesicDensifyAlgorithm()]
-        for alg in self.alglist:
-            alg.provider = self
-
-    def supportsNonFileBasedOutput(self):
-        return True
-
-    def initializeSettings(self):
-        AlgorithmProvider.initializeSettings(self)
 
     def unload(self):
-        AlgorithmProvider.unload(self)
+        QgsProcessingProvider.unload(self)
 
-    def getName(self):
+    def loadAlgorithms(self):
+        for alg in self.alglist:
+            self.addAlgorithm( alg )
+
+    def icon(self):
+        return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
+        
+    def id(self):
         return 'shapetools'
 
-    def getDescription(self):
+    def name(self):
         return 'Shape tools'
 
-    def _loadAlgorithms(self):
-        self.algs = self.alglist
+    def longName(self):
+        return self.name()

@@ -1,27 +1,21 @@
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
+import processing
 
 from .LatLon import LatLon
 from .vector2Shape import Vector2ShapeWidget
 from .xyToLine import XYToLineWidget
 from .settings import SettingsWidget
-from .geodesicDensify import GeodesicDensifyWidget
 from .geodesicMeasureTool import GeodesicMeasureTool
 from .azDigitizer import AzDigitizerTool
 
 import os.path
 import webbrowser
-'''
-try:
-    from processing.core.Processing import Processing
-    from .provider import ShapeToolsProvider
-    processingOk = True
-except:
-    processingOk = False'''
+from .provider import ShapeToolsProvider
 
-class ShapeTools:
+class ShapeTools(object):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -33,8 +27,7 @@ class ShapeTools:
         self.previousLayer = None
         self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
         self.toolbar.setObjectName('ShapeToolsToolbar')
-        #if processingOk:
-        #    self.provider = ShapeToolsProvider()
+        self.provider = ShapeToolsProvider()
 
     def initGui(self):
         self.azDigitizerTool = AzDigitizerTool(self.iface)
@@ -97,12 +90,12 @@ class ShapeTools:
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToVectorMenu('Shape Tools', self.helpAction)
         
-        '''if processingOk:
-            Processing.addProvider(self.provider)'''
-        
         self.iface.currentLayerChanged.connect(self.currentLayerChanged)
         self.canvas.mapToolSet.connect(self.unsetTool)
         self.enableDigitizeTool()
+        
+        # Add the processing provider
+        QgsApplication.processingRegistry().addProvider(self.provider)
         
     def unsetTool(self, tool):
         try:
@@ -135,8 +128,7 @@ class ShapeTools:
         # remove the toolbar
         del self.toolbar
 
-        '''if processingOk:
-            Processing.removeProvider(self.provider)'''
+        QgsApplication.processingRegistry().removeProvider(self.provider)
         
     def shapeTool(self):
         if self.shapeDialog is None:
@@ -153,9 +145,7 @@ class ShapeTools:
         self.xyLineDialog.show()
         
     def geodesicDensifyTool(self):
-        if self.geodesicDensifyDialog is None:
-            self.geodesicDensifyDialog = GeodesicDensifyWidget(self.iface, self.iface.mainWindow())
-        self.geodesicDensifyDialog.show()
+        results = processing.execAlgorithmDialog('shapetools:geodesicdensifier', {})
         
     def measureTool(self):
         self.measureAction.setChecked(True)

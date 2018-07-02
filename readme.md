@@ -4,7 +4,7 @@
 
 * ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
-* ![Geodesic Shape Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
+* ![Geodesic Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
 * ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Azimuth, Distance Tool](images/dazdigitize.png) **Azimuth, Distance Tool** digitizes points at an azimuth, and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a certain distance
 
@@ -12,7 +12,7 @@
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
-* [Geodesic Shape Densifier](#geodesic-shape-densifier)
+* [Geodesic Densifier](#geodesic-shape-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Azimuth, Distance Tool](#asimuth-distance)
 * [Settings](#settings)
@@ -100,7 +100,7 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
-## <a name="geodesic-shape-densifier"></a> ![Geodesic Shape Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
+## <a name="geodesic-shape-densifier"></a> ![Geodesic Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
 
 Densify a line or polygon vector layer by adding geodesic points inbetween individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.
 

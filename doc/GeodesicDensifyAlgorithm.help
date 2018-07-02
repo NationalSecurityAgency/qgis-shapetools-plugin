@@ -1,0 +1,7 @@
+Densify a line or polygon vector layer by adding geodesic points in between individual line segments. This gives a nice smooth curved appearance. Geodesic lines are the shortest distance between two points on the Earth. For line vectors a geodesic line can be drawn between just the beginning and ending points.
+
+The distance between two points before adding additional vertices is set from the "Settings" menu.
+
+* Input Layer - Select an existing line or polygon layer.
+* Output Layer Name - Specifies the name of the output layer that will be created in QGIS.
+* Discard inner line vertices - When this is checked only the beginning and ending points of a line are used when drawing geodesic lines. This is not used with polygons.
