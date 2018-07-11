@@ -185,14 +185,17 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             return
         layer = self.mMapLayerComboBox.currentLayer()
         self.clearLayerFields()
-        if layer:
-            header = [tr("[ Use Default ]")]
-            fields = layer.fields()
-            for field in fields.toList():
-                # force it to be lower case - makes matching easier
-                name = field.name()
-                header.append(name)
-            self.configureLayerFields(header)
+        try:
+            if layer:
+                header = [tr("[ Use Default ]")]
+                fields = layer.fields()
+                for field in fields.toList():
+                    # force it to be lower case - makes matching easier
+                    name = field.name()
+                    header.append(name)
+                self.configureLayerFields(header)
+        except:
+            pass
 
     def configureLayerFields(self, header):
         if not settings.guessNames:
