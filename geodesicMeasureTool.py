@@ -2,7 +2,7 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.PyQt.QtCore import Qt, QSettings, QVariant, QByteArray
+from qgis.PyQt.QtCore import Qt, QSettings, QVariant, QByteArray, QCoreApplication
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog
 from qgis.core import (QgsCoordinateTransform, 
@@ -13,6 +13,9 @@ from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.PyQt import uic
 
 from .settings import epsg4326, settings
+
+def tr(string):
+    return QCoreApplication.translate('Processing', string)
 
 class GeodesicMeasureTool(QgsMapTool):
     
@@ -67,7 +70,7 @@ class GeodesicMeasureTool(QgsMapTool):
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/geodesicMeasureDialog.ui'))
 
-UNITS = ['meters', 'kilometers', 'feet', 'yards','miles','nautical miles']
+UNITS = [tr('meters'), tr('kilometers'), tr('feet'), tr('yards'),tr('miles'),tr('nautical miles')]
 
 class GeodesicMeasureDialog(QDialog, FORM_CLASS):
     def __init__(self, iface, parent):
@@ -88,7 +91,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
 
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setSortingEnabled(False)
-        self.tableWidget.setHorizontalHeaderLabels(['Heading To', 'Heading From', 'Distance'])
+        self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Heading From'), tr('Distance')])
         
         self.unitsComboBox.activated.connect(self.unitsChanged)
         

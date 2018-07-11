@@ -9,17 +9,20 @@ from qgis.core import (QgsFeature,
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt.QtCore import QSettings, QCoreApplication
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 #import traceback
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
 
+def tr(string):
+    return QCoreApplication.translate('Processing', string)
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/vector2Shape.ui'))
 
-DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
+DISTANCE_MEASURE=[tr("Kilometers"),tr("Meters"),tr("Nautical Miles"),tr("Miles"),tr("Feet")]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
     def __init__(self, iface, parent):
         super(Vector2ShapeWidget, self).__init__(parent)
@@ -27,7 +30,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
-        self.outputCRSComboBox.addItems(['Layer CRS', 'Project CRS', 'WGS 84'])
+        self.outputCRSComboBox.addItems([tr('Layer CRS'), tr('Project CRS'), tr('WGS 84')])
         self.iface = iface
         self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
         self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
@@ -68,7 +71,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         layer = self.mMapLayerComboBox.currentLayer()
         outname = self.layerNameLineEdit.text()
         if not layer:
-            self.showErrorMessage("No valid layer to process")
+            self.showErrorMessage(tr("No valid layer to process"))
             return
         
         # Apply any environment variable settings
@@ -120,7 +123,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             try:
                 distance = float(self.distPolyLineEdit.text())
             except:
-                self.showErrorMessage("Invalid Distance. Fix and try again")
+                self.showErrorMessage(tr("Invalid Distance. Fix and try again"))
                 return
             self.processPoly(layer, outname,
                 self.sidesPolyComboBox.currentIndex()-1, #number of sides column
@@ -183,7 +186,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         layer = self.mMapLayerComboBox.currentLayer()
         self.clearLayerFields()
         if layer:
-            header = ["[ Use Default ]"]
+            header = [tr("[ Use Default ]")]
             fields = layer.fields()
             for field in fields.toList():
                 # force it to be lower case - makes matching easier

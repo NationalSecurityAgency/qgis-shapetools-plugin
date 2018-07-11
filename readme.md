@@ -74,31 +74,33 @@ Create an N-leafed epicycloid. The distance form the center to the outer edge is
 Create a mathematical heart which fits within the circle defined by its radius.
 
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.png) XY to Line
-This creates geodesic lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x-coordinate, start y-coordinate, and an end x-coordinate and end y-coordinate.
+This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
 
-**Input Layer** - This can either be a points layer of a simple table. For example a CSV file containing starting and ending coordinates could be imported using the importer ***Add Delimited Text Layer...*** from the menu ***Layer->Add Layer->Add Delimited Text Layer...*** From this dialog box the user can specify one of the coordinates for the layer's geometry or **No Geometry** can be used. Both types of layers will be visible to **XY to Line.**
+**Input Layer** - This can either be a points layer, a simple table, or any other vector data set that has two coordinates among its data fields. For example a CSV file containing starting and ending coordinates could be imported using the importer ***Add Delimited Text Layer...*** from the menu ***Layer->Add Layer->Add Delimited Text Layer...*** From this dialog box the user can specify one of the coordinates for the layer's geometry or **No Geometry** can be used. Both types of layers will be visible to **XY to Line.**
 
-**Output Points Layer Name** - Name of the points layer that will be created in QGIS. It is automatically generated from the **Input Layer** name. It can contain the starting point, ending point, both points, or no points in which case it will not be created. 
+**Output point layer** - Optional points layer that can be created in QGIS. It can contain the starting point, ending point, both points, or no points in which case it will not be created. 
 
-**Output Line Layer Name** - Name of the line layer that will be created in QGIS. It is automatically generated from the **Input Layer** name.
+**Output line layer** - Output line layer file that is created in QGIS.
 
-**Input Coordinate CRS** - CRS of the input coordinates. Note that if **Use the Layer's geometry** is specified this must match both the layer's geometry CRS as will as the table's data CRS.
+**Input CRS for coordinates within the vector fields** - CRS of the input coordinates within the table data fields.
 
-**Output Layer CRS** - CRS of the output line and point layers.
+**Output layer CRS** - CRS of the output line and point layers.
 
-**Line Type** - 1) **Geodesic** creates a highly accurate shortest path between two points. 2) **Great Circle** creates a *Great Circle* arc between the two points. 3) **Simple Line** creates a non-geodesic straight line between the two points. 
+**Line type** - 1) **Geodesic** creates a highly accurate shortest path between two points. 2) **Great Circle** creates a *Great Circle* arc between the two points. 3) **Simple Line** creates a non-geodesic straight line between the two points. 
 
-**Starting Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **Start X Field** and **Start Y Field** from the layer's fields.
+**Starting point** - Specify whether to use the *Layer's point geometry* (not applicable for layers that don't have Point geometry) or to specify the **Starting X Field (lon)** and **Starting Y Field (lat)** from the layer's fields.
 
-**Ending Point** - Specify whether to use the *Layer's geometry* (not available for tables) or to specify the **End X Field** and **End Y Field** from the layer's fields.
+**Ending Point** - Specify whether to use the *Layer's geometry* (not applicable for layers that don't have Point geometry) or to specify the **Ending X Field (lon)** and **Ending Y Field (lat)** from the layer's fields.
 
-**Show Starting Point** - If checked the output point layer will include an entry for the starting point.
+**Show starting point** - If checked the output point layer will include an entry for the starting point if an **Output point layer** has been specified.
 
-**Show Ending Point** - If checked the output point layer will include an entry for the ending point.
+**Show ending point** - If checked the output point layer will include an entry for the ending point if an **Output point layer** has been specified.
 
-If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
+This function can also be accessed from the **Processing Toolbox**.
+
+<div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
 ## <a name="geodesic-shape-densifier"></a> ![Geodesic Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
 

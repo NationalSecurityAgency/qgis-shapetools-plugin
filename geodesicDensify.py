@@ -15,12 +15,15 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QUrl, QCoreApplication
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
     
 geod = Geodesic.WGS84
+
+def tr(string):
+    return QCoreApplication.translate('Processing', string)
 
 class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
     """
@@ -38,18 +41,18 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.PrmInputLayer,
-                'Line or polygon layer',
+                tr('Line or polygon layer'),
                 [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon])
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
-                'Output layer')
+                tr('Output layer'))
             )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmDiscardVertices,
-                'Discard inner line vertices',
+                tr('Discard inner line vertices'),
                 False,
                 optional=True)
             )
@@ -77,7 +80,7 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
             num_bad = processPoly(source, sink, feedback)
             
         if num_bad > 0:
-            feedback.pushInfo("{} out of {} features from input layer failed to process correctly.".format(num_bad, source.featureCount()))
+            feedback.pushInfo(tr("{} out of {} features from input layer failed to process correctly.".format(num_bad, source.featureCount())))
             
         return {self.PrmOutputLayer: dest_id}
         
@@ -88,10 +91,10 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
     
     def displayName(self):
-        return 'Geodesic densifier'
+        return tr('Geodesic densifier')
     
     def group(self):
-        return 'Vector geometry'
+        return tr('Vector geometry')
         
     def groupId(self):
         return 'vectorgeometry'

@@ -2,6 +2,7 @@ import os
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 from .geodesicDensify import GeodesicDensifyAlgorithm
+from .xyToLine import XYToLineAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -9,7 +10,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         QgsProcessingProvider.__init__(self)
 
         # Load algorithms
-        self.alglist = [GeodesicDensifyAlgorithm()]
+        self.alglist = [GeodesicDensifyAlgorithm(), XYToLineAlgorithm()]
 
     def unload(self):
         QgsProcessingProvider.unload(self)

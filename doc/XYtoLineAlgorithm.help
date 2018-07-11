@@ -1,0 +1,5 @@
+This creates geodesic, great circle, and simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a start x coordinate, start y coordinate, and an end x coordinate and end y coordinate.
+
+Make sure the proper CRS is selected for the input coordinates. The default is the project CRS.
+
+The output is a newly created line layer and an optional point layer that can contain the beginning and ending points.

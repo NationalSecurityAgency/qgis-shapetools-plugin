@@ -1,7 +1,7 @@
 import os
 import math
 
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QCoreApplication
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.uic import loadUiType
 from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, QgsPoint, QgsUnitTypes, QgsProject, QgsWkbTypes
@@ -10,6 +10,9 @@ from qgis.gui import QgsMapToolEmitPoint
 from geographiclib.geodesic import Geodesic
 from .settings import epsg4326
 #import traceback
+
+def tr(string):
+    return QCoreApplication.translate('Processing', string)
 
 from .settings import settings, epsg4326
 
@@ -52,7 +55,7 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
             self.azDigitizerDialog.setPoint(pt4326)
             self.azDigitizerDialog.show()
         except:
-            self.iface.messageBar().pushMessage("", "Clicked location is invalid", level=Qgis.Warning, duration=4)
+            self.iface.messageBar().pushMessage("", tr("Clicked location is invalid"), level=Qgis.Warning, duration=4)
             
 class AzDigitizerWidget(QDialog, FORM_CLASS):
     
@@ -61,7 +64,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.unitsComboBox.addItems(["Kilometers","Meters","Nautical Miles","Miles","Yards", "Feet"])
+        self.unitsComboBox.addItems([tr("Kilometers"),tr("Meters"),tr("Nautical Miles"),tr("Miles"),tr("Yards"), tr("Feet")])
         self.geod = Geodesic.WGS84
         
     def setPoint(self, pt):
@@ -74,11 +77,11 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
             units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 ft
             start = self.checkBox.isChecked()
         except:
-            self.iface.messageBar().pushMessage("", "Either distance or azimuth were invalid", level=Qgis.Warning, duration=4)
+            self.iface.messageBar().pushMessage("", tr("Either distance or azimuth were invalid"), level=Qgis.Warning, duration=4)
             return
         layer = self.iface.activeLayer()
         if layer == None:
-            self.iface.messageBar().pushMessage("", "No point or line layer selected", level=Qgis.Warning, duration=4)
+            self.iface.messageBar().pushMessage("", tr("No point or line layer selected"), level=Qgis.Warning, duration=4)
             return
             
         if units == 0: # Kilometers
