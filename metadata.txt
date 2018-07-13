@@ -15,7 +15,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
-    3.0.8 - Added pie wedge mode to allow center azimuth and width
+    3.0.8 - Added pie azimuth mode to allow center azimuth and width
     3.0.7 - 'XY to line' tool moved to processing.
     3.0.6 - Geodesic measure tool color now selectable, Geodesic densifier moved to processing
     3.0.5 - Made number of points in pie wedge arc selectable & measure tool bearing coordinate range selectable
