@@ -43,7 +43,7 @@ If a field in the layer represents the semi-major axis, semi-minor axis, or orie
 
 ### Pie Wedge
 
-The pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting bearing** going in a clockwise direction to the **Ending bearing**. The pie wedge can either be defined from the point vector layer data fields or from the **Default** parameters. **Arc point spacing** determines the number of degrees in the arc before another point is added to give it a curved appearance. Making this smaller will give smoother results, but will be slower rendering the shapes.
+Depending on the **Azimuth mode**, if it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer data fields or from the **Default** parameters. **Arc point spacing** determines the number of degrees in the arc before another point is added to give it a curved appearance. Making this smaller will give smoother results, but will be slower rendering the shapes.
 
 ### Polygon
 

@@ -42,6 +42,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.unitsHeartComboBox.addItems(DISTANCE_MEASURE)
         self.unitsEpicyclodeComboBox.addItems(DISTANCE_MEASURE)
         self.pieUnitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
+        self.pieAzimuthModeComboBox.addItems([tr('Use beginning end ending azimuths'),
+            tr('Use center azimuth and width')])
+        self.pieAzimuthModeComboBox.activated.connect(self.pieAzimuthModeChange)
         self.polygonLayer = None
         self.geod = Geodesic.WGS84
         icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
@@ -77,6 +80,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         # Apply any environment variable settings
         qset = QSettings()
         qset.setValue('/ShapeTools/PieArcPtSpacing', self.pointSpacingSpinBox.value())
+        qset.setValue('/ShapeTools/PieAzimuthMode', self.pieAzimuthModeComboBox.currentIndex())
         
         # We need to make sure all the points in the layer are transformed to EPSG:4326
         layerCRS = layer.crs()
@@ -111,6 +115,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.defaultDistanceSpinBox.value())
         elif tab == 2: # Pie shape
             self.processPie(layer, outname,
+                self.pieAzimuthModeComboBox.currentIndex(),
                 self.pieBearingStartComboBox.currentIndex()-1,
                 self.pieBearingEndComboBox.currentIndex()-1,
                 self.pieDistanceComboBox.currentIndex()-1,
@@ -170,15 +175,30 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.heartSizeSpinBox.value(),
                 self.unitsHeartComboBox.currentIndex())
         
+    def pieAzimuthModeChange(self):
+        if int(self.pieAzimuthModeComboBox.currentIndex()) == 0:
+            self.pieAngleField1Label.setText(tr('Starting azimuth field'))
+            self.pieAngleField2Label.setText(tr('Ending azimuth field'))
+            self.pieDefaultAngle1Label.setText(tr('Default starting azimuth'))
+            self.pieDefaultAngle2Label.setText(tr('Default ending azimuth'))
+        else:
+            self.pieAngleField1Label.setText(tr('Center azimuth field'))
+            self.pieAngleField2Label.setText(tr('Azimuth width field'))
+            self.pieDefaultAngle1Label.setText(tr('Default center azimuth'))
+            self.pieDefaultAngle2Label.setText(tr('Default azimuth width'))
+        
     def showEvent(self, event):
         '''The dialog is being shown. We need to initialize it.'''
         super(Vector2ShapeWidget, self).showEvent(event)
         # read  environment variables required for setting up the dialog
         qset = QSettings()
         arcPtSpace = int(qset.value('/ShapeTools/PieArcPtSpacing', 6))
+        pieAzimuthMode = int(qset.value('/ShapeTools/PieAzimuthMode', 0))
         self.pointSpacingSpinBox.setValue(arcPtSpace)
+        self.pieAzimuthModeComboBox.setCurrentIndex(pieAzimuthMode)
         
         self.findFields()
+        self.pieAzimuthModeChange()
         
     def findFields(self):
         if not self.isVisible():
@@ -387,7 +407,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         QgsProject.instance().addMapLayer(self.lineLayer)
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=Qgis.Info, duration=3)
         
-    def processPie(self, layer, outname, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist, arcPtSpacing):
+    def processPie(self, layer, outname, azimuthMode, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist, arcPtSpacing):
         measureFactor = self.conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
@@ -416,6 +436,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     eangle = endangle
                 else:
                     eangle = float(feature[endanglecol])
+                if azimuthMode == 1:
+                    width = abs(eangle) / 2.0
+                    eangle = sangle + width
+                    sangle -= width
                 if distcol == -1:
                     dist = defaultDist
                 else:
