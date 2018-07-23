@@ -178,9 +178,8 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 feedback.pushInfo(tr('Output point layer was set to [skip output]. No point layer will be generated.'))
             showStart = False
             showEnd = False
-            
-        if (startUseGeom or endUseGeom) and (source.wkbType() != QgsWkbTypes.PointGeometry):
-            msg = tr('In order to use the layer geometry for the start or ending points, the input layer must be of type PointGeometry')
+        if (startUseGeom or endUseGeom) and (source.wkbType() != QgsWkbTypes.Point):
+            msg = tr('In order to use the layer geometry for the start or ending points, the input layer must be of type Point')
             feedback.reportError(msg)
             raise QgsProcessingException(msg)
             
