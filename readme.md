@@ -98,6 +98,8 @@ This creates geodesic, great circle, or simple lines based on starting and endin
 
 **Show ending point** - If checked the output point layer will include an entry for the ending point if an **Output point layer** has been specified.
 
+**Break lines at -180, 180 boundary for better rendering** - Depending on the QGIS projection when lines cross the international date line, strange behavior may occur. Checking this box breaks the line at the -180, 180 boundary in a way that it displays properly.
+
 This function can also be accessed from the **Processing Toolbox**.
 
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>

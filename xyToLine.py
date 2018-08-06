@@ -46,6 +46,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
     PrmEndYField = 'EndYField'
     PrmShowStartPoint = 'ShowStartPoint'
     PrmShowEndPoint = 'ShowEndPoint'
+    PrmDateLineBreak = 'DateLineBreak'
     geod = Geodesic.WGS84
 
     def initAlgorithm(self, config):
@@ -140,6 +141,13 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 optional=True)
             )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmDateLineBreak,
+                tr('Break lines at -180, 180 boundary for better rendering'),
+                False,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLineLayer,
                 tr('Output line layer'))
@@ -165,10 +173,21 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         endYcol = self.parameterAsString(parameters, self.PrmEndYField, context)
         showStart =  self.parameterAsBool(parameters, self.PrmShowStartPoint, context)
         showEnd =  self.parameterAsBool(parameters, self.PrmShowEndPoint, context)
+        dateLine =  self.parameterAsBool(parameters, self.PrmDateLineBreak, context)
         
-        (lineSink, lineDest_id) = self.parameterAsSink(parameters,
-            self.PrmOutputLineLayer, context, source.fields(),
-            QgsWkbTypes.LineString, sinkCrs)
+        if dateLine and lineType <= 1:
+            isMultiPart = True
+        else:
+            isMultiPart = False
+        
+        if isMultiPart:
+            (lineSink, lineDest_id) = self.parameterAsSink(parameters,
+                self.PrmOutputLineLayer, context, source.fields(),
+                QgsWkbTypes.MultiLineString, sinkCrs)
+        else:
+            (lineSink, lineDest_id) = self.parameterAsSink(parameters,
+                self.PrmOutputLineLayer, context, source.fields(),
+                QgsWkbTypes.LineString, sinkCrs)
         (ptSink, ptDest_id) = self.parameterAsSink(parameters,
             self.PrmOutputPointLayer, context, source.fields(),
             QgsWkbTypes.Point, sinkCrs)
@@ -230,8 +249,6 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                     if sourceCrs != epsg4326:
                         ptEnd = sourceTo4326.transform(ptEnd)
                 pts = [ptStart]
-                # If we have a simple line, these if/elif statements are skipped because we only
-                # need the beginning and ending points.
                 if lineType == 0: # Geodesic
                     l = self.geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                     if l.s13 > maxseglen:
@@ -239,32 +256,42 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                         if n > maxSegments:
                             n = maxSegments
                         seglen = l.s13 / n
-                        for i in range(1,n):
+                        for i in range(1,n+1):
                             s = seglen * i
-                            g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                            g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                             pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                 elif lineType == 1: # Great circle
                     pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
                         settings.maxSegLength*1000.0, # Put it in meters
                         settings.maxSegments+1)
-                pts.append(ptEnd)
-                if sinkCrs != epsg4326: # Convert each point to the output CRS
-                    for x, pt in enumerate(pts):
-                        pts[x] = toSinkCrs.transform(pt)
+                    pts.append(ptEnd)
+                else: # Simple line
+                    pts.append(ptEnd)
                 f = QgsFeature()
-                f.setGeometry(QgsGeometry.fromPolylineXY(pts))
+                if isMultiPart:
+                    outseg = self.checkCrossings(pts)
+                    if sinkCrs != epsg4326: # Convert each point to the output CRS
+                        for y in range(len(outseg)):
+                            for x, pt in enumerate(outseg[y]):
+                                outseg[y][x] = toSinkCrs.transform(pt)
+                    f.setGeometry(QgsGeometry.fromMultiPolylineXY(outseg))
+                else:
+                    if sinkCrs != epsg4326: # Convert each point to the output CRS
+                        for x, pt in enumerate(pts):
+                            pts[x] = toSinkCrs.transform(pt)
+                    f.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 f.setAttributes(feature.attributes())
                 lineSink.addFeature(f)
                 
                 if showStart:
                     f = QgsFeature()
-                    f.setGeometry(QgsGeometry.fromPointXY(pts[0]))
+                    f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptStart)))
                     f.setAttributes(feature.attributes())
                     ptSink.addFeature(f)
                 if showEnd:
                     f = QgsFeature()
-                    f.setGeometry(QgsGeometry.fromPointXY(pts[len(pts)-1]))
+                    f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptEnd)))
                     f.setAttributes(feature.attributes())
                     ptSink.addFeature(f)
             except:
@@ -279,6 +306,39 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         
             
         return {self.PrmOutputLineLayer: lineDest_id, self.PrmOutputPointLayer: ptDest_id}
+    
+    def checkCrossings(self, pts):
+        outseg = []
+        ptlen = len(pts)
+        pts2 = [pts[0]]
+        for i in range(1,ptlen):
+            if pts[i-1].x() < -130 and pts[i].x() > 130: # We have crossed the date line going west
+                ld = self.geod.Inverse(pts[i-1].y(), pts[i-1].x(), pts[i].y(), pts[i].x())
+                try:
+                    (intrlat, intrlon) = intersection_point(-89,-180, 0, pts[i-1].y(), pts[i-1].x(), ld['azi1'])
+                    ptnew = QgsPointXY(-180, intrlat)
+                    pts2.append(ptnew)
+                    outseg.append(pts2)
+                    ptnew = QgsPointXY(180, intrlat)
+                    pts2 = [ptnew]
+                except:
+                    pts2.append(pts[i])
+            if pts[i-1].x() > 130 and pts[i].x() < -130: # We have crossed the date line going east
+                ld = self.geod.Inverse(pts[i-1].y(), pts[i-1].x(), pts[i].y(), pts[i].x())
+                try:
+                    (intrlat, intrlon) = intersection_point(-89,180, 0, pts[i-1].y(), pts[i-1].x(), ld['azi1'])
+                    ptnew = QgsPointXY(180, intrlat)
+                    pts2.append(ptnew)
+                    outseg.append(pts2)
+                    ptnew = QgsPointXY(-180, intrlat)
+                    pts2 = [ptnew]
+                except:
+                    pts2.append(pts[i])
+            else:
+                pts2.append(pts[i])
+        outseg.append(pts2)
+
+        return(outseg)
         
     def name(self):
         return 'xy2line'
@@ -312,3 +372,41 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
         return XYToLineAlgorithm()
 
+def intersection_point(lat1, lon1, bearing1, lat2, lon2, bearing2):
+    o1 = math.radians(lat1)
+    lam1 = math.radians(lon1)
+    o2 = math.radians(lat2)
+    lam2 = math.radians(lon2)
+    bo_13 = math.radians(bearing1)
+    bo_23 = math.radians(bearing2)
+    
+    diff_fo = o2 - o1
+    diff_la = lam2 - lam1
+    d12 = 2 * math.asin(math.sqrt(math.sin(diff_fo / 2) * math.sin(diff_fo / 2) + math.cos(o1) * math.cos(o2) * math.sin(diff_la / 2) * math.sin(diff_la / 2)))
+    if d12 == 0: # intersection_not_found
+        raise ValueError('Intersection not found')
+
+    print("bo_2 numerator: {}".format(math.sin(o1) - math.sin(o2) * math.cos(d12)))
+    print("bo_2 denominator: {}".format(math.sin(d12) * math.cos(o2)))
+    bo_1 = math.acos((math.sin(o2) - math.sin(o1) * math.cos(d12)) / (math.sin(d12) * math.cos(o1)))
+    bo_2 = math.acos((math.sin(o1) - math.sin(o2) * math.cos(d12)) / (math.sin(d12) * math.cos(o2)))
+    if math.sin(lam2 - lam1) > 0:
+        bo_12 = bo_1
+        bo_21 = 2 * math.pi - bo_2
+    else:
+        bo_12 = 2 * math.pi - bo_1
+        bo_21 = bo_2
+    a_1 = ((bo_13 - bo_12 + math.pi) % (2 * math.pi)) - math.pi
+    a_2 = ((bo_21 - bo_23 + math.pi) % (2 * math.pi)) - math.pi
+    if (math.sin(a_1) == 0) and (math.sin(a_2) == 0): # infinite intersections
+        raise ValueError('Intersection not found')
+    if math.sin(a_1) * math.sin(a_2) < 0: # ambiguous intersection
+        raise ValueError('Intersection not found')
+
+    a_3 = math.acos(-math.cos(a_1) * math.cos(a_2) + math.sin(a_1) * math.sin(a_2) * math.cos(d12))
+    be_13 = math.atan2(math.sin(d12) * math.sin(a_1) * math.sin(a_2), math.cos(a_2) + math.cos(a_1) * math.cos(a_3))
+    fo_3 = math.asin(math.sin(o1) * math.cos(be_13) + math.cos(o1) * math.sin(be_13) * math.cos(bo_13))
+    diff_lam13 = math.atan2(math.sin(bo_13) * math.sin(be_13) * math.cos(o1), math.cos(be_13) - math.sin(o1) * math.sin(fo_3))
+    la_3 = lam1 + diff_lam13
+
+    return (math.degrees(fo_3), math.degrees(la_3))
