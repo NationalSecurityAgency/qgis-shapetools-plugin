@@ -60,13 +60,13 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterCrs(
                 self.PrmInputCRS,
                 tr('Input CRS for coordinates within the vector fields'),
-                'ProjectCrs')
+                'EPSG:4326')
         )
         self.addParameter(
             QgsProcessingParameterCrs(
                 self.PrmOutputCRS,
                 tr('Output layer CRS'),
-                'ProjectCrs')
+                'EPSG:4326')
         )
         self.addParameter(
             QgsProcessingParameterEnum(
@@ -157,7 +157,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 self.PrmOutputPointLayer,
                 tr('Output point layer'),
                 optional=True,
-                createByDefault=False)
+                createByDefault=True)
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -286,12 +286,18 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 
                 if showStart:
                     f = QgsFeature()
-                    f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptStart)))
+                    if sinkCrs != epsg4326:
+                        f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptStart)))
+                    else:
+                        f.setGeometry(QgsGeometry.fromPointXY(ptStart))
                     f.setAttributes(feature.attributes())
                     ptSink.addFeature(f)
                 if showEnd:
                     f = QgsFeature()
-                    f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptEnd)))
+                    if sinkCrs != epsg4326:
+                        f.setGeometry(QgsGeometry.fromPointXY(toSinkCrs.transform(ptEnd)))
+                    else:
+                        f.setGeometry(QgsGeometry.fromPointXY(ptEnd))
                     f.setAttributes(feature.attributes())
                     ptSink.addFeature(f)
             except:

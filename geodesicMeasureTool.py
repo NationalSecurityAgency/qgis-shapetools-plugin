@@ -227,6 +227,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         fields.append(QgsField("units", QVariant.String))
         fields.append(QgsField("heading_to", QVariant.Double))
         fields.append(QgsField("heading_from", QVariant.Double))
+        fields.append(QgsField("total_dist", QVariant.Double))
         
         layer = QgsVectorLayer("LineString?crs={}".format(canvasCrs.authid()), "Measurements", "memory")
         dp = layer.dataProvider()
@@ -234,6 +235,11 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         layer.updateFields()
         
         num = len(self.capturedPoints)
+        total = 0.0
+        for i in range(1,num):
+            (distance, startA, endA) = self.calcParameters(self.capturedPoints[i-1], self.capturedPoints[i])
+            total += distance
+        total = self.unitDistance(total)
         for i in range(1,num):
             (distance, startA, endA) = self.calcParameters(self.capturedPoints[i-1], self.capturedPoints[i])
             pts = self.getLinePts(distance, self.capturedPoints[i-1], self.capturedPoints[i])
@@ -244,6 +250,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             feat.setAttribute(2, units)
             feat.setAttribute(3, startA)
             feat.setAttribute(4, endA)
+            feat.setAttribute(5, total)
             feat.setGeometry(QgsGeometry.fromPolylineXY(pts))
             dp.addFeatures([feat])
                 

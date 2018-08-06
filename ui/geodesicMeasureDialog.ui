@@ -61,16 +61,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="saveToLayerButton">
+      <widget class="QPushButton" name="newButton">
        <property name="text">
-        <string>Save to Layer</string>
+        <string>New</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="newButton">
+      <widget class="QPushButton" name="saveToLayerButton">
        <property name="text">
-        <string>New</string>
+        <string>Save to Layer</string>
        </property>
       </widget>
      </item>
