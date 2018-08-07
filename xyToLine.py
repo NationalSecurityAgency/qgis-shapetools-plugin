@@ -265,7 +265,6 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                         ptEnd.y(), ptEnd.x(),
                         settings.maxSegLength*1000.0, # Put it in meters
                         settings.maxSegments+1)
-                    pts.append(ptEnd)
                 else: # Simple line
                     pts.append(ptEnd)
                 f = QgsFeature()
@@ -392,8 +391,6 @@ def intersection_point(lat1, lon1, bearing1, lat2, lon2, bearing2):
     if d12 == 0: # intersection_not_found
         raise ValueError('Intersection not found')
 
-    print("bo_2 numerator: {}".format(math.sin(o1) - math.sin(o2) * math.cos(d12)))
-    print("bo_2 denominator: {}".format(math.sin(d12) * math.cos(o2)))
     bo_1 = math.acos((math.sin(o2) - math.sin(o1) * math.cos(d12)) / (math.sin(d12) * math.cos(o1)))
     bo_2 = math.acos((math.sin(o1) - math.sin(o2) * math.cos(d12)) / (math.sin(d12) * math.cos(o2)))
     if math.sin(lam2 - lam1) > 0:
