@@ -98,6 +98,8 @@ This creates geodesic lines based on starting and ending coordinates in each tab
 
 **Show Ending Point** - If checked the output point layer will include an entry for the ending point.
 
+**Break lines at -180, 180 boundary for better rendering** - Depending on the QGIS projection when lines cross the international date line, strange behavior may occur. Checking this box breaks the line at the -180, 180 boundary in a way that it displays properly.
+
 If neither *Show Starting Point* nor *Show Ending Point* are checked, then a point layer will not be created.
 
 ## <a name="geodesic-shape-densifier"></a> ![Geodesic Shape Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
