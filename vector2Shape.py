@@ -15,14 +15,11 @@ from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
-
-def tr(string):
-    return QCoreApplication.translate('Processing', string)
+from .utils import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/vector2Shape.ui'))
 
-DISTANCE_MEASURE=[tr("Kilometers"),tr("Meters"),tr("Nautical Miles"),tr("Miles"),tr("Feet")]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
     def __init__(self, iface, parent):
         super(Vector2ShapeWidget, self).__init__(parent)
@@ -31,21 +28,22 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.mMapLayerComboBox.layerChanged.connect(self.findFields)
         self.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
         self.outputCRSComboBox.addItems([tr('Layer CRS'), tr('Project CRS'), tr('WGS 84')])
+        self.shapeTypeComboBox.addItems([tr('Polygon'), tr('Line')])
         self.iface = iface
-        self.unitOfAxisComboBox.addItems(DISTANCE_MEASURE)
-        self.unitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
-        self.distUnitsPolyComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsStarComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsRoseComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsCyclodeComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsFoilComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsHeartComboBox.addItems(DISTANCE_MEASURE)
-        self.unitsEpicyclodeComboBox.addItems(DISTANCE_MEASURE)
-        self.pieUnitOfDistanceComboBox.addItems(DISTANCE_MEASURE)
+        self.unitOfAxisComboBox.addItems(DISTANCE_LABELS)
+        self.unitOfDistanceComboBox.addItems(DISTANCE_LABELS)
+        self.distUnitsPolyComboBox.addItems(DISTANCE_LABELS)
+        self.unitsDonutComboBox.addItems(DISTANCE_LABELS)
+        self.unitsStarComboBox.addItems(DISTANCE_LABELS)
+        self.unitsRoseComboBox.addItems(DISTANCE_LABELS)
+        self.unitsCyclodeComboBox.addItems(DISTANCE_LABELS)
+        self.unitsFoilComboBox.addItems(DISTANCE_LABELS)
+        self.unitsHeartComboBox.addItems(DISTANCE_LABELS)
+        self.unitsEpicyclodeComboBox.addItems(DISTANCE_LABELS)
+        self.pieUnitOfDistanceComboBox.addItems(DISTANCE_LABELS)
         self.pieAzimuthModeComboBox.addItems([tr('Use beginning end ending azimuths'),
             tr('Use center azimuth and width')])
         self.pieAzimuthModeComboBox.activated.connect(self.pieAzimuthModeChange)
-        self.polygonLayer = None
         self.geod = Geodesic.WGS84
         icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
         self.tabWidget.setTabIcon(0, icon)
@@ -53,20 +51,22 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.tabWidget.setTabIcon(1, icon)
         icon = QIcon(os.path.dirname(__file__) + '/images/pie.png')
         self.tabWidget.setTabIcon(2, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/donut.png')
         self.tabWidget.setTabIcon(3, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
         self.tabWidget.setTabIcon(4, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
         self.tabWidget.setTabIcon(5, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
         self.tabWidget.setTabIcon(6, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
         self.tabWidget.setTabIcon(7, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
         self.tabWidget.setTabIcon(8, icon)
-        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
         self.tabWidget.setTabIcon(9, icon)
+        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        self.tabWidget.setTabIcon(10, icon)
 
     def apply(self):
         '''process the data'''
@@ -79,7 +79,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         # Apply any environment variable settings
         qset = QSettings()
-        qset.setValue('/ShapeTools/PieArcPtSpacing', self.pointSpacingSpinBox.value())
+        qset.setValue('/ShapeTools/DonutSegments', self.donutDrawingSegmentsSpinBox.value())
+        qset.setValue('/ShapeTools/PieSegments', self.pieDrawingSegmentsSpinBox.value())
         qset.setValue('/ShapeTools/PieAzimuthMode', self.pieAzimuthModeComboBox.currentIndex())
         
         # We need to make sure all the points in the layer are transformed to EPSG:4326
@@ -96,9 +97,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             self.outputCRS = self.iface.mapCanvas().mapSettings().destinationCrs()
             if self.outputCRS != epsg4326:
                 self.transformOut = QgsCoordinateTransform(epsg4326, self.outputCRS, QgsProject.instance())
-        
+        shapetype = self.shapeTypeComboBox.currentIndex()
         if tab == 0: # Ellipse
-            self.processEllipse(layer, outname,
+            self.processEllipse(layer, outname, shapetype,
                 self.semiMajorComboBox.currentIndex()-1,
                 self.semiMinorComboBox.currentIndex()-1,
                 self.orientationComboBox.currentIndex()-1,
@@ -114,7 +115,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.defaultBearingSpinBox.value(),
                 self.defaultDistanceSpinBox.value())
         elif tab == 2: # Pie shape
-            self.processPie(layer, outname,
+            self.processPie(layer, outname, shapetype,
                 self.pieAzimuthModeComboBox.currentIndex(),
                 self.pieBearingStartComboBox.currentIndex()-1,
                 self.pieBearingEndComboBox.currentIndex()-1,
@@ -123,14 +124,22 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.pieBearingStartSpinBox.value(),
                 self.pieBearingEndSpinBox.value(),
                 self.pieDefaultDistanceSpinBox.value(),
-                self.pointSpacingSpinBox.value())
-        elif tab == 3: # Polygon
+                self.pieDrawingSegmentsSpinBox.value())
+        elif tab == 3: # Donut
+            self.processDonut(layer, outname, shapetype,
+                self.donutInnerRadiusComboBox.currentIndex()-1,
+                self.donutOuterRadiusComboBox.currentIndex()-1,
+                self.donutInnerRadiusSpinBox.value(),
+                self.donutOuterRadiusSpinBox.value(),
+                self.unitsDonutComboBox.currentIndex(),
+                self.donutDrawingSegmentsSpinBox.value())
+        elif tab == 4: # Polygon
             try:
                 distance = float(self.distPolyLineEdit.text())
             except:
                 self.showErrorMessage(tr("Invalid Distance. Fix and try again"))
                 return
-            self.processPoly(layer, outname,
+            self.processPoly(layer, outname, shapetype,
                 self.sidesPolyComboBox.currentIndex()-1, #number of sides column
                 self.anglePolyComboBox.currentIndex()-1, #starting angle column
                 self.distPolyComboBox.currentIndex()-1, # distance column
@@ -138,39 +147,39 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 self.anglePolySpinBox.value(), # default starting angle
                 distance,
                 self.distUnitsPolyComboBox.currentIndex())
-        elif tab == 4: # Star
-            self.processStar(layer, outname,
+        elif tab == 5: # Star
+            self.processStar(layer, outname, shapetype,
                 self.starPointsSpinBox.value(),
                 self.starStartAngleSpinBox.value(),
                 self.innerStarRadiusSpinBox.value(),
                 self.outerStarRadiusSpinBox.value(),
                 self.unitsStarComboBox.currentIndex())
-        elif tab == 5: # Rose
-            self.processRose(layer, outname,
+        elif tab == 6: # Rose
+            self.processRose(layer, outname, shapetype,
                 self.roseAngleSpinBox.value(),
                 self.rosePetalSpinBox.value(),
                 self.roseRadiusSpinBox.value(),
                 self.unitsRoseComboBox.currentIndex())
-        elif tab == 6: # Cyclode
-            self.processCyclode(layer, outname,
+        elif tab == 7: # Cyclode
+            self.processCyclode(layer, outname, shapetype,
                 self.cyclodeAngleSpinBox.value(),
                 self.cyclodeCuspsSpinBox.value(),
                 self.cyclodeRadiusSpinBox.value(),
                 self.unitsCyclodeComboBox.currentIndex())
-        elif tab == 7: # Polyfoil
-            self.processPolyfoil(layer, outname,
+        elif tab == 8: # Polyfoil
+            self.processPolyfoil(layer, outname, shapetype,
                 self.foilAngleSpinBox.value(),
                 self.foilLobesSpinBox.value(),
                 self.foilRadiusSpinBox.value(),
                 self.unitsFoilComboBox.currentIndex())
-        elif tab == 8: # Epicycloid
-            self.processEpicycloid(layer, outname,
+        elif tab == 9: # Epicycloid
+            self.processEpicycloid(layer, outname, shapetype,
                 self.epicyclodeAngleSpinBox.value(),
                 self.epicyclodeLobesSpinBox.value(),
                 self.epicyclodeRadiusSpinBox.value(),
                 self.unitsEpicyclodeComboBox.currentIndex())
-        elif tab == 9: # Heart
-            self.processHeart(layer, outname,
+        elif tab == 10: # Heart
+            self.processHeart(layer, outname, shapetype,
                 self.heartAngleSpinBox.value(),
                 self.heartSizeSpinBox.value(),
                 self.unitsHeartComboBox.currentIndex())
@@ -192,9 +201,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         super(Vector2ShapeWidget, self).showEvent(event)
         # read  environment variables required for setting up the dialog
         qset = QSettings()
-        arcPtSpace = int(qset.value('/ShapeTools/PieArcPtSpacing', 6))
+        donutSegments = int(qset.value('/ShapeTools/DonutSegments', 36))
+        pieSegments = int(qset.value('/ShapeTools/PieSegments', 36))
         pieAzimuthMode = int(qset.value('/ShapeTools/PieAzimuthMode', 0))
-        self.pointSpacingSpinBox.setValue(arcPtSpace)
+        self.donutDrawingSegmentsSpinBox.setValue(donutSegments)
+        self.pieDrawingSegmentsSpinBox.setValue(pieSegments)
         self.pieAzimuthModeComboBox.setCurrentIndex(pieAzimuthMode)
         
         self.findFields()
@@ -223,6 +234,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.semiMajorComboBox.addItems(header)
         self.semiMinorComboBox.addItems(header)
         self.orientationComboBox.addItems(header)
+        
+        # Donut
+        self.donutInnerRadiusComboBox.addItems(header)
+        self.donutOuterRadiusComboBox.addItems(header)
         
         self.bearingComboBox.addItems(header)
         self.distanceComboBox.addItems(header)
@@ -271,6 +286,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.semiMajorComboBox.clear()
         self.semiMinorComboBox.clear()
         self.orientationComboBox.clear()
+        # Donut
+        self.donutInnerRadiusComboBox.clear()
+        self.donutOuterRadiusComboBox.clear()
+        
         self.bearingComboBox.clear()
         self.distanceComboBox.clear()
         self.pieBearingStartComboBox.clear()
@@ -283,27 +302,32 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
     def showErrorMessage(self, message):
         self.iface.messageBar().pushMessage("", message, level=Qgis.Warning, duration=3)
         
-    def processEllipse(self, layer, outname, semimajorcol, semiminorcol, orientcol, unitOfMeasure, defSemiMajor, defSemiMinor, defOrientation):
+    def processEllipse(self, layer, outname, shapetype, semimajorcol, semiminorcol, orientcol, unitOfMeasure, defSemiMajor, defSemiMinor, defOrientation):
         measureFactor = 1.0
         # The ellipse calculation is done in Nautical Miles. This converts
         # the semi-major and minor axis to nautical miles
         if unitOfMeasure == 2: # Nautical Miles
             measureFactor = 1.0
         elif unitOfMeasure == 0: # Kilometers
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)*1000.0
+            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles)
         elif unitOfMeasure == 1: # Meters
             measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
         elif unitOfMeasure == 3: # Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceNauticalMiles)*5280.0
-        elif unitOfMeasure == 4: # Feet
+            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceNauticalMiles)
+        elif unitOfMeasure == 4: # Yards
+            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceYards, QgsUnitTypes.DistanceNauticalMiles)
+        elif unitOfMeasure == 5: # Feet
             measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceNauticalMiles)
         
         fields = layer.fields()
         
-        self.polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = self.polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        self.polygonLayer.updateFields()
+        if shapetype == 0:
+            self.outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            self.outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = self.outLayer.dataProvider()
+        dp.addAttributes(fields)
+        self.outLayer.updateFields()
         
         iter = layer.getFeatures()
         num_features = 0
@@ -335,21 +359,24 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                         pts[x] = self.transformOut.transform(ptout)
                         
                 featureout = QgsFeature()
-                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
                 featureout.setAttributes(feature.attributes())
-                ppolygon.addFeatures([featureout])
+                if shapetype == 0:
+                    featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                else:
+                    featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
+                dp.addFeatures([featureout])
                 num_good += 1
             except:
                 # Just skip any lines that are badly formed
                 #traceback.print_exc()
                 pass
-        self.polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(self.polygonLayer)
+        self.outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(self.outLayer)
         self.iface.messageBar().pushMessage("", "{} Ellipses created from {} records".format(num_good, num_features), level=Qgis.Info, duration=3)
         
     def processLOB(self, layer, outname, bearingcol, distcol, unitOfDist, defaultBearing, defaultDist):
         '''Process each layer point and create a new line layer with the associated bearings'''
-        measureFactor = self.conversionToMeters(unitOfDist)
+        measureFactor = conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
         maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
@@ -357,10 +384,10 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         
         fields = layer.fields()
         
-        self.lineLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        pline = self.lineLayer.dataProvider()
+        lineLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        pline = lineLayer.dataProvider()
         pline.addAttributes(fields)
-        self.lineLayer.updateFields()
+        lineLayer.updateFields()
         
         iter = layer.getFeatures()
         num_features = 0
@@ -403,21 +430,26 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             except:
                 # Just skip any lines that are badly formed
                 pass
-        self.lineLayer.updateExtents()
-        QgsProject.instance().addMapLayer(self.lineLayer)
+        lineLayer.updateExtents()
+        QgsProject.instance().addMapLayer(lineLayer)
         self.iface.messageBar().pushMessage("", "{} lines of bearing created from {} records".format(num_good, num_features), level=Qgis.Info, duration=3)
         
-    def processPie(self, layer, outname, azimuthMode, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist, arcPtSpacing):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processPie(self, layer, outname, shapetype, azimuthMode, startanglecol, endanglecol, distcol, unitOfDist, startangle, endangle, defaultDist, segments):
+        measureFactor = conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
+        
+        arcPtSpacing = 360.0 / segments
  
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
         
@@ -467,26 +499,108 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                         pts[x] = self.transformOut.transform(ptout)
                         
                 featureout = QgsFeature()
-                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                if shapetype == 0:
+                    featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                else:
+                    featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 featureout.setAttributes(feature.attributes())
-                ppolygon.addFeatures([featureout])
+                dp.addFeatures([featureout])
             except:
                 pass
                 
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
+
+    def processDonut(self, layer, outname, shapetype, innerCol, outerCol, defInnerRadius, defOuterRadius, units, segments):
+        measureFactor = conversionToMeters(units)
+            
+        defInnerRadius *= measureFactor
+        defOuterRadius *= measureFactor
+        
+        ptSpacing = 360.0 / segments
+ 
+        fields = layer.fields()
+        
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("MultiLineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
+        
+        iter = layer.getFeatures()
+        
+        for feature in iter:
+            try:
+                ptsi = []
+                ptso = []
+                pt = feature.geometry().asPoint()
+                # make sure the coordinates are in EPSG:4326
+                pt = self.transform.transform(pt.x(), pt.y())
+                lat = pt.y()
+                lon = pt.x()
+                angle = 0
+                while angle < 360:
+                    if innerCol == -1:
+                        iRadius = defInnerRadius
+                    else:
+                        iRadius = float(feature[innerCol]) * measureFactor
+                    if outerCol == -1:
+                        oRadius = defOuterRadius
+                    else:
+                        oRadius = float(feature[outerCol]) * measureFactor
+                    if iRadius != 0:
+                        g = self.geod.Direct(lat, lon, angle, iRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        ptsi.append(QgsPointXY(g['lon2'], g['lat2']))
+                    g = self.geod.Direct(lat, lon, angle, oRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    ptso.append(QgsPointXY(g['lon2'], g['lat2']))
+                    angle += ptSpacing
+                if iRadius != 0:
+                    ptsi.append(ptsi[0])
+                ptso.append(ptso[0])
                 
-    def processPoly(self, layer, outname, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+                # If the Output crs is not 4326 transform the points to the proper crs
+                if self.outputCRS != epsg4326:
+                    if iRadius != 0:
+                        for x, ptout in enumerate(ptsi):
+                            ptsi[x] = self.transformOut.transform(ptout)
+                    for x, ptout in enumerate(ptso):
+                        ptso[x] = self.transformOut.transform(ptout)
+                        
+                featureout = QgsFeature()
+                if shapetype == 0:
+                    if iRadius == 0:
+                        featureout.setGeometry(QgsGeometry.fromPolygonXY([ptso]))
+                    else:
+                        featureout.setGeometry(QgsGeometry.fromPolygonXY([ptso, ptsi]))
+                else:
+                    if iRadius == 0:
+                        featureout.setGeometry(QgsGeometry.fromMultiPolylineXY([ptso]))
+                    else:
+                        featureout.setGeometry(QgsGeometry.fromMultiPolylineXY([ptso, ptsi]))
+                featureout.setAttributes(feature.attributes())
+                dp.addFeatures([featureout])
+            except:
+                pass
+                
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)        
+               
+    def processPoly(self, layer, outname, shapetype, sidescol, anglecol, distcol, sides, angle, defaultDist, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         defaultDist *= measureFactor
  
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -514,8 +628,6 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     i -= 1
                     g = self.geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
-                    #pts.append(QgsPointXY(lon2, lat2))
                     
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if self.outputCRS != epsg4326:
@@ -523,28 +635,33 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                         pts[x] = self.transformOut.transform(ptout)
 
                 featureout = QgsFeature()
-                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                if shapetype == 0:
+                    featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                else:
+                    featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 featureout.setAttributes(feature.attributes())
-                ppolygon.addFeatures([featureout])
+                dp.addFeatures([featureout])
             except:
                 pass
                 
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processStar(self, layer, outname, numPoints, startAngle, innerRadius, outerRadius, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processStar(self, layer, outname, shapetype, numPoints, startAngle, innerRadius, outerRadius, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         innerRadius *= measureFactor
         outerRadius *= measureFactor
 
         fields = layer.fields()
         
-        
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -560,12 +677,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 angle = (i * 360.0 / numPoints) + startAngle
                 g = self.geod.Direct(pt.y(), pt.x(), angle, outerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle, outerRadius)
-                #pts.append(QgsPointXY(lon2, lat2))
                 g = self.geod.Direct(pt.y(), pt.x(), angle-half, innerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
-                #pts.append(QgsPointXY(lon2, lat2))
                 
             # If the Output crs is not 4326 transform the points to the proper crs
             if self.outputCRS != epsg4326:
@@ -573,23 +686,29 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processRose(self, layer, outname, startAngle, k, radius, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processRose(self, layer, outname, shapetype, startAngle, k, radius, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         radius *= measureFactor
         fields = layer.fields()
         
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
         dist=[]
@@ -630,25 +749,30 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processCyclode(self, layer, outname, startAngle, cusps, radius, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processCyclode(self, layer, outname, shapetype, startAngle, cusps, radius, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         radius *= measureFactor
         r = radius / cusps
         fields = layer.fields()
         
-        
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -674,25 +798,30 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processEpicycloid(self, layer, outname, startAngle, lobes, radius, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processEpicycloid(self, layer, outname, shapetype, startAngle, lobes, radius, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         radius *= measureFactor
         r = radius / (lobes + 2.0)
         fields = layer.fields()
         
-        
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -718,25 +847,30 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processPolyfoil(self, layer, outname, startAngle, lobes, radius, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processPolyfoil(self, layer, outname, shapetype, startAngle, lobes, radius, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
             
         radius *= measureFactor
         r = radius / lobes
         fields = layer.fields()
         
-        
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -761,15 +895,18 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
 
-    def processHeart(self, layer, outname, startAngle, size, unitOfDist):
-        measureFactor = self.conversionToMeters(unitOfDist)
+    def processHeart(self, layer, outname, shapetype, startAngle, size, unitOfDist):
+        measureFactor = conversionToMeters(unitOfDist)
         # The algorithm creates the heart on its side so this rotates
         # it so that it is upright.
         startAngle -= 90.0
@@ -778,11 +915,13 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
 
         fields = layer.fields()
         
-        
-        polygonLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
-        ppolygon = polygonLayer.dataProvider()
-        ppolygon.addAttributes(fields)
-        polygonLayer.updateFields()
+        if shapetype == 0:
+            outLayer = QgsVectorLayer("Polygon?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        else:
+            outLayer = QgsVectorLayer("LineString?crs={}".format(self.outputCRS.authid()), outname, "memory")
+        dp = outLayer.dataProvider()
+        dp.addAttributes(fields)
+        outLayer.updateFields()
         
         iter = layer.getFeatures()
 
@@ -809,25 +948,15 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     pts[x] = self.transformOut.transform(ptout)
                     
             featureout = QgsFeature()
-            featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            if shapetype == 0:
+                featureout.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                featureout.setGeometry(QgsGeometry.fromPolylineXY(pts))
             featureout.setAttributes(feature.attributes())
-            ppolygon.addFeatures([featureout])
+            dp.addFeatures([featureout])
                     
-        polygonLayer.updateExtents()
-        QgsProject.instance().addMapLayer(polygonLayer)
-        
-    def conversionToMeters(self, units):
-        if units == 2: # Nautical Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceNauticalMiles, QgsUnitTypes.DistanceMeters)
-        elif units == 0: # Kilometers
-            measureFactor = 1000.0
-        elif units == 1: # Meters
-            measureFactor = 1.0
-        elif units == 3: # Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceMeters)*5280.0
-        elif units == 4: # Feet
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceMeters)
-        return measureFactor
+        outLayer.updateExtents()
+        QgsProject.instance().addMapLayer(outLayer)
         
     def accept(self):
         self.apply()
