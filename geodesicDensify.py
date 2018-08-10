@@ -17,7 +17,6 @@ from qgis.core import (QgsProcessing,
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl, QCoreApplication
 
-from .LatLon import LatLon
 from .settings import settings, epsg4326
     
 geod = Geodesic.WGS84
