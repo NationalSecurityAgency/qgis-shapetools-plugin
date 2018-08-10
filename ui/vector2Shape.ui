@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>463</height>
+    <width>540</width>
+    <height>484</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,6 +58,16 @@
      </item>
      <item row="2" column="1">
       <widget class="QComboBox" name="outputCRSComboBox"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_59">
+       <property name="text">
+        <string>Shape type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="shapeTypeComboBox"/>
      </item>
     </layout>
    </item>
@@ -426,20 +436,7 @@
        <item row="8" column="0">
         <widget class="QLabel" name="label_55">
          <property name="text">
-          <string>Arc point spacing (degrees)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QDoubleSpinBox" name="pointSpacingSpinBox">
-         <property name="minimum">
-          <double>0.250000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>30.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>4.000000000000000</double>
+          <string>Circle drawing segments</string>
          </property>
         </widget>
        </item>
@@ -452,6 +449,122 @@
        </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="pieAzimuthModeComboBox"/>
+       </item>
+       <item row="8" column="1">
+        <widget class="QSpinBox" name="pieDrawingSegmentsSpinBox">
+         <property name="minimum">
+          <number>6</number>
+         </property>
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+         <property name="value">
+          <number>36</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="donut">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Donut</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_12">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_47">
+         <property name="text">
+          <string>Outer radius field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="donutOuterRadiusComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_48">
+         <property name="text">
+          <string>Inner radius field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="donutInnerRadiusComboBox"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_51">
+         <property name="text">
+          <string>Default outer radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="donutOuterRadiusSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_52">
+         <property name="text">
+          <string>Default inner radius</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDoubleSpinBox" name="donutInnerRadiusSpinBox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>10.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_57">
+         <property name="text">
+          <string>Radius units</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="unitsDonutComboBox"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_58">
+         <property name="text">
+          <string>Drawing segments</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="donutDrawingSegmentsSpinBox">
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+         <property name="value">
+          <number>36</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

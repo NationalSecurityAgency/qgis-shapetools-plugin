@@ -73,6 +73,10 @@ Create an N-leafed epicycloid. The distance form the center to the outer edge is
 
 Create a mathematical heart which fits within the circle defined by its radius.
 
+### Donut
+
+Create a donut shape. The inner and outer radius is specified either as default values or from the attribute table. If the inner radius is 0 then a solid circle is drawn. **Arc point spacing (degrees)** defines how often a point is drawn to create the circle. A lower value will produce a smoother circle, but will take more time to draw.
+
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.png) XY to Line
 This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
 
