@@ -21,10 +21,8 @@ from qgis.core import (QgsProcessing,
 
 from .LatLon import LatLon
 from .settings import settings, epsg4326
+from .utils import checkIdlCrossings, tr, geod
 #import traceback
-
-def tr(string):
-    return QCoreApplication.translate('Processing', string)
 
 class XYToLineAlgorithm(QgsProcessingAlgorithm):
     """
@@ -47,7 +45,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
     PrmShowStartPoint = 'ShowStartPoint'
     PrmShowEndPoint = 'ShowEndPoint'
     PrmDateLineBreak = 'DateLineBreak'
-    geod = Geodesic.WGS84
+    
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -250,7 +248,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                         ptEnd = sourceTo4326.transform(ptEnd)
                 pts = [ptStart]
                 if lineType == 0: # Geodesic
-                    l = self.geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
+                    l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                     if l.s13 > maxseglen:
                         n = int(math.ceil(l.s13 / maxseglen))
                         if n > maxSegments:
@@ -269,7 +267,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                     pts.append(ptEnd)
                 f = QgsFeature()
                 if isMultiPart:
-                    outseg = self.checkCrossings(pts)
+                    outseg = checkIdlCrossings(pts)
                     if sinkCrs != epsg4326: # Convert each point to the output CRS
                         for y in range(len(outseg)):
                             for x, pt in enumerate(outseg[y]):
@@ -311,39 +309,6 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         
             
         return {self.PrmOutputLineLayer: lineDest_id, self.PrmOutputPointLayer: ptDest_id}
-    
-    def checkCrossings(self, pts):
-        outseg = []
-        ptlen = len(pts)
-        pts2 = [pts[0]]
-        for i in range(1,ptlen):
-            if pts[i-1].x() < -130 and pts[i].x() > 130: # We have crossed the date line going west
-                ld = self.geod.Inverse(pts[i-1].y(), pts[i-1].x(), pts[i].y(), pts[i].x())
-                try:
-                    (intrlat, intrlon) = intersection_point(-89,-180, 0, pts[i-1].y(), pts[i-1].x(), ld['azi1'])
-                    ptnew = QgsPointXY(-180, intrlat)
-                    pts2.append(ptnew)
-                    outseg.append(pts2)
-                    ptnew = QgsPointXY(180, intrlat)
-                    pts2 = [ptnew]
-                except:
-                    pts2.append(pts[i])
-            if pts[i-1].x() > 130 and pts[i].x() < -130: # We have crossed the date line going east
-                ld = self.geod.Inverse(pts[i-1].y(), pts[i-1].x(), pts[i].y(), pts[i].x())
-                try:
-                    (intrlat, intrlon) = intersection_point(-89,180, 0, pts[i-1].y(), pts[i-1].x(), ld['azi1'])
-                    ptnew = QgsPointXY(180, intrlat)
-                    pts2.append(ptnew)
-                    outseg.append(pts2)
-                    ptnew = QgsPointXY(-180, intrlat)
-                    pts2 = [ptnew]
-                except:
-                    pts2.append(pts[i])
-            else:
-                pts2.append(pts[i])
-        outseg.append(pts2)
-
-        return(outseg)
         
     def name(self):
         return 'xy2line'
@@ -376,40 +341,3 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         
     def createInstance(self):
         return XYToLineAlgorithm()
-
-def intersection_point(lat1, lon1, bearing1, lat2, lon2, bearing2):
-    o1 = math.radians(lat1)
-    lam1 = math.radians(lon1)
-    o2 = math.radians(lat2)
-    lam2 = math.radians(lon2)
-    bo_13 = math.radians(bearing1)
-    bo_23 = math.radians(bearing2)
-    
-    diff_fo = o2 - o1
-    diff_la = lam2 - lam1
-    d12 = 2 * math.asin(math.sqrt(math.sin(diff_fo / 2) * math.sin(diff_fo / 2) + math.cos(o1) * math.cos(o2) * math.sin(diff_la / 2) * math.sin(diff_la / 2)))
-    if d12 == 0: # intersection_not_found
-        raise ValueError('Intersection not found')
-
-    bo_1 = math.acos((math.sin(o2) - math.sin(o1) * math.cos(d12)) / (math.sin(d12) * math.cos(o1)))
-    bo_2 = math.acos((math.sin(o1) - math.sin(o2) * math.cos(d12)) / (math.sin(d12) * math.cos(o2)))
-    if math.sin(lam2 - lam1) > 0:
-        bo_12 = bo_1
-        bo_21 = 2 * math.pi - bo_2
-    else:
-        bo_12 = 2 * math.pi - bo_1
-        bo_21 = bo_2
-    a_1 = ((bo_13 - bo_12 + math.pi) % (2 * math.pi)) - math.pi
-    a_2 = ((bo_21 - bo_23 + math.pi) % (2 * math.pi)) - math.pi
-    if (math.sin(a_1) == 0) and (math.sin(a_2) == 0): # infinite intersections
-        raise ValueError('Intersection not found')
-    if math.sin(a_1) * math.sin(a_2) < 0: # ambiguous intersection
-        raise ValueError('Intersection not found')
-
-    a_3 = math.acos(-math.cos(a_1) * math.cos(a_2) + math.sin(a_1) * math.sin(a_2) * math.cos(d12))
-    be_13 = math.atan2(math.sin(d12) * math.sin(a_1) * math.sin(a_2), math.cos(a_2) + math.cos(a_1) * math.cos(a_3))
-    fo_3 = math.asin(math.sin(o1) * math.cos(be_13) + math.cos(o1) * math.sin(be_13) * math.cos(bo_13))
-    diff_lam13 = math.atan2(math.sin(bo_13) * math.sin(be_13) * math.cos(o1), math.cos(be_13) - math.sin(o1) * math.sin(fo_3))
-    la_3 = lam1 + diff_lam13
-
-    return (math.degrees(fo_3), math.degrees(la_3))
