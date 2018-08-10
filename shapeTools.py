@@ -58,6 +58,14 @@ class ShapeTools(object):
         self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.toolbar.addAction(self.geodesicDensifyAction)
         
+        # Initialize the Geodesic Densifier menu item
+        icon = QIcon(os.path.dirname(__file__) + '/images/idlbreak.png')
+        self.geodesicLineBreakAction = QAction(icon, tr('Geodesic line break at -180,180'), self.iface.mainWindow())
+        self.geodesicLineBreakAction.setObjectName('stGeodesicLineBreak')        
+        self.geodesicLineBreakAction.triggered.connect(self.geodesicLineBreakTool)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicLineBreakAction)
+        self.toolbar.addAction(self.geodesicLineBreakAction)
+        
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
         icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
@@ -116,6 +124,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.shapeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.geodesicLineBreakAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.digitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
@@ -124,6 +133,7 @@ class ShapeTools(object):
         self.iface.removeToolBarIcon(self.shapeAction)
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.geodesicDensifyAction)
+        self.iface.removeToolBarIcon(self.geodesicLineBreakAction)
         self.iface.removeToolBarIcon(self.measureAction)
         self.iface.removeToolBarIcon(self.digitizeAction)
         self.azDigitizerTool = None
@@ -146,6 +156,9 @@ class ShapeTools(object):
         
     def geodesicDensifyTool(self):
         results = processing.execAlgorithmDialog('shapetools:geodesicdensifier', {})
+        
+    def geodesicLineBreakTool(self):
+        results = processing.execAlgorithmDialog('shapetools:linebreak', {})
         
     def measureTool(self):
         self.measureAction.setChecked(True)
