@@ -19,9 +19,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl
 
 from .settings import epsg4326, settings
-from .utils import *
-    
-geod = Geodesic.WGS84
+from .utils import geod, tr, conversionToMeters,DISTANCE_LABELS
 
 class CreateLobAlgorithm(QgsProcessingAlgorithm):
     """
@@ -188,14 +186,6 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-    
-    '''def shortHelpString(self):
-        file = os.path.dirname(__file__)+'/doc/GeodesicDensifyAlgorithm.help'
-        if not os.path.exists(file):
-            return ''
-        with open(file) as helpf:
-            help=helpf.read()
-        return help'''
         
     def createInstance(self):
         return CreateLobAlgorithm()
