@@ -3,7 +3,8 @@
 ***Shape Tools*** has the following tools that are installed in the Vector menu or can be accessed from the toolbar.
 
 * ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
-* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates. 
+* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates.
+* ![Geodesic Line Break](images/idlbreak.png) **Geodesic Line Break at -180,180** breaks lines at the international date line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
 * ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Azimuth, Distance Tool](images/dazdigitize.png) **Azimuth, Distance Tool** digitizes points at an azimuth, and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a certain distance
@@ -12,9 +13,10 @@
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
+* [Geodesic Line Break](#geodesic-line-break)
 * [Geodesic Densifier](#geodesic-shape-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
-* [Azimuth, Distance Tool](#asimuth-distance)
+* [Azimuth, Distance Tool](#azimuth-distance)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
@@ -108,6 +110,16 @@ This function can also be accessed from the **Processing Toolbox**.
 
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
+## <a name="geodesic-line-break"></a> ![Geodesic Line Break at -180,180](images/idlbreak.png) Geodesic Line Break at -180,180
+
+If you have ever created a geospatial masterpiece that has crossings across the international date line at a longitude of -180&deg;/180&deg; and had it turn out like the image on the left, you are not alone.
+
+<div style="text-align:center"><img src="doc/breaklines.jpg" alt="Break lines"></div>
+
+**Geodesic line break** will break lines at the -180&deg;/180&deg; boundary along a geodesic path which is the shortest distance along the earth's surface between two points. The algorithm is very simple with just an input and output layer. The resulting output is shown in the above right side image.
+
+<div style="text-align:center"><img src="doc/geodesiclinebreak.jpg" alt="Geodesic Line Break"></div>
+
 ## <a name="geodesic-shape-densifier"></a> ![Geodesic Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
 
 Densify a line or polygon vector layer by adding geodesic points inbetween individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.
@@ -157,7 +169,12 @@ Azimuth is in degrees and distance is in the selected *Distance units of measure
 
 The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape Tools->Settings*. The following are the parameters that can be configured.
 
+<div style="text-align:center"><img src="doc/settings.jpg" alt="Settings"></div>
+
 * **Try to guess column names** - By default the ellipse and line of bearing shapes will try to guess the vector fields that contain the appropriate parameters such as semi-major axis, semi-minor axis, axis orientation, bearing, and distance. If it finds one of the fields that has a name similar to these it will set the drop down menu to that item. If you do not want this behavior, then uncheck this box.
-* **Line Settings** - These are settings when drawing geodesic and great circle lines.
+* **Geodesic Line Settings** - These are settings when drawing geodesic and great circle lines.
     * **Maximum segment length before creating a new segment** - In order to draw a smooth curved line, multiple line segments are required. This defines how far to travel before a new line segment is created. This parameter is in kilometers. 
     * **Maximum number of segments per line** - This is the maximum number of line segments that will be created for any line even though it may exceed the maximum segment length. This takes precedence.
+* **Measure Tool Settings** - These are settings for the **Geodesic Measure Tool**.
+    * **Azimuth Range** - The azimuth is displayed from **-180 to 180** degrees or from **0 to 360** degrees.
+    * **Rubber band color** - Selects the rubber band line color used by the measure tool.

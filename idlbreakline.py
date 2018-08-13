@@ -14,7 +14,7 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from .settings import epsg4326
-from .utils import checkIdlCrossings, tr, geod
+from .utils import checkIdlCrossings, normalizeLongitude, tr, geod
 import traceback
 
 class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
@@ -77,6 +77,7 @@ class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
                     if srcCRS != epsg4326:
                         for x, pt in enumerate(pts):
                             pts[x] = geomTo4326.transform(pt)
+                    normalizeLongitude(pts)
                     newseg = checkIdlCrossings(pts)
                     outseg.extend(newseg)
                 if srcCRS != epsg4326: # Convert each point to the output CRS
