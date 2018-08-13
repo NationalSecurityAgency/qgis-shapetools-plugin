@@ -7,6 +7,7 @@ from .createDonut import CreateDonutAlgorithm
 from .createLob import CreateLobAlgorithm
 from .createPolygon import CreatePolygonAlgorithm
 from .idlbreakline import IdlBreakLineAlgorithm
+from .createPie import CreatePieAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -19,6 +20,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(XYToLineAlgorithm())
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
+        self.addAlgorithm(CreatePieAlgorithm())
         self.addAlgorithm(CreatePolygonAlgorithm())
 
     def icon(self):
