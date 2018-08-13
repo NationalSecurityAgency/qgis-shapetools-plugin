@@ -25,6 +25,11 @@ def conversionToMeters(units):
         measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceMeters)
     return measureFactor
     
+def normalizeLongitude(pts):
+    ptlen = len(pts)
+    for i in range(ptlen):
+        pts[i].setX( (pts[i].x() + 180) % 360 - 180)
+        
 def checkIdlCrossings(pts):
     outseg = []
     ptlen = len(pts)
