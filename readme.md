@@ -5,7 +5,7 @@
 * ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedge, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic Line Break](images/idlbreak.png) **Geodesic Line Break at -180,180** breaks lines at the international date line at -180,180 degrees longitude for a more pleasing visual look.
-* ![Geodesic Densifier](images/geodesicDensifier.png) **Geodesic Shape Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
+* ![Geodesic Densifier](images/geodesicDensifier.png) **Geodesic Densifier** densifies a line or polygon vector layer by adding geodesic points inbetween each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
 * ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Azimuth, Distance Tool](images/dazdigitize.png) **Azimuth, Distance Tool** digitizes points at an azimuth, and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a certain distance
 
@@ -14,12 +14,14 @@
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
 * [Geodesic Line Break](#geodesic-line-break)
-* [Geodesic Densifier](#geodesic-shape-densifier)
+* [Geodesic Densifier](#geodesic-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Azimuth, Distance Tool](#azimuth-distance)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
+
+Note that some of these shapes are now in the Shape Tools processing tool box.
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
@@ -112,21 +114,21 @@ This function can also be accessed from the **Processing Toolbox**.
 
 ## <a name="geodesic-line-break"></a> ![Geodesic Line Break at -180,180](images/idlbreak.png) Geodesic Line Break at -180,180
 
-If you have ever created a geospatial masterpiece that has crossings across the international date line at a longitude of -180&deg;/180&deg; and had it turn out like the image on the left, you are not alone.
+If you have ever created a geospatial masterpiece that has crossings across the international date line at a longitude of -180&deg;/180&deg; and it turned out like the image on the left, you are not alone.
 
 <div style="text-align:center"><img src="doc/breaklines.jpg" alt="Break lines"></div>
 
-**Geodesic line break** will break lines at the -180&deg;/180&deg; boundary along a geodesic path which is the shortest distance along the earth's surface between two points. The algorithm is very simple with just an input and output layer. The resulting output is shown in the above right side image.
+**Geodesic line break** will break lines at the -180&deg;/180&deg; boundary along a geodesic path which is the shortest distance along the earth's surface between two points. The algorithm is very simple with just an input and output layer. The resulting output is shown in the above right side image. Depending on your data you may find it useful to also run the **Geodesic Densifier** on the data prior to this routine.
 
 <div style="text-align:center"><img src="doc/geodesiclinebreak.jpg" alt="Geodesic Line Break"></div>
 
-## <a name="geodesic-shape-densifier"></a> ![Geodesic Densifier](images/geodesicDensifier.png) Geodesic Shape Densifier
+## <a name="geodesic-densifier"></a> ![Geodesic Densifier](images/geodesicDensifier.png) Geodesic Densifier
 
 Densify a line or polygon vector layer by adding geodesic points inbetween individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.
 
 The distance between two points before adding additional vertices is set from the **Settings** menu.
 
-<div style="text-align:center"><img src="doc/geodesicshape.jpg" alt="Geodesic Shape Densifier"></div>
+<div style="text-align:center"><img src="doc/geodesicshape.jpg" alt="Geodesic Densifier"></div>
 
 * **Input Layer** - Select an existing line or polygon layer.
 * **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
