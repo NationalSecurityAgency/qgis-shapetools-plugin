@@ -94,8 +94,9 @@ class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
                 s = traceback.format_exc()
                 feedback.pushInfo(s)
                 pass
-                
-            feedback.setProgress(int(cnt * total))
+            
+            if cnt % 100 == 0:
+                feedback.setProgress(int(cnt * total))
             
         return {self.PrmOutputLayer: dest_id}
         

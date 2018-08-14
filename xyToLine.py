@@ -227,7 +227,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         
         iterator = source.getFeatures()
         for cnt, feature in enumerate(iterator):
-            if feedback.isCanceled():
+            if (cnt % 100 == 0) and feedback.isCanceled():
                 break
             try:
                 if startUseGeom:
@@ -247,6 +247,10 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                     if sourceCrs != epsg4326:
                         ptEnd = sourceTo4326.transform(ptEnd)
                 pts = [ptStart]
+                if ptStart == ptEnd: # We cannot have a line that begins and ends at the same point
+                    numBad += 1
+                    continue
+                    
                 if lineType == 0: # Geodesic
                     l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                     if l.s13 > maxseglen:
@@ -258,6 +262,8 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                             s = seglen * i
                             g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                             pts.append( QgsPointXY(g['lon2'], g['lat2']) )
+                    else: # The line segment is too short so it is from ptStart to ptEnd
+                        pts.append(ptEnd)
                 elif lineType == 1: # Great circle
                     pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
@@ -301,11 +307,12 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 numBad += 1
                 '''s = traceback.format_exc()
                 feedback.pushInfo(s)'''
-                
-            feedback.setProgress(int(cnt * total))
+            
+            if cnt % 100 == 0: # Set the progress after every 100 entries
+                feedback.setProgress(int(cnt * total))
             
         if numBad > 0:
-            feedback.pushInfo(tr("{} out of {} features from input layer failed to process correctly.".format(numBad, featureCount)))
+            feedback.pushInfo(tr("{} out of {} features from the input layer were invalid and were ignored.".format(numBad, featureCount)))
         
             
         return {self.PrmOutputLineLayer: lineDest_id, self.PrmOutputPointLayer: ptDest_id}
