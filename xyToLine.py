@@ -117,6 +117,8 @@ class XYToLineWidget(QDialog, FORM_CLASS):
                             s = seglen * i
                             g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                             pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                    else: # The line segment is too short so it is from ptStart to ptEnd
+                        pts.append(ptEnd)
                 elif lineType == 1: # Great Circle
                     pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
