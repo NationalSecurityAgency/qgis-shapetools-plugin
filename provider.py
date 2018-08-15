@@ -8,6 +8,8 @@ from .createLob import CreateLobAlgorithm
 from .createPolygon import CreatePolygonAlgorithm
 from .idlbreakline import IdlBreakLineAlgorithm
 from .createPie import CreatePieAlgorithm
+from .createArc import CreateArcAlgorithm
+from .createStar import CreateStarAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -21,7 +23,9 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
         self.addAlgorithm(CreatePieAlgorithm())
+        self.addAlgorithm(CreateArcAlgorithm())
         self.addAlgorithm(CreatePolygonAlgorithm())
+        self.addAlgorithm(CreateStarAlgorithm())
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')

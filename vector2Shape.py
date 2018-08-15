@@ -11,6 +11,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSettings, QCoreApplication
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
+import processing
 #import traceback
 
 from .LatLon import LatLon
