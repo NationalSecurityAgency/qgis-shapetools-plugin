@@ -10,6 +10,7 @@ from .idlbreakline import IdlBreakLineAlgorithm
 from .createPie import CreatePieAlgorithm
 from .createArc import CreateArcAlgorithm
 from .createStar import CreateStarAlgorithm
+from .createRose import CreateRoseAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -26,6 +27,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateArcAlgorithm())
         self.addAlgorithm(CreatePolygonAlgorithm())
         self.addAlgorithm(CreateStarAlgorithm())
+        self.addAlgorithm(CreateRoseAlgorithm())
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
