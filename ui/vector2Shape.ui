@@ -878,7 +878,7 @@
        <string/>
       </attribute>
       <attribute name="toolTip">
-       <string>Hypocyloid</string>
+       <string>Hypocycloid</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_7">
        <item row="0" column="0">

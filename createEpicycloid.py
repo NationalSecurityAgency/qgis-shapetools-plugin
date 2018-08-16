@@ -23,18 +23,19 @@ from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
 SHAPE_TYPE=[tr("Polygon"),tr("Line")]
 
-class CreateRoseAlgorithm(QgsProcessingAlgorithm):
+class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
     """
-    Algorithm to create a donut shape.
+    Algorithm to create a epicycloid shape.
     """
 
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
-    PrmPetals = 'Petals'
+    PrmLobes = 'Lobes'
     PrmRadius = 'Radius'
     PrmStartingAngle = 'StartingAngle'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
+    PrmDrawingSegments = 'DrawingSegments'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -53,10 +54,10 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.PrmPetals,
-                tr('Number of petals'),
+                self.PrmLobes,
+                tr('Number of lobes'),
                 QgsProcessingParameterNumber.Integer,
-                defaultValue=8,
+                defaultValue=5,
                 minValue=1,
                 optional=True)
             )
@@ -86,6 +87,15 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
                 optional=False)
         )
         self.addParameter(
+            QgsProcessingParameterNumber(
+                self.PrmDrawingSegments,
+                tr('Number of drawing segments'),
+                QgsProcessingParameterNumber.Integer,
+                defaultValue=720,
+                minValue=4,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
@@ -96,11 +106,13 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
         radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
         startAngle = self.parameterAsDouble(parameters, self.PrmStartingAngle, context)
-        k = self.parameterAsInt(parameters, self.PrmPetals, context)
+        lobes = self.parameterAsInt(parameters, self.PrmLobes, context)
+        segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         
         measureFactor = conversionToMeters(units)
         radius *= measureFactor
+        r = radius / (lobes + 2.0)
 
         srcCRS = source.sourceCrs()
         if shapetype == 0:
@@ -116,23 +128,12 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
             geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
             toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
         
-        dist=[]
-        if k == 1:
-            dist.append(0.0)
-        step = 1
-        angle = -90.0 + step
-        while angle < 90.0:
-            a = math.radians(angle)
-            r = math.cos(a)
-            dist.append(r)
-            angle += step
-        cnt = len(dist)
-        
         featureCount = source.featureCount()
         total = 100.0 / featureCount if featureCount else 0
         
+        step = 360.0 / segments
         iterator = source.getFeatures()
-        for item, feature in enumerate(iterator):
+        for index, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
             pts = []
@@ -140,21 +141,17 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
             # make sure the coordinates are in EPSG:4326
             if srcCRS != epsg4326:
                 pt = geomTo4326.transform(pt.x(), pt.y())
-            arange = 360.0 / k
-            angle = -arange / 2.0
-            astep = arange / cnt
-            for i in range(k):
-                aoffset = arange * (k - 1)
-                index = 0
-                while index < cnt:
-                    r = dist[index] * radius
-                    g = geod.Direct(pt.y(), pt.x(), angle + aoffset+startAngle, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    angle += astep
-                    index+=1
-            # repeat the very first point to close the polygon
-            pts.append(pts[0])
-            
+            angle = 0.0
+            while angle <= 360.0:
+                a = math.radians(angle)
+                x = r * (lobes + 1.0)*math.cos(a) - r * math.cos((lobes + 1.0) * a)
+                y = r * (lobes + 1.0)*math.sin(a) - r * math.sin((lobes + 1.0) * a)
+                a2 = math.degrees(math.atan2(y,x))+startAngle
+                dist = math.sqrt(x*x + y*y)
+                g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                pts.append(QgsPointXY(g['lon2'], g['lat2']))
+                angle += step
+                
             # If the Output crs is not 4326 transform the points to the proper crs
             if srcCRS != epsg4326:
                 for x, ptout in enumerate(pts):
@@ -166,21 +163,22 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
             else:
                 f.setGeometry(QgsGeometry.fromPolylineXY(pts))
             f.setAttributes(feature.attributes())
+            f.setAttributes(feature.attributes())
             sink.addFeature(f)
             
-            if item % 100 == 0:
-                feedback.setProgress(int(item * total))
+            if index % 100 == 0:
+                feedback.setProgress(int(index * total))
             
         return {self.PrmOutputLayer: dest_id}
         
     def name(self):
-        return 'createrose'
+        return 'createepicycloid'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/rose.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__),'images/epicycloid.png'))
     
     def displayName(self):
-        return tr('Create ellipse rose')
+        return tr('Create epicycloid')
     
     def group(self):
         return tr('Geodesic vector creation')
@@ -195,5 +193,5 @@ class CreateRoseAlgorithm(QgsProcessingAlgorithm):
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
         
     def createInstance(self):
-        return CreateRoseAlgorithm()
+        return CreateEpicycloidAlgorithm()
 

@@ -736,7 +736,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 index = 0
                 while index < cnt:
                     r = dist[index] * radius
-                    g = geod.Direct(pt.y(), pt.x(), angle + aoffset, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(pt.y(), pt.x(), angle + aoffset + startAngle, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
                     angle += astep
                     index+=1

@@ -11,6 +11,10 @@ from .createPie import CreatePieAlgorithm
 from .createArc import CreateArcAlgorithm
 from .createStar import CreateStarAlgorithm
 from .createRose import CreateRoseAlgorithm
+from .createHypocycloid import CreateHypocycloidAlgorithm
+from .createEpicycloid import CreateEpicycloidAlgorithm
+from .createPolyfoil import CreatePolyfoilAlgorithm
+from .createHeart import CreateHeartAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -28,6 +32,10 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreatePolygonAlgorithm())
         self.addAlgorithm(CreateStarAlgorithm())
         self.addAlgorithm(CreateRoseAlgorithm())
+        self.addAlgorithm(CreateEpicycloidAlgorithm())
+        self.addAlgorithm(CreateHypocycloidAlgorithm())
+        self.addAlgorithm(CreatePolyfoilAlgorithm())
+        self.addAlgorithm(CreateHeartAlgorithm())
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
