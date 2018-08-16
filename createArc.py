@@ -18,8 +18,8 @@ from qgis.core import (QgsProcessing,
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl
 
-from .settings import epsg4326
-from .utils import geod, tr, conversionToMeters, DISTANCE_LABELS
+from .settings import epsg4326, geod
+from .utils import tr, conversionToMeters, DISTANCE_LABELS
 SHAPE_TYPE=[tr("Polygon"),tr("Line")]
 
 class CreateArcAlgorithm(QgsProcessingAlgorithm):

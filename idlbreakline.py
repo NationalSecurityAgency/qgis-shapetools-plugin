@@ -14,7 +14,7 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from .settings import epsg4326
-from .utils import checkIdlCrossings, normalizeLongitude, tr, geod
+from .utils import checkIdlCrossings, normalizeLongitude, tr
 import traceback
 
 class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):

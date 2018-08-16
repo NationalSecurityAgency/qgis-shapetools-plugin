@@ -17,12 +17,8 @@ from qgis.core import (QgsProcessing,
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl, QCoreApplication
 
-from .settings import settings, epsg4326
-    
-geod = Geodesic.WGS84
-
-def tr(string):
-    return QCoreApplication.translate('Processing', string)
+from .settings import settings, epsg4326, geod
+from .utils import tr
 
 class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
     """

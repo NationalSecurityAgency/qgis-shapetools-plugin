@@ -1,9 +1,8 @@
 import math
 from qgis.core import QgsUnitTypes, QgsPointXY
 from qgis.PyQt.QtCore import QCoreApplication
-from geographiclib.geodesic import Geodesic
 
-geod = Geodesic.WGS84
+from .settings import geod
 
 def tr(string):
     return QCoreApplication.translate('Processing', string)

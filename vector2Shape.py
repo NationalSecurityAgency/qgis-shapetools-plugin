@@ -15,7 +15,7 @@ import processing
 #import traceback
 
 from .LatLon import LatLon
-from .settings import settings, epsg4326
+from .settings import settings, epsg4326, geod
 from .utils import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -45,7 +45,6 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.pieAzimuthModeComboBox.addItems([tr('Use beginning end ending azimuths'),
             tr('Use center azimuth and width')])
         self.pieAzimuthModeComboBox.activated.connect(self.pieAzimuthModeChange)
-        self.geod = Geodesic.WGS84
         icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
         self.tabWidget.setTabIcon(0, icon)
         icon = QIcon(os.path.dirname(__file__) + '/images/line.png')
@@ -408,7 +407,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
                 pts = [pt]
-                l = self.geod.Line(pt.y(), pt.x(), bearing)
+                l = geod.Line(pt.y(), pt.x(), bearing)
                 n = int(math.ceil(distance / maxseglen))
                 if n > maxSegments:
                     n = maxSegments
@@ -486,11 +485,11 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     # 360 from it.
                     sangle -= 360.0
                 while sangle < eangle:
-                    g = self.geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
                     sangle += arcPtSpacing # add this number of degrees to the angle
                     
-                g = self.geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 pts.append(pt)
                     
@@ -552,9 +551,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     else:
                         oRadius = float(feature[outerCol]) * measureFactor
                     if iRadius != 0:
-                        g = self.geod.Direct(lat, lon, angle, iRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        g = geod.Direct(lat, lon, angle, iRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                         ptsi.append(QgsPointXY(g['lon2'], g['lat2']))
-                    g = self.geod.Direct(lat, lon, angle, oRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(lat, lon, angle, oRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     ptso.append(QgsPointXY(g['lon2'], g['lat2']))
                     angle += ptSpacing
                 if iRadius != 0:
@@ -627,7 +626,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 while i >= 0:
                     a = (i * 360.0 / s)+startangle
                     i -= 1
-                    g = self.geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
                     
                 # If the Output crs is not 4326 transform the points to the proper crs
@@ -676,9 +675,9 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             while i >= 0:
                 i -= 1
                 angle = (i * 360.0 / numPoints) + startAngle
-                g = self.geod.Direct(pt.y(), pt.x(), angle, outerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), angle, outerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                g = self.geod.Direct(pt.y(), pt.x(), angle-half, innerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), angle-half, innerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 
             # If the Output crs is not 4326 transform the points to the proper crs
@@ -737,7 +736,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 index = 0
                 while index < cnt:
                     r = dist[index] * radius
-                    g = self.geod.Direct(pt.y(), pt.x(), angle + aoffset, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(pt.y(), pt.x(), angle + aoffset, r, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
                     angle += astep
                     index+=1
@@ -789,7 +788,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 y = r * (cusps - 1.0)*math.sin(a) - r * math.sin((cusps - 1.0) * a)
                 a2 = math.degrees(math.atan2(y,x))+startAngle
                 dist = math.sqrt(x*x + y*y)
-                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
                 
@@ -838,7 +837,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 y = r * (lobes + 1.0)*math.sin(a) - r * math.sin((lobes + 1.0) * a)
                 a2 = math.degrees(math.atan2(y,x))+startAngle
                 dist = math.sqrt(x*x + y*y)
-                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
                 
@@ -886,7 +885,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 x = r * (lobes - 1.0)*math.cos(a) + r * math.cos((lobes - 1.0) * a)
                 y = r * (lobes - 1.0)*math.sin(a) - r * math.sin((lobes - 1.0) * a)
                 dist = math.sqrt(x*x + y*y)
-                g = self.geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
                 
@@ -939,7 +938,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 y = 13 * math.cos(a) - 5 * math.cos(2*a) - 2 * math.cos(3 * a)- math.cos(4*a)
                 dist = math.sqrt(x*x + y*y) * size / 17.0
                 a2 = math.degrees(math.atan2(y,x))+startAngle
-                g = self.geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += 0.5
                 

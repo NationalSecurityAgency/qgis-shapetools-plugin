@@ -20,8 +20,8 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from .LatLon import LatLon
-from .settings import settings, epsg4326
-from .utils import checkIdlCrossings, tr, geod
+from .settings import settings, epsg4326, geod
+from .utils import checkIdlCrossings, tr
 #import traceback
 
 class XYToLineAlgorithm(QgsProcessingAlgorithm):

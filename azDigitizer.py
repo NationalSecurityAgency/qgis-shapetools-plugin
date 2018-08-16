@@ -8,7 +8,7 @@ from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, Qgs
 from qgis.gui import QgsMapToolEmitPoint
 
 from geographiclib.geodesic import Geodesic
-from .settings import epsg4326
+from .settings import epsg4326, geod
 #import traceback
 
 def tr(string):
@@ -65,7 +65,6 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.unitsComboBox.addItems([tr("Kilometers"),tr("Meters"),tr("Nautical Miles"),tr("Miles"),tr("Yards"), tr("Feet")])
-        self.geod = Geodesic.WGS84
         
     def setPoint(self, pt):
         self.pt = pt
@@ -102,7 +101,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         destCRS = layer.crs()
         transform = QgsCoordinateTransform(epsg4326, destCRS, QgsProject.instance())
         if layer.wkbType() == QgsWkbTypes.Point:
-            g = self.geod.Direct(pt.y(), pt.x(), azimuth, distance, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+            g = geod.Direct(pt.y(), pt.x(), azimuth, distance, Geodesic.LATITUDE | Geodesic.LONGITUDE)
             if start:
                 ptStart = transform.transform(self.pt.x(),self.pt.y())
                 feat = QgsFeature(layer.fields())
@@ -115,7 +114,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         else: # It will either be a LineString or MultiLineString
             maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
             maxSegments = settings.maxSegments
-            l = self.geod.Line(pt.y(), pt.x(), azimuth)
+            l = geod.Line(pt.y(), pt.x(), azimuth)
             n = int(math.ceil(distance / maxseglen))
             if n > maxSegments:
                 n = maxSegments

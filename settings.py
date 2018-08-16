@@ -1,4 +1,5 @@
 import os
+from geographiclib.geodesic import Geodesic
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSettings, QCoreApplication
@@ -8,6 +9,7 @@ from qgis.PyQt.QtGui import QColor
 from qgis.core import QgsCoordinateReferenceSystem
 
 epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
+geod = Geodesic.WGS84
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/settings.ui'))

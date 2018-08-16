@@ -12,10 +12,8 @@ from qgis.core import (QgsCoordinateTransform,
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.PyQt import uic
 
-from .settings import epsg4326, settings
-
-def tr(string):
-    return QCoreApplication.translate('Processing', string)
+from .settings import epsg4326, settings, geod
+from .utils import tr
 
 class GeodesicMeasureTool(QgsMapTool):
     
@@ -97,7 +95,6 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
         self.capturedPoints = []
         self.distances = []
-        self.geod = Geodesic.WGS84
         self.activeMeasuring = True
         self.unitsChanged()
         self.currentDistance = 0.0
@@ -182,7 +179,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.tempRb.setToGeometry(QgsGeometry.fromPolylineXY( linePts ), None)
         
     def calcParameters(self, pt1, pt2):
-        l = self.geod.Inverse(pt1.y(), pt1.x(), pt2.y(), pt2.x())
+        l = geod.Inverse(pt1.y(), pt1.x(), pt2.y(), pt2.x())
         az2 = (l['azi2'] + 180) %360.0
         if az2 > 180:
             az2 = az2 - 360.0
@@ -204,7 +201,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         pt2c = transform.transform(pt2.x(), pt2.y())
         if distance < 10000:
             return [pt1c, pt2c]
-        l = self.geod.InverseLine(pt1.y(), pt1.x(), pt2.y(), pt2.x())
+        l = geod.InverseLine(pt1.y(), pt1.x(), pt2.y(), pt2.x())
         n = int(math.ceil(distance / 10000.0))
         if n > 20:
             n = 20
