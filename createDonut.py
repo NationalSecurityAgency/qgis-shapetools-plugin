@@ -146,6 +146,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / featureCount if featureCount else 0
         
         iterator = source.getFeatures()
+        numbad = 0
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
@@ -200,9 +201,12 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 f.setAttributes(feature.attributes())
                 sink.addFeature(f)
             except:
-                pass
+                numbad += 1
                 
             feedback.setProgress(int(cnt * total))
+            
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         

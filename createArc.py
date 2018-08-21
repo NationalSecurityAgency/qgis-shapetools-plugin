@@ -197,6 +197,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / featureCount if featureCount else 0
         
         iterator = source.getFeatures()
+        numbad = 0
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
@@ -270,9 +271,12 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 f.setAttributes(feature.attributes())
                 sink.addFeature(f)
             except:
-                pass
+                numbad += 1
                 
             feedback.setProgress(int(cnt * total))
+            
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         
@@ -283,7 +287,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.join(os.path.dirname(__file__),'images/arc.png'))
     
     def displayName(self):
-        return tr('Create arc')
+        return tr('Create arc wedge')
     
     def group(self):
         return tr('Geodesic vector creation')

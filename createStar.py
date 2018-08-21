@@ -20,7 +20,7 @@ from qgis.PyQt.QtCore import QUrl
 
 from .settings import epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
-import traceback
+#import traceback
 
 SHAPE_TYPE=[tr("Polygon"),tr("Line")]
 
@@ -178,6 +178,7 @@ class CreateStarAlgorithm(QgsProcessingAlgorithm):
         
         half = (360.0 / numPoints) / 2.0
 
+        numbad = 0
         iterator = source.getFeatures()
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
@@ -230,11 +231,15 @@ class CreateStarAlgorithm(QgsProcessingAlgorithm):
                 f.setAttributes(feature.attributes())
                 sink.addFeature(f)
             except:
-                s = traceback.format_exc()
-                feedback.pushInfo(s)
-                pass
+                '''s = traceback.format_exc()
+                feedback.pushInfo(s)'''
+                numbad += 1
                 
-            feedback.setProgress(int(cnt * total))
+            if index % 100 == 0:
+                feedback.setProgress(int(index * total))
+        
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         

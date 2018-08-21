@@ -117,7 +117,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / featureCount if featureCount else 0
         
         num_features = 0
-        num_good = 0
+        numbad = 0
         iterator = source.getFeatures()
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
@@ -155,14 +155,14 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 f  = QgsFeature()
                 f.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 f.setAttributes(feature.attributes())
-                num_good += 1
                 sink.addFeature(f)
             except:
-                pass
+                numbad += 1
                 
             feedback.setProgress(int(cnt * total))
             
-        feedback.pushInfo("{} lines of bearing created from {} records".format(num_good, num_features))
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         
