@@ -31,6 +31,9 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
+    PrmCuspsField = 'CuspsField'
+    PrmStartingAngleField = 'StartingAngleField'
+    PrmRadiusField = 'RadiusField'
     PrmCusps = 'Cusps'
     PrmRadius = 'Radius'
     PrmStartingAngle = 'StartingAngle'
@@ -51,6 +54,33 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
                 options=SHAPE_TYPE,
                 defaultValue=0,
                 optional=False)
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmCuspsField,
+                tr('Number of cusps field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmStartingAngleField,
+                tr('Starting angle field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmRadiusField,
+                tr('Radius field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -104,6 +134,9 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
+        cuspscol = self.parameterAsString(parameters, self.PrmCuspsField, context)
+        startanglecol = self.parameterAsString(parameters, self.PrmStartingAngleField, context)
+        radiuscol = self.parameterAsString(parameters, self.PrmRadiusField, context)
         radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
         startAngle = self.parameterAsDouble(parameters, self.PrmStartingAngle, context)
         cusps = self.parameterAsInt(parameters, self.PrmCusps, context)
@@ -112,7 +145,6 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
         
         measureFactor = conversionToMeters(units)
         radius *= measureFactor
-        r = radius / cusps
 
         srcCRS = source.sourceCrs()
         if shapetype == 0:
@@ -132,10 +164,28 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / featureCount if featureCount else 0
         
         step = 360.0 / segments
+        numbad = 0
         iterator = source.getFeatures()
         for index, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
+            try:
+                if startanglecol:
+                    sangle = float(feature[startanglecol])
+                else:
+                    sangle = startAngle
+                if cuspscol:
+                    cusps2 = int(feature[cuspscol])
+                else:
+                    cusps2 = cusps
+                if radiuscol:
+                    radius2 = float(feature[radiuscol]) * measureFactor
+                else:
+                    radius2 = radius
+                r = radius2 / cusps2
+            except:
+                numbad += 1
+                continue
             pts = []
             pt = feature.geometry().asPoint()
             # make sure the coordinates are in EPSG:4326
@@ -144,9 +194,9 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
             angle = 0.0
             while angle <= 360.0:
                 a = math.radians(angle)
-                x = r * (cusps - 1.0)*math.cos(a) + r * math.cos((cusps - 1.0) * a)
-                y = r * (cusps - 1.0)*math.sin(a) - r * math.sin((cusps - 1.0) * a)
-                a2 = math.degrees(math.atan2(y,x))+startAngle
+                x = r * (cusps2 - 1.0)*math.cos(a) + r * math.cos((cusps2 - 1.0) * a)
+                y = r * (cusps2 - 1.0)*math.sin(a) - r * math.sin((cusps2 - 1.0) * a)
+                a2 = math.degrees(math.atan2(y,x))+sangle
                 dist = math.sqrt(x*x + y*y)
                 g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
@@ -167,6 +217,9 @@ class CreateHypocycloidAlgorithm(QgsProcessingAlgorithm):
             
             if index % 100 == 0:
                 feedback.setProgress(int(index * total))
+                
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         

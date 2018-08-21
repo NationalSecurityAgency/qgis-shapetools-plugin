@@ -31,6 +31,9 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
+    PrmLobesField = 'LobesField'
+    PrmStartingAngleField = 'StartingAngleField'
+    PrmRadiusField = 'RadiusField'
     PrmLobes = 'Lobes'
     PrmRadius = 'Radius'
     PrmStartingAngle = 'StartingAngle'
@@ -51,6 +54,33 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 options=SHAPE_TYPE,
                 defaultValue=0,
                 optional=False)
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmLobesField,
+                tr('Number of lobes field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmStartingAngleField,
+                tr('Starting angle field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmRadiusField,
+                tr('Radius field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -104,6 +134,9 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
+        lobescol = self.parameterAsString(parameters, self.PrmLobesField, context)
+        startanglecol = self.parameterAsString(parameters, self.PrmStartingAngleField, context)
+        radiuscol = self.parameterAsString(parameters, self.PrmRadiusField, context)
         radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
         startAngle = self.parameterAsDouble(parameters, self.PrmStartingAngle, context)
         lobes = self.parameterAsInt(parameters, self.PrmLobes, context)
@@ -132,10 +165,28 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / featureCount if featureCount else 0
         
         step = 360.0 / segments
+        numbad = 0
         iterator = source.getFeatures()
         for index, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
+            try:
+                if startanglecol:
+                    sangle = float(feature[startanglecol])
+                else:
+                    sangle = startAngle
+                if lobescol:
+                    lobes2 = int(feature[lobescol])
+                else:
+                    lobes2 = lobes
+                if radiuscol:
+                    radius2 = float(feature[radiuscol]) * measureFactor
+                else:
+                    radius2 = radius
+                r = radius2 / lobes2
+            except:
+                numbad += 1
+                continue
             pts = []
             pt = feature.geometry().asPoint()
             # make sure the coordinates are in EPSG:4326
@@ -143,9 +194,9 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 pt = geomTo4326.transform(pt.x(), pt.y())
             angle = 0.0
             while angle <= 360.0:
-                a = math.radians(angle-startAngle)
-                x = r * (lobes - 1.0)*math.cos(a) + r * math.cos((lobes - 1.0) * a)
-                y = r * (lobes - 1.0)*math.sin(a) - r * math.sin((lobes - 1.0) * a)
+                a = math.radians(angle-sangle)
+                x = r * (lobes2 - 1.0)*math.cos(a) + r * math.cos((lobes2 - 1.0) * a)
+                y = r * (lobes2 - 1.0)*math.sin(a) - r * math.sin((lobes2 - 1.0) * a)
                 dist = math.sqrt(x*x + y*y)
                 g = geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))

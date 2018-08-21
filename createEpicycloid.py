@@ -31,6 +31,9 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
+    PrmLobesField = 'LobesField'
+    PrmStartingAngleField = 'StartingAngleField'
+    PrmRadiusField = 'RadiusField'
     PrmLobes = 'Lobes'
     PrmRadius = 'Radius'
     PrmStartingAngle = 'StartingAngle'
@@ -51,6 +54,33 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 options=SHAPE_TYPE,
                 defaultValue=0,
                 optional=False)
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmLobesField,
+                tr('Number of lobes field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmStartingAngleField,
+                tr('Starting angle field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PrmRadiusField,
+                tr('Radius field'),
+                parentLayerParameterName=self.PrmInputLayer,
+                type=QgsProcessingParameterField.Any,
+                optional=True
+            )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -104,6 +134,9 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
+        lobescol = self.parameterAsString(parameters, self.PrmLobesField, context)
+        startanglecol = self.parameterAsString(parameters, self.PrmStartingAngleField, context)
+        radiuscol = self.parameterAsString(parameters, self.PrmRadiusField, context)
         radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
         startAngle = self.parameterAsDouble(parameters, self.PrmStartingAngle, context)
         lobes = self.parameterAsInt(parameters, self.PrmLobes, context)
@@ -112,7 +145,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
         
         measureFactor = conversionToMeters(units)
         radius *= measureFactor
-        r = radius / (lobes + 2.0)
+        r2 = radius / (lobes + 2.0)
 
         srcCRS = source.sourceCrs()
         if shapetype == 0:
@@ -133,9 +166,30 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
         
         step = 360.0 / segments
         iterator = source.getFeatures()
+        numbad = 0
         for index, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
+            try:
+                if startanglecol:
+                    sangle = float(feature[startanglecol])
+                else:
+                    sangle = startAngle
+                if lobescol:
+                    lobes2 = int(feature[lobescol])
+                else:
+                    lobes2 = lobes
+                if radiuscol:
+                    radius2 = float(feature[radiuscol]) * measureFactor
+                else:
+                    radius2 = radius
+                if lobescol or radiuscol:
+                    r = radius2 / (lobes2 + 2.0)
+                else:
+                    r = r2
+            except:
+                numbad += 1
+                continue
             pts = []
             pt = feature.geometry().asPoint()
             # make sure the coordinates are in EPSG:4326
@@ -144,9 +198,9 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
             angle = 0.0
             while angle <= 360.0:
                 a = math.radians(angle)
-                x = r * (lobes + 1.0)*math.cos(a) - r * math.cos((lobes + 1.0) * a)
-                y = r * (lobes + 1.0)*math.sin(a) - r * math.sin((lobes + 1.0) * a)
-                a2 = math.degrees(math.atan2(y,x))+startAngle
+                x = r * (lobes2 + 1.0)*math.cos(a) - r * math.cos((lobes2 + 1.0) * a)
+                y = r * (lobes2 + 1.0)*math.sin(a) - r * math.sin((lobes2 + 1.0) * a)
+                a2 = math.degrees(math.atan2(y,x))+sangle
                 dist = math.sqrt(x*x + y*y)
                 g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
@@ -168,6 +222,9 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
             
             if index % 100 == 0:
                 feedback.setProgress(int(index * total))
+        
+        if numbad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
             
         return {self.PrmOutputLayer: dest_id}
         
