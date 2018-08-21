@@ -26,6 +26,7 @@ class GeodesicMeasureTool(QgsMapTool):
     def activate(self):
         '''When activated set the cursor to a crosshair.'''
         self.canvas.setCursor(Qt.CrossCursor)
+        self.measureDialog.initGeodLabel()
         self.measureDialog.show()
         
     def closeDialog(self):
@@ -36,6 +37,7 @@ class GeodesicMeasureTool(QgsMapTool):
     def canvasPressEvent(self, event):
         '''Capture the coordinates when the user click on the mouse for measurements.'''
         if not self.measureDialog.isVisible():
+            self.measureDialog.initGeodLabel()
             self.measureDialog.show()
             self.measureDialog.updateRBColor()
             return
@@ -126,7 +128,12 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
     def newDialog(self):
         self.clear()
-        
+        self.initGeodLabel()
+    
+    def initGeodLabel(self):
+        label = tr('Ellipsoid: ') + settings.ellipseDescription
+        self.geodLabel.setText(label)
+
     def unitsChanged(self):
         label = "Distance [{}]".format(UNITS[self.unitsComboBox.currentIndex()])
         item = QTableWidgetItem(label)

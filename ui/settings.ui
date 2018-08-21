@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>340</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,13 +106,46 @@
         <item row="0" column="1">
          <widget class="QgsColorButton" name="rubberBandColor">
           <property name="color">
-           <color alpha="255">
+           <color>
             <red>222</red>
             <green>167</green>
             <blue>67</blue>
            </color>
           </property>
          </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Ellipsoid Used for Measurements</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Ellipsoid group</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="ellipsoidComboBox"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>System Ellipsoids</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="systemEllipsoidComboBox"/>
         </item>
        </layout>
       </item>
@@ -148,7 +181,7 @@
   <customwidget>
    <class>QgsColorButton</class>
    <extends>QPushButton</extends>
-   <header>qgis.gui</header>
+   <header>qgscolorbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
