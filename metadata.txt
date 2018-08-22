@@ -1,11 +1,11 @@
 [general]
 name=Shape Tools
 qgisMinimumVersion=3.0.0
-description=Shape Tools features geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measure tool, and digitize points at an azimuth & distance.
-version=3.1.0
+description=Shape Tools features geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measure tool, and digitize points at an azimuth & distance.
+version=3.1.1
 author=C Hamilton
 email=adenaculture@gmail.com
-about=Shape Tools features geodesic shapes and tools. "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. "Geodesic Line Break" breaks lines at the international date line. "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer. "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance. Shape Tools is installed in the Vector menu.
+about=Shape Tools features geodesic shapes and tools. "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. "Geodesic Line Break" breaks lines at the International Date Line. "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer. "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance. Shape Tools is installed in the Vector menu.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 tags=ellipse,line of bearing,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,measure,measurements,azimuth,distance,digitize,line split,international date line
@@ -15,6 +15,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    3.1.1 - Added arc wedge shape and now support more ellipsoids for measurements.
     3.1.0 - Added geodesic line break, and added some shape creation to processing.
     3.0.10 - Bug fix
     3.0.9 - Added break lines at date line for XY to Line.
