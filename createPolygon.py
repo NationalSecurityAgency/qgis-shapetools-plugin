@@ -197,8 +197,8 @@ class CreatePolygonAlgorithm(QgsProcessingAlgorithm):
             except:
                 numbad += 1
                 
-            if index % 100 == 0:
-                feedback.setProgress(int(index * total))
+            if cnt % 100 == 0:
+                feedback.setProgress(int(cnt * total))
             
         if numbad > 0:
             feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
