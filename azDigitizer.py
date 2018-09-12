@@ -9,10 +9,7 @@ from qgis.gui import QgsMapToolEmitPoint
 
 from geographiclib.geodesic import Geodesic
 from .settings import epsg4326, geod
-#import traceback
-
-def tr(string):
-    return QCoreApplication.translate('Processing', string)
+from .utils import conversionToMeters, DISTANCE_LABELS, tr
 
 from .settings import settings, epsg4326
 
@@ -64,7 +61,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.unitsComboBox.addItems([tr("Kilometers"),tr("Meters"),tr("Nautical Miles"),tr("Miles"),tr("Yards"), tr("Feet")])
+        self.unitsComboBox.addItems(DISTANCE_LABELS)
         
     def setPoint(self, pt):
         self.pt = pt
@@ -82,19 +79,8 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         if layer == None:
             self.iface.messageBar().pushMessage("", tr("No point or line layer selected"), level=Qgis.Warning, duration=4)
             return
-            
-        if units == 0: # Kilometers
-            measureFactor = 1000.0
-        elif units == 1: # Meters
-            measureFactor = 1.0
-        elif units == 2: # Nautical Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceNauticalMiles, QgsUnitTypes.DistanceMeters)
-        elif units == 3: # Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceMeters)
-        elif units == 4: # Yards
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceYards, QgsUnitTypes.DistanceMeters)
-        elif units == 5: # Feet
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceMeters)
+        
+        measureFactor = conversionToMeters(units)
 
         distance = distance * measureFactor
         pt = self.pt
