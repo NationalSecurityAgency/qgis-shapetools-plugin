@@ -2,6 +2,7 @@ import os
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 from .geodesicDensify import GeodesicDensifyAlgorithm
+from .geodesicLayerMeasure import GeodesicLayerMeasureAlgorithm
 from .xyToLine import XYToLineAlgorithm
 from .createDonut import CreateDonutAlgorithm
 from .createLob import CreateLobAlgorithm
@@ -24,6 +25,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
     def loadAlgorithms(self):
         self.addAlgorithm(GeodesicDensifyAlgorithm())
         self.addAlgorithm(IdlBreakLineAlgorithm())
+        self.addAlgorithm(GeodesicLayerMeasureAlgorithm())
         self.addAlgorithm(XYToLineAlgorithm())
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
