@@ -262,13 +262,13 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
             lcitem = item.lower()
             if lcitem.startswith('orient'):
                 orientcol = x
-            elif bool(re.match('semi.*maj', lcitem)):
+            elif bool(re.match(r'semi.*maj', lcitem)):
                 semimajorcol = x
-            elif bool(re.match('semi.*min', lcitem)):
+            elif bool(re.match(r'semi.*min', lcitem)):
                 semiminorcol = x
-            elif bool(re.search('bearing', lcitem)):
+            elif bool(re.search(r'bearing', lcitem)):
                 bearingcol = x
-            elif bool(re.match('dist', lcitem)):
+            elif bool(re.match(r'dist', lcitem)):
                 distancecol = x
                 
         if orientcol != -1:
