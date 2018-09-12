@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>432</height>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -110,6 +110,42 @@
             <red>222</red>
             <green>167</green>
             <blue>67</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Measurement layer color</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QgsColorButton" name="measureLineColor">
+          <property name="color">
+           <color>
+            <red>0</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Measurement text color</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QgsColorButton" name="measureTextColor">
+          <property name="color">
+           <color>
+            <red>0</red>
+            <green>255</green>
+            <blue>255</blue>
            </color>
           </property>
          </widget>

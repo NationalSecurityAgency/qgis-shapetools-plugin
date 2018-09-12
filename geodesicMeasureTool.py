@@ -261,9 +261,16 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         label = QgsPalLayerSettings()
         label.fieldName = 'label'
         label.placement = QgsPalLayerSettings.AboveLine
+        format = label.format()
+        format.setColor(settings.measureTextColor)
+        format.setNamedStyle('Bold')
+        label.setFormat(format)
         labeling = QgsVectorLayerSimpleLabeling(label)
         layer.setLabeling(labeling)
         layer.setLabelsEnabled(True)
+        renderer = layer.renderer()
+        renderer.symbol().setColor(settings.measureLineColor)
+        renderer.symbol().setWidth(0.5)
         
         layer.updateExtents()
         QgsProject.instance().addMapLayer(layer)

@@ -59,7 +59,6 @@ class Settings():
 
     def __init__(self):
         self.readSettings()
-        self.rubberBandColor = QColor(222, 167, 67, 150)
 
     def readSettings(self):
         '''Load the user selected settings. The settings are retained even when
@@ -71,6 +70,12 @@ class Settings():
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
         acronym = qset.value('ShapeTools/Ellipsoid', 'WGS84')
         self.ellipsoidMode = int(qset.value('ShapeTools/EllipsoidMode', 0))
+        color = qset.value('ShapeTools/RubberBandColor', '#dea743')
+        self.rubberBandColor = QColor(color)
+        color = qset.value('ShapeTools/MeasureLineColor', '#00ffff')
+        self.measureLineColor = QColor(color)
+        color = qset.value('ShapeTools/MeasureTextColor', '#00ffff')
+        self.measureTextColor = QColor(color)
         self.setEllipsoid(acronym)
         
     def setEllipsoid(self, acronym):
@@ -103,7 +108,6 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.ellipsoidComboBox.addItems(['WGS84', tr('System Ellipsoids')])
         self.ellipsoidComboBox.activated.connect(self.initEllipsoid)
         self.rubberBandColor.setAllowOpacity(True)
-        self.rubberBandColor.setColor(settings.rubberBandColor)
         settings.readSettings()
         self.initEllipsoid()
         
@@ -136,7 +140,12 @@ class SettingsWidget(QDialog, FORM_CLASS):
             name = self.systemEllipsoidComboBox.itemData(index)
         qset.setValue('/ShapeTools/Ellipsoid', name)
         settings.readSettings()
-        settings.rubberBandColor = self.rubberBandColor.color()
+        settings.rubberBandColor  = self.rubberBandColor.color()
+        settings.measureLineColor = self.measureLineColor.color()
+        settings.measureTextColor = self.measureTextColor.color()
+        qset.setValue('/ShapeTools/RubberBandColor', settings.rubberBandColor.name())
+        qset.setValue('/ShapeTools/MeasureLineColor', settings.measureLineColor.name())
+        qset.setValue('/ShapeTools/MeasureTextColor', settings.measureTextColor.name())
         self.close()
         
     def showEvent(self, e):
@@ -148,6 +157,9 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.maxSegmentsSpinBox.setValue(settings.maxSegments)
         self.segLengthSpinBox.setValue(settings.maxSegLength)
         self.mtAzComboBox.setCurrentIndex(settings.mtAzMode)
+        self.rubberBandColor.setColor(settings.rubberBandColor)
+        self.measureLineColor.setColor(settings.measureLineColor)
+        self.measureTextColor.setColor(settings.measureTextColor)
         self.ellipsoidComboBox.blockSignals(True)
         self.ellipsoidComboBox.setCurrentIndex(settings.ellipsoidMode)
         self.ellipsoidComboBox.blockSignals(False)
