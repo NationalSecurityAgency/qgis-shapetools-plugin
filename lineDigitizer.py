@@ -72,6 +72,7 @@ class LineDigitizerWidget(QDialog, FORM_CLASS):
 
     def accept(self):
         closeline = self.closeLineCheckBox.isChecked()
+        declination = self.declinationSpinBox.value()
         try:
             valuestr = str(self.valuesTextEdit.toPlainText()).strip()
             values = re.split(r'[\s,;]+', valuestr)
@@ -102,7 +103,7 @@ class LineDigitizerWidget(QDialog, FORM_CLASS):
             feat.setGeometry(QgsGeometry.fromPointXY(ptStart))
             layer.addFeature(feat)
             for x in range(numpairs):
-                azimuth = values[x << 1]
+                azimuth = values[x << 1] + declination
                 distance = values[(x << 1)+1] * measureFactor
                 g = geod.Direct(pt.y(), pt.x(), azimuth, distance, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pt = QgsPoint(g['lon2'],g['lat2']) # Keep this in EPSG:4326
@@ -114,7 +115,7 @@ class LineDigitizerWidget(QDialog, FORM_CLASS):
             ptStart = transform.transform(self.pt.x(),self.pt.y())
             pts = [ptStart]
             for x in range(numpairs):
-                azimuth = values[x << 1]
+                azimuth = values[x << 1] + declination
                 distance = values[(x << 1)+1] * measureFactor
                 g = geod.Direct(pt.y(), pt.x(), azimuth, distance, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pt = QgsPoint(g['lon2'],g['lat2']) # Keep this in EPSG:4326
