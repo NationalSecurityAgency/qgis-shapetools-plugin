@@ -1,22 +1,26 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** has the following tools that are installed in the Vector menu or can be accessed from the toolbar.
+***Shape Tools*** has the following tools that are installed in the Vector menu, on the toolbar, or from the Processing Toolbox.
 
-* ![Create Shapes](images/shapes.png) **Create Shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
+* ![Create shapes](images/shapes.png) **Create shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates.
-* ![Geodesic Line Break](images/idlbreak.png) **Geodesic Line Break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
-* ![Geodesic Densifier](images/geodesicDensifier.png) **Geodesic Densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
-* ![Geodesic Measure Tool](images/measure.png) **Geodesic Measure Tool** provides geodesic line measuring, similar to that implemented in Google Earth.
-* ![Azimuth, Distance Tool](images/dazdigitize.png) **Azimuth, Distance Tool** digitizes points at an azimuth, and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a certain distance
+* ![Geodesic line break](images/idlbreak.png) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
+* ![Geodesic densifier](images/geodesicDensifier.png) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
+* ![Geodesic measure tool](images/measure.png) **Geodesic measure tool** provides geodesic line measuring, similar to that implemented in Google Earth.
+* ![Geodesic measurement layer](images/measureLine.png) **Geodesic measurement layer** converts a polygon or line layer a new layer with all geometries measured and labeled.
+* ![Azimuth, distance digitizer](images/dazdigitize.png) **Azimuth, distance digitizer** creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.
+* ![Azimuth distance sequence digitizer](images/linedigitize.png) **Azimuth distance sequence digitizer** digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.
 
-**Contents**
+## Contents
 
 * [Create Shapes](#create-shapes)
 * [XY to Line](#xy-to-line)
 * [Geodesic Line Break](#geodesic-line-break)
 * [Geodesic Densifier](#geodesic-densifier)
 * [Geodesic Measure Tool](#geodesic-measure)
-* [Azimuth, Distance Tool](#azimuth-distance)
+* [Geodesic Measurement Layer](#geodesic-measure-layer)
+* [Azimuth, Distance Digitizer](#azimuth-distance)
+* [Azimuth Distance Sequence Digitizer](#azimuth-distance-sequence)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> ![Create Shapes](images/shapes.png) Create Shapes
@@ -89,11 +93,11 @@ Create an N-leafed epicycloid. The distance from the center to the outer edge is
 Create a mathematical heart which fits within the circle defined by its radius.
 
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.png) XY to Line
-This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the table data itself where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
+This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
 
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
 
-**Input Layer** - This can either be a points layer, a simple table, or any other vector data set that has two coordinates among its data fields. For example a CSV file containing starting and ending coordinates could be imported using the importer ***Add Delimited Text Layer...*** from the menu ***Layer->Add Layer->Add Delimited Text Layer...*** From this dialog box the user can specify one of the coordinates for the layer's geometry or **No Geometry** can be used. Both types of layers will be visible to **XY to Line.**
+**Input Layer** - This can either be a point layer, a simple table, or any other vector data set that has two coordinates among its data fields. For example a CSV file containing starting and ending coordinates could be imported using ***Layer->Add Layer->Add Delimited Text Layer...*** located in the QGIS menu. From this dialog box the user can specify one of the coordinates for the layer's geometry or **No Geometry** can be used. Both types of layers will be visible to **XY to Line.**
 
 **Output point layer** - Optional points layer that can be created in QGIS. It can contain the starting point, ending point, both points, or no points in which case it will not be created. 
 
@@ -151,7 +155,7 @@ This function can also be accessed from the **Processing Toolbox**.
 
 ## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
 
-This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are the same as those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be meters, kilometers, feet, yards, miles, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. Notice that the ellipsoid used to calculate measurements is listed in the lower left-hand corner. By default this is set to ***WGS 84***, but it can be changed in the ***Settings*** menu.
+This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are similar to those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be meters, kilometers, feet, yards, miles, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. Notice that the ellipsoid used to calculate measurements is listed in the lower left-hand corner. By default this is set to ***WGS 84***, but it can be changed in the ***Settings*** menu.
 
 <div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
 
@@ -163,9 +167,23 @@ By right-mouse clicking on the **Measurement** layer and selecting **Open Attrib
 
 <div style="text-align:center"><img src="doc/geodesicmeasure3.jpg" alt="Geodesic Measure Tool"></div>
 
-## <a name="azimuth-distance"></a> ![Azimuth, Distance Tool](images/dazdigitize.png) Azimuth, Distance Tool
+## <a name="geodesic-measure-layer"></a> ![Geodesic Measurement Layer](images/linedigitize.png) Geodesic Measurement Layer
 
-This tool works on point and line vector layers and is enabled when they are selected and in edit mode. In either case this dialog box is displayed when the tool is enabled and a point on the map is clicked on.
+This take either a polygon or line layer and for each of the geometries calculates the geodesic distances of each feature. The user can choose whether each line segment is measured and output as a line measurement or whether the entire line/polygon geometry is measured. It outputs a new line layer of lines that contain attributes with all the measurements. If measuring individual line segments the attributes are a label, distance, units of measure, azimuth/bearing to the next point, and the total distance of the geometry. If measuring the entire geometry then the attributes are a label, distance, and units of measure. The input is either a line or polygon layer. Select whether you want to measure the entire line or polygon or each line segment within the line or polygon. **Distance units** can be kilometers, meters, nautical miles, miles, yards, or feet. **Use automatic styling** styles the QGIS layer with the label string in the attribute table and with the text and line colors found in **Settings**.
+
+<div style="text-align:center"><img src="doc/measurement-layer.jpg" alt="Geodesic Measurement Layer"></div>
+
+Here is an example of running this on a polygon. Notice how it not only measures the outer boundary, but it also measures the inner boundary as well.
+
+<div style="text-align:center"><img src="doc/measure-polygon.jpg" alt="Measuring a polygon"></div>
+
+Here is what the attributes table looks like.
+
+<div style="text-align:center"><img src="doc/measurement-attributes.jpg" alt="Measurement Attributes"></div>
+
+## <a name="azimuth-distance"></a> ![Azimuth, Distance Digitizer](images/dazdigitize.png) Azimuth, Distance Digitizer
+
+This tool works on point and line vector layers and is enabled when they are selected and in edit mode. In either case the following dialog box is displayed when the tool is enabled and a point on the map is clicked on.
 
 <div style="text-align:center"><img src="doc/azimuth-distance.jpg" alt="Azimuth, Distance Tool"></div>
 
@@ -173,6 +191,12 @@ Azimuth is in degrees and distance is in the selected *Distance units of measure
 
 * **Point Vector Layer** - If an editable point vector layer is selected and the map is click on, the tool will create a point in the azimuth direction and at the specified distance. The point clicked on can be also included in the output layer.
 * **Line Vector Layer** - If an editable line vector layer is selected and the map is click on, the tool will create a geodesic line from the clicked point along the azimuth and distance path.
+
+## <a name="azimuth-distance-sequence"></a> ![Azimuth Distance Sequence Digitizer](images/dazdigitize.png) Azimuth Distance Sequence Digitizer
+
+<div style="text-align:center"><img src="doc/az-sequence.jpg" alt="Azimuth, Distance Sequence Digitizer"></div>
+
+This is similar to the **Azimuth, Distance Digitizer**, but it provides the ability to click on the map as a starting point and then give a series of bearings and distances in the order of 'bearing 1, distance 1, bearing 2, distance 2, ... bearing N, distance N' and it will create a path. This is useful in some survey work. If older surveying used magnetic north, it can be compensated for by the **Bearing / declination adjustment**. Magnetic declination changes over time, but the [NOAA Magnetic Field Calculator](https://www.ngdc.noaa.gov/geomag-web/#declination) provides an easy interface to estimate the magnetic north declination at a certain latitude, longitude and time, all the way back to 1590. West declination will be a negative number and east declination is a positive number. If a polygon layer is selected then the resulting shape automatically closes the polygon such that the beginning and ending points are the same. If a line layer is selected then you have the option of automatically adding a line segment from the last point in the sequence to the first point. If a point layer is selected, then only the nodes will be added to the layer.
 
 ## <a name="settings"></a>Settings
 
@@ -187,6 +211,8 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
 * **Measure Tool Settings** - These are settings for the **Geodesic Measure Tool**.
     * **Azimuth Range** - The azimuth is displayed from **-180 to 180** degrees or from **0 to 360** degrees.
     * **Rubber band color** - Selects the rubber band line color used by the measure tool.
+    * **Measurement layer color** - Vector line color when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
+    * **Measurement layer text** - Color of the text when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
 * **Ellipsoid Used for Measurements** - Selects the ellipsoid used for calculating the geodesic distances within Shape Tools. By default this should normally be *WGS 84*
     * **Ellipsoid group** - Choose the default *WGS 84* setting or enable the *System Ellipsoids*.
     * **System Ellipsoids** - This is enabled if **Ellipsoid group** is set to *System Ellipsoids*.
