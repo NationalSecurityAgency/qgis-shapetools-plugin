@@ -104,7 +104,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QgsColorButton" name="rubberBandColor">
+         <widget class="QgsColorButton" name="rubberBandColorButton">
           <property name="color">
            <color>
             <red>222</red>
@@ -122,7 +122,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QgsColorButton" name="measureLineColor">
+         <widget class="QgsColorButton" name="measureLineColorButton">
           <property name="color">
            <color>
             <red>0</red>
@@ -140,7 +140,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QgsColorButton" name="measureTextColor">
+         <widget class="QgsColorButton" name="measureTextColorButton">
           <property name="color">
            <color>
             <red>0</red>
