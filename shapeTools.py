@@ -99,7 +99,7 @@ class ShapeTools(object):
         
         # Initialize the multi point azimuth Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/linedigitize.png')
-        self.lineDigitizeAction = QAction(icon, tr('Multi azimuth distance digitizer'), self.iface.mainWindow())
+        self.lineDigitizeAction = QAction(icon, tr('Azimuth distance sequence digitizer'), self.iface.mainWindow())
         self.lineDigitizeAction.setObjectName('stLineDigitizer')        
         self.lineDigitizeAction.triggered.connect(self.setShowLineDigitizeTool)
         self.lineDigitizeAction.setCheckable(True)
