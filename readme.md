@@ -214,5 +214,6 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
     * **Measurement layer color** - Vector line color when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
     * **Measurement layer text** - Color of the text when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
 * **Ellipsoid Used for Measurements** - Selects the ellipsoid used for calculating the geodesic distances within Shape Tools. By default this should normally be *WGS 84*
-    * **Ellipsoid group** - Choose the default *WGS 84* setting or enable the *System Ellipsoids*.
+    * **Ellipsoid group** - Choose the default *WGS 84* setting or enable *System Ellipsoids* or *Historical Ellipsoids*.
     * **System Ellipsoids** - This is enabled if **Ellipsoid group** is set to *System Ellipsoids*.
+    * **Historical Ellipsoids** - This is enabled if **Ellipsoid group** is set to *Historical Ellipsoids*. Additional historical ellipsoids can be selected.
