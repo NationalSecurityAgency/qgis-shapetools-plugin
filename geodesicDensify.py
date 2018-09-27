@@ -148,6 +148,8 @@ def processPoly(source, sink, feedback):
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                         n = int(math.ceil(l.s13 / maxseglen))
+                        if n < 1: # Can be zero if two points are the same
+                            n = 1
                         if n > maxSegments:
                             n = maxSegments
                             
@@ -190,6 +192,8 @@ def processPoly(source, sink, feedback):
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                             n = int(math.ceil(l.s13 / maxseglen))
+                            if n < 1:
+                                n = 1
                             if n > maxSegments:
                                 n = maxSegments
                                 
@@ -215,8 +219,9 @@ def processPoly(source, sink, feedback):
                     sink.addFeature(featureout)
         except:
             num_bad += 1
-            #traceback.print_exc()
-            pass
+            '''s = traceback.format_exc()
+            feedback.pushInfo(s)'''
+
         feedback.setProgress(int(cnt * total))
     return num_bad
         
@@ -312,8 +317,8 @@ def processLine(source, sink, feedback, discardVertices):
                             if layercrs != epsg4326: # Convert to 4326
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                            n = int(math.ceil(l.s13 / maxseglen))
                             if l.s13 > maxseglen:
+                                n = int(math.ceil(l.s13 / maxseglen))
                                 if n > maxSegments:
                                     n = maxSegments
                                 seglen = l.s13 / n
@@ -335,8 +340,7 @@ def processLine(source, sink, feedback, discardVertices):
             sink.addFeature(fline)
         except:
             num_bad += 1
-            #traceback.print_exc()
-            pass
+        
         feedback.setProgress(int(cnt * total))
             
     return num_bad
