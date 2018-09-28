@@ -150,15 +150,16 @@ def processPoly(layer, writerLines, isProcessing):
                         if layercrs != epsg4326: # Convert to 4326
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                        n = int(math.ceil(l.s13 / maxseglen))
-                        if n > maxSegments:
-                            n = maxSegments
-                            
-                        seglen = l.s13 / n
-                        for i in range(1,n):
-                            s = seglen * i
-                            g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                            pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                        if l.s13 > maxseglen:
+                            n = int(math.ceil(l.s13 / maxseglen))
+                            if n > maxSegments:
+                                n = maxSegments
+                                
+                            seglen = l.s13 / n
+                            for i in range(1,n):
+                                s = seglen * i
+                                g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                                pts.append( QgsPoint(g['lon2'], g['lat2']) )
                         pts.append(ptEnd)
                         ptStart = ptEnd
      
@@ -195,15 +196,16 @@ def processPoly(layer, writerLines, isProcessing):
                             if layercrs != epsg4326: # Convert to 4326
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                            n = int(math.ceil(l.s13 / maxseglen))
-                            if n > maxSegments:
-                                n = maxSegments
-                                
-                            seglen = l.s13 / n
-                            for i in range(1,n):
-                                s = seglen * i
-                                g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                                pts.append( QgsPoint(g['lon2'], g['lat2']) )
+                            if l.s13 > maxseglen:
+                                n = int(math.ceil(l.s13 / maxseglen))
+                                if n > maxSegments:
+                                    n = maxSegments
+                                    
+                                seglen = l.s13 / n
+                                for i in range(1,n):
+                                    s = seglen * i
+                                    g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                                    pts.append( QgsPoint(g['lon2'], g['lat2']) )
                             pts.append(ptEnd)
                             ptStart = ptEnd
          
