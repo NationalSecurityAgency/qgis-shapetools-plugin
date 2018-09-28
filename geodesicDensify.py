@@ -11,6 +11,7 @@ from qgis.core import (QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
+    QgsProcessingParameterNumber,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink)
 
@@ -31,6 +32,7 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmDiscardVertices = 'DiscardVertices'
+    PrmMaxSegmentLength = 'MaxSegmentLength'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -40,21 +42,31 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon])
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmDiscardVertices,
+                tr('Discard inner vertices (lines only)'),
+                False,
+                optional=True)
+            )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.PrmMaxSegmentLength,
+                tr('Maximum line segment length (in kilometers)'),
+                QgsProcessingParameterNumber.Double,
+                defaultValue=settings.maxSegLength,
+                minValue=0.001,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.PrmDiscardVertices,
-                tr('Discard inner line vertices'),
-                False,
-                optional=True)
             )
     
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         discardVertices = self.parameterAsBool(parameters, self.PrmDiscardVertices, context)
+        maxseglen = self.parameterAsDouble(parameters, self.PrmMaxSegmentLength, context) * 1000 # Make it in meters
         
         wkbtype = source.wkbType()
         
@@ -65,14 +77,14 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
             (sink, dest_id) = self.parameterAsSink(parameters, self.PrmOutputLayer,
                 context, source.fields(), outputType, source.sourceCrs())
 
-            num_bad = processLine(source, sink, feedback, discardVertices)
+            num_bad = processLine(source, sink, feedback, discardVertices, maxseglen)
         else:
             outputType = QgsWkbTypes.Polygon if wkbtype == QgsWkbTypes.Polygon else QgsWkbTypes.MultiPolygon
             
             (sink, dest_id) = self.parameterAsSink(parameters, self.PrmOutputLayer,
                 context, source.fields(), outputType, source.sourceCrs())
                 
-            num_bad = processPoly(source, sink, feedback)
+            num_bad = processPoly(source, sink, feedback, maxseglen)
             
         if num_bad > 0:
             feedback.pushInfo(tr("{} out of {} features from input layer failed to process correctly.".format(num_bad, source.featureCount())))
@@ -111,7 +123,7 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
         return GeodesicDensifyAlgorithm()
 
-def processPoly(source, sink, feedback):
+def processPoly(source, sink, feedback, maxseglen):
     layercrs = source.sourceCrs()
     if layercrs != epsg4326:
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
@@ -120,8 +132,6 @@ def processPoly(source, sink, feedback):
     total = 100.0 / source.featureCount() if source.featureCount() else 0
     iterator = source.getFeatures()
     num_bad = 0
-    maxseglen = settings.maxSegLength*1000.0
-    maxSegments = settings.maxSegments
     for cnt, feature in enumerate(iterator):
         if feedback.isCanceled():
             break
@@ -133,6 +143,8 @@ def processPoly(source, sink, feedback):
                     continue
                 
                 ptset = []
+                # Iterate through all points in the polygon and if the distance
+                # is greater than the maxseglen, then add additional points.
                 for points in poly:
                     numpoints = len(points)
                     if numpoints < 2:
@@ -147,17 +159,15 @@ def processPoly(source, sink, feedback):
                         if layercrs != epsg4326: # Convert to 4326
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                        n = int(math.ceil(l.s13 / maxseglen))
-                        if n < 1: # Can be zero if two points are the same
-                            n = 1
-                        if n > maxSegments:
-                            n = maxSegments
-                            
-                        seglen = l.s13 / n
-                        for i in range(1,n):
-                            s = seglen * i
-                            g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                            pts.append( QgsPointXY(g['lon2'], g['lat2']) )
+                        # Check to see if the distance is greater than the maximum
+                        # segment length and if so lets add additional points.
+                        if l.s13 > maxseglen:
+                            n = int(math.ceil(l.s13 / maxseglen))
+                            seglen = l.s13 / n
+                            for i in range(1,n):
+                                s = seglen * i
+                                g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                                pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                         pts.append(ptEnd)
                         ptStart = ptEnd
      
@@ -191,17 +201,13 @@ def processPoly(source, sink, feedback):
                             if layercrs != epsg4326: # Convert to 4326
                                 ptEnd = transto4326.transform(ptEnd)
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                            n = int(math.ceil(l.s13 / maxseglen))
-                            if n < 1:
-                                n = 1
-                            if n > maxSegments:
-                                n = maxSegments
-                                
-                            seglen = l.s13 / n
-                            for i in range(1,n):
-                                s = seglen * i
-                                g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                                pts.append( QgsPointXY(g['lon2'], g['lat2']) )
+                            if l.s13 > maxseglen:
+                                n = int(math.ceil(l.s13 / maxseglen))
+                                seglen = l.s13 / n
+                                for i in range(1,n):
+                                    s = seglen * i
+                                    g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                                    pts.append( QgsPointXY(g['lon2'], g['lat2']) )
                             pts.append(ptEnd)
                             ptStart = ptEnd
          
@@ -225,7 +231,7 @@ def processPoly(source, sink, feedback):
         feedback.setProgress(int(cnt * total))
     return num_bad
         
-def processLine(source, sink, feedback, discardVertices):
+def processLine(source, sink, feedback, discardVertices, maxseglen):
     layercrs = source.sourceCrs()
     if layercrs != epsg4326:
         transto4326 = QgsCoordinateTransform(layercrs, epsg4326, QgsProject.instance())
@@ -234,8 +240,6 @@ def processLine(source, sink, feedback, discardVertices):
     total = 100.0 / source.featureCount() if source.featureCount() else 0
     iterator = source.getFeatures()
     num_bad = 0
-    maxseglen = settings.maxSegLength*1000.0
-    maxSegments = settings.maxSegments
     for cnt, feature in enumerate(iterator):
         if feedback.isCanceled():
             break
@@ -262,8 +266,6 @@ def processLine(source, sink, feedback, discardVertices):
                 l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                 if l.s13 > maxseglen:
                     n = int(math.ceil(l.s13 / maxseglen))
-                    if n > maxSegments:
-                        n = maxSegments
                     seglen = l.s13 / n
                     for i in range(1,n):
                         s = seglen * i
@@ -288,10 +290,8 @@ def processLine(source, sink, feedback, discardVertices):
                         if layercrs != epsg4326: # Convert to 4326
                             ptEnd = transto4326.transform(ptEnd)
                         l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
-                        n = int(math.ceil(l.s13 / maxseglen))
                         if l.s13 > maxseglen:
-                            if n > maxSegments:
-                                n = maxSegments
+                            n = int(math.ceil(l.s13 / maxseglen))
                             seglen = l.s13 / n
                             for i in range(1,n):
                                 s = seglen * i
@@ -319,8 +319,6 @@ def processLine(source, sink, feedback, discardVertices):
                             l = geod.InverseLine(ptStart.y(), ptStart.x(), ptEnd.y(), ptEnd.x())
                             if l.s13 > maxseglen:
                                 n = int(math.ceil(l.s13 / maxseglen))
-                                if n > maxSegments:
-                                    n = maxSegments
                                 seglen = l.s13 / n
                                 for i in range(1,n):
                                     s = seglen * i

@@ -137,13 +137,12 @@ If you have ever created a geospatial masterpiece that has crossings across the 
 
 Densify a line or polygon vector layer by adding geodesic points in between individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.
 
-The distance between two points before adding additional vertices is set from the **Settings** menu.
-
 <div style="text-align:center"><img src="doc/geodesicshape.jpg" alt="Geodesic Densifier"></div>
 
 * **Input Layer** - Select an existing line or polygon layer.
-* **Output Layer Name** - Specifies the name of the memory layer that will be created in QGIS.
-* **Discard inner vertices of the line vectors and just use end points** - When this is checked only the beginning and ending points are used when drawing geodesic lines.
+* **Output Layer** - Specifies the output layer that will be created in QGIS.
+* **Discard inner vertices (lines only)** - When this is checked only the beginning and ending points are used when drawing geodesic lines. This does not apply to polygons.
+* **Maximum line segment length (in kilometers)** - This is the maximum length of a line segment before a new vertex is added along the geodesic path. This value defaults to the length specified in the **Settings** menu.
 
 The following shows the before and after results of running this function on a polygon layer.
 
