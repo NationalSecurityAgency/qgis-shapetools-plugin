@@ -3,4 +3,4 @@ Densify a line or polygon vector layer by adding geodesic points in between indi
 * Input Layer - Select an existing line or polygon layer.
 * Output Layer - Specifies the output layer that will be created in QGIS.
 * Discard inner vertices (lines only) - When this is checked only the beginning and ending points of a line are used when drawing geodesic lines. This is not used with polygons.
-* Maximum line segment length - This is the maximum length of a line segment before a new vertex is added along the geodesic path. This value defaults to the length specified in the **Settings** menu.
+* Maximum line segment length - This is the maximum length of a line segment before a new vertex is added along the geodesic path. This value defaults to the length specified in the "Settings" menu.
