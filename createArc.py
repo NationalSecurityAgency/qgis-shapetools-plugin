@@ -181,12 +181,12 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
         src_crs = source.sourceCrs()
         if shape_type == 0:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                                                   self.PrmOutputLayer, context, source.fields(),
-                                                   QgsWkbTypes.Polygon, src_crs)
+                   self.PrmOutputLayer, context, source.fields(),
+                   QgsWkbTypes.Polygon, src_crs)
         else:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                                                   self.PrmOutputLayer, context, source.fields(),
-                                                   QgsWkbTypes.LineString, src_crs)
+                   self.PrmOutputLayer, context, source.fields(),
+                   QgsWkbTypes.LineString, src_crs)
 
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
