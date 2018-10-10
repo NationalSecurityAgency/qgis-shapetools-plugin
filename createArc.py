@@ -1,26 +1,25 @@
 import os
-import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsVectorLayer,
-    QgsPointXY, QgsFeature, QgsGeometry, 
-    QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
+from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry,
+                       QgsProject, QgsWkbTypes, QgsCoordinateTransform)
+
 from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterFeatureSink)
+                       QgsProcessingAlgorithm,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl
 
 from .settings import epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
-SHAPE_TYPE=[tr("Polygon"),tr("Line")]
+
+SHAPE_TYPE = [tr("Polygon"), tr("Line")]
+
 
 class CreateArcAlgorithm(QgsProcessingAlgorithm):
     """
@@ -30,7 +29,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
-    PrmAzimuthMode='AzimuthMode'
+    PrmAzimuthMode = 'AzimuthMode'
     PrmAzimuth1Field = 'Azimuth1Field'
     PrmAzimuth2Field = 'Azimuth2Field'
     PrmInnerRadiusField = 'InnerRadiusField'
@@ -61,7 +60,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterEnum(
                 self.PrmAzimuthMode,
                 tr('Azimuth mode'),
-                options=[tr('Use beginning and ending azimuths'),tr('Use center azimuth and width')],
+                options=[tr('Use beginning and ending azimuths'), tr('Use center azimuth and width')],
                 defaultValue=1,
                 optional=False)
         )
@@ -116,7 +115,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDefaultAzimuth2,
@@ -124,7 +123,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=30.0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmOuterRadius,
@@ -133,7 +132,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=40.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmInnerRadius,
@@ -142,7 +141,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=20.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDrawingSegments,
@@ -151,51 +150,51 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=36,
                 minValue=4,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
         azimuthmode = self.parameterAsInt(parameters, self.PrmAzimuthMode, context)
         startanglecol = self.parameterAsString(parameters, self.PrmAzimuth1Field, context)
         endanglecol = self.parameterAsString(parameters, self.PrmAzimuth2Field, context)
-        innerRadiusCol = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
-        outerRadiusCol = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
+        inner_radius_col = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
+        outer_radius_col = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
         startangle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth1, context)
         endangle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth2, context)
-        innerRadius = self.parameterAsDouble(parameters, self.PrmInnerRadius, context)
-        outerRadius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
+        inner_radius = self.parameterAsDouble(parameters, self.PrmInnerRadius, context)
+        outer_radius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
-        
-        measureFactor = conversionToMeters(units)
-            
-        innerRadius *= measureFactor
-        outerRadius *= measureFactor
-        
-        ptSpacing = 360.0 / segments
-        srcCRS = source.sourceCrs()
+
+        measure_factor = conversionToMeters(units)
+
+        inner_radius *= measure_factor
+        outer_radius *= measure_factor
+
+        pt_spacing = 360.0 / segments
+        src_crs = source.sourceCrs()
         if shapetype == 0:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
-                QgsWkbTypes.Polygon, srcCRS)
+                                                   self.PrmOutputLayer, context, source.fields(),
+                                                   QgsWkbTypes.Polygon, src_crs)
         else:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
-                QgsWkbTypes.LineString, srcCRS)
-                
-        if srcCRS != epsg4326:
-            geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
-            toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
-        
-        featureCount = source.featureCount()
-        total = 100.0 / featureCount if featureCount else 0
-        
+                                                   self.PrmOutputLayer, context, source.fields(),
+                                                   QgsWkbTypes.LineString, src_crs)
+
+        if src_crs != epsg4326:
+            geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
+            to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
+
+        feature_count = source.featureCount()
+        total = 100.0 / feature_count if feature_count else 0
+
         iterator = source.getFeatures()
         numbad = 0
         for cnt, feature in enumerate(iterator):
@@ -205,8 +204,8 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 pts = []
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
-                if srcCRS != epsg4326:
-                    pt = geomTo4326.transform(pt.x(), pt.y())
+                if src_crs != epsg4326:
+                    pt = geom_to_4326.transform(pt.x(), pt.y())
                 if startanglecol:
                     sangle = float(feature[startanglecol])
                 else:
@@ -219,50 +218,50 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                     width = abs(eangle) / 2.0
                     eangle = sangle + width
                     sangle -= width
-                if outerRadiusCol:
-                    outerDist = float(feature[outerRadiusCol]) * measureFactor
+                if outer_radius_col:
+                    outer_dist = float(feature[outer_radius_col]) * measure_factor
                 else:
-                    outerDist = outerRadius
-                if innerRadiusCol:
-                    innerDist = float(feature[innerRadiusCol]) * measureFactor
+                    outer_dist = outer_radius
+                if inner_radius_col:
+                    inner_dist = float(feature[inner_radius_col]) * measure_factor
                 else:
-                    innerDist = innerRadius
-                    
+                    inner_dist = inner_radius
+
                 sangle = sangle % 360
                 eangle = eangle % 360
-                if sangle == eangle: # This is not valid
+                if sangle == eangle:  # This is not valid
                     continue
-                
+
                 if sangle > eangle:
                     # We are crossing the 0 boundry so lets just subtract
                     # 360 from it.
                     sangle -= 360.0
                 sanglesave = sangle
-                    
-                while sangle < eangle: # Draw the outer arc
-                    g = geod.Direct(pt.y(), pt.x(), sangle, outerDist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+
+                while sangle < eangle:  # Draw the outer arc
+                    g = geod.Direct(pt.y(), pt.x(), sangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    sangle += ptSpacing # add this number of degrees to the angle
-                    
-                g = geod.Direct(pt.y(), pt.x(), eangle, outerDist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    sangle += pt_spacing  # add this number of degrees to the angle
+
+                g = geod.Direct(pt.y(), pt.x(), eangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                if innerDist == 0: # This will just be a pie wedge
+                if inner_dist == 0:  # This will just be a pie wedge
                     pts.append(pt)
                 else:
                     sangle = sanglesave
-                    while eangle > sangle: #Draw the inner arc
-                        g = geod.Direct(pt.y(), pt.x(), eangle, innerDist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    while eangle > sangle:  # Draw the inner arc
+                        g = geod.Direct(pt.y(), pt.x(), eangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                         pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                        eangle -= ptSpacing # subtract this number of degrees to the angle
-                    g = geod.Direct(pt.y(), pt.x(), sangle, innerDist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        eangle -= pt_spacing  # subtract this number of degrees to the angle
+                    g = geod.Direct(pt.y(), pt.x(), sangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                
+
                 pts.append(pts[0])
                 # If the Output crs is not 4326 transform the points to the proper crs
-                if srcCRS != epsg4326:
+                if src_crs != epsg4326:
                     for x, ptout in enumerate(pts):
-                        pts[x] = toSinkCrs.transform(ptout)
-                        
+                        pts[x] = to_sink_crs.transform(ptout)
+
                 f = QgsFeature()
                 if shapetype == 0:
                     f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
@@ -272,35 +271,35 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 sink.addFeature(f)
             except:
                 numbad += 1
-                
+
             feedback.setProgress(int(cnt * total))
-            
+
         if numbad > 0:
-            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
-            
+            feedback.pushInfo(
+                tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, feature_count)))
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createarc'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/arc.png'))
-    
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/arc.png'))
+
     def displayName(self):
         return tr('Create arc wedge')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreateArcAlgorithm()
-
