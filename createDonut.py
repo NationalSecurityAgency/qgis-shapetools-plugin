@@ -1,13 +1,10 @@
 import os
-import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsVectorLayer,
-    QgsPointXY, QgsFeature, QgsGeometry, 
+from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
     
 from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
@@ -21,7 +18,8 @@ from qgis.PyQt.QtCore import QUrl
 from .settings import epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
-SHAPE_TYPE=[tr("Polygon"),tr("Line")]
+SHAPE_TYPE = [tr("Polygon"), tr("Line")]
+
 
 class CreateDonutAlgorithm(QgsProcessingAlgorithm):
     """
@@ -114,99 +112,99 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
     
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
-        shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
-        outerCol = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
-        innerCol = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
-        defOuterRadius = self.parameterAsDouble(parameters, self.PrmDefaultOuterRadius, context)
-        defInnerRadius = self.parameterAsDouble(parameters, self.PrmDefaultInnerRadius, context)
+        shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
+        outer_col = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
+        inner_col = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
+        def_outer_radius = self.parameterAsDouble(parameters, self.PrmDefaultOuterRadius, context)
+        def_inner_radius = self.parameterAsDouble(parameters, self.PrmDefaultInnerRadius, context)
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         
-        measureFactor = conversionToMeters(units)
+        measure_factor = conversionToMeters(units)
             
-        defInnerRadius *= measureFactor
-        defOuterRadius *= measureFactor
+        def_inner_radius *= measure_factor
+        def_outer_radius *= measure_factor
         
-        ptSpacing = 360.0 / segments
-        srcCRS = source.sourceCrs()
-        if shapetype == 0:
+        pt_spacing = 360.0 / segments
+        src_crs = source.sourceCrs()
+        if shape_type == 0:
             (sink, dest_id) = self.parameterAsSink(parameters,
                 self.PrmOutputLayer, context, source.fields(),
-                QgsWkbTypes.Polygon, srcCRS)
+                QgsWkbTypes.Polygon, src_crs)
         else:
             (sink, dest_id) = self.parameterAsSink(parameters,
                 self.PrmOutputLayer, context, source.fields(),
-                QgsWkbTypes.MultiLineString, srcCRS)
+                QgsWkbTypes.MultiLineString, src_crs)
                 
-        if srcCRS != epsg4326:
-            geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
-            toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
+        if src_crs != epsg4326:
+            geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
+            to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
         
-        featureCount = source.featureCount()
-        total = 100.0 / featureCount if featureCount else 0
+        feature_count = source.featureCount()
+        total = 100.0 / feature_count if feature_count else 0
         
         iterator = source.getFeatures()
-        numbad = 0
+        num_bad = 0
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
                 break
             try:
-                ptsi = []
-                ptso = []
+                pts_in = []
+                pts_out = []
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
-                if srcCRS != epsg4326:
-                    pt = geomTo4326.transform(pt.x(), pt.y())
+                if src_crs != epsg4326:
+                    pt = geom_to_4326.transform(pt.x(), pt.y())
                 lat = pt.y()
                 lon = pt.x()
                 angle = 0
                 while angle < 360:
-                    if innerCol:
-                        iRadius = float(feature[innerCol]) * measureFactor
+                    if inner_col:
+                        inner_radius = float(feature[inner_col]) * measure_factor
                     else:
-                        iRadius = defInnerRadius
-                    if outerCol:
-                        oRadius = float(feature[outerCol]) * measureFactor
+                        inner_radius = def_inner_radius
+                    if outer_col:
+                        outer_radius = float(feature[outer_col]) * measure_factor
                     else:
-                        oRadius = defOuterRadius
-                    if iRadius != 0:
-                        g = geod.Direct(lat, lon, angle, iRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                        ptsi.append(QgsPointXY(g['lon2'], g['lat2']))
-                    g = geod.Direct(lat, lon, angle, oRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    ptso.append(QgsPointXY(g['lon2'], g['lat2']))
-                    angle += ptSpacing
-                if iRadius != 0:
-                    ptsi.append(ptsi[0])
-                ptso.append(ptso[0])
+                        outer_radius = def_outer_radius
+                    if inner_radius != 0:
+                        g = geod.Direct(lat, lon, angle, inner_radius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        pts_in.append(QgsPointXY(g['lon2'], g['lat2']))
+                    g = geod.Direct(lat, lon, angle, outer_radius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    pts_out.append(QgsPointXY(g['lon2'], g['lat2']))
+                    angle += pt_spacing
+                if inner_radius != 0:
+                    pts_in.append(pts_in[0])
+                pts_out.append(pts_out[0])
                 
                 # If the Output crs is not 4326 transform the points to the proper crs
-                if srcCRS != epsg4326:
-                    if iRadius != 0:
-                        for x, ptout in enumerate(ptsi):
-                            ptsi[x] = toSinkCrs.transform(ptout)
-                    for x, ptout in enumerate(ptso):
-                        ptso[x] = toSinkCrs.transform(ptout)
+                if src_crs != epsg4326:
+                    if inner_radius != 0:
+                        for x, pt_out in enumerate(pts_in):
+                            pts_in[x] = to_sink_crs.transform(pt_out)
+                    for x, pt_out in enumerate(pts_out):
+                        pts_out[x] = to_sink_crs.transform(pt_out)
                         
                 f = QgsFeature()
-                if shapetype == 0:
-                    if iRadius == 0:
-                        f.setGeometry(QgsGeometry.fromPolygonXY([ptso]))
+                if shape_type == 0:
+                    if inner_radius == 0:
+                        f.setGeometry(QgsGeometry.fromPolygonXY([pts_out]))
                     else:
-                        f.setGeometry(QgsGeometry.fromPolygonXY([ptso, ptsi]))
+                        f.setGeometry(QgsGeometry.fromPolygonXY([pts_out, pts_in]))
                 else:
-                    if iRadius == 0:
-                        f.setGeometry(QgsGeometry.fromMultiPolylineXY([ptso]))
+                    if inner_radius == 0:
+                        f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts_out]))
                     else:
-                        f.setGeometry(QgsGeometry.fromMultiPolylineXY([ptso, ptsi]))
+                        f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts_out, pts_in]))
                 f.setAttributes(feature.attributes())
                 sink.addFeature(f)
             except:
-                numbad += 1
+                num_bad += 1
                 
             feedback.setProgress(int(cnt * total))
             
-        if numbad > 0:
-            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
+        if num_bad > 0:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(num_bad, feature_count)))
             
         return {self.PrmOutputLayer: dest_id}
         
@@ -214,7 +212,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
         return 'createdonut'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/donut.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/donut.png'))
     
     def displayName(self):
         return tr('Create donut')
