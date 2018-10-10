@@ -1,25 +1,23 @@
 import os
 import math
 
-from qgis.PyQt.QtCore import Qt, QCoreApplication
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.uic import loadUiType
-from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, QgsPoint, QgsUnitTypes, QgsProject, QgsWkbTypes
+from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, QgsProject, QgsWkbTypes
 from qgis.gui import QgsMapToolEmitPoint
 
 from geographiclib.geodesic import Geodesic
-from .settings import epsg4326, geod
+from .settings import settings, epsg4326, geod
 from .utils import conversionToMeters, DISTANCE_LABELS, tr
-
-from .settings import settings, epsg4326
 
 FORM_CLASS, _ = loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/azDistDigitizer.ui'))
 
 class AzDigitizerTool(QgsMapToolEmitPoint):
-    '''Class to interact with the map canvas to capture the coordinate
+    """Class to interact with the map canvas to capture the coordinate
     when the mouse button is pressed and to display the coordinate in
-    in the status bar.'''
+    in the status bar."""
     
     def __init__(self, iface):
         QgsMapToolEmitPoint.__init__(self, iface.mapCanvas())
@@ -29,17 +27,17 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
         self.azDigitizerDialog = None
         
     def activate(self):
-        '''When activated set the cursor to a crosshair.'''
+        """When activated set the cursor to a crosshair."""
         self.canvas.setCursor(Qt.CrossCursor)
         
     def clicked(self, pt, b):
-        '''Capture the coordinate when the mouse button has been released.'''
-        if self.azDigitizerDialog == None:
+        """Capture the coordinate when the mouse button has been released."""
+        if self.azDigitizerDialog is None:
             from .azDigitizer import AzDigitizerWidget
             self.azDigitizerDialog = AzDigitizerWidget(self.iface, self.iface.mainWindow())
         
         layer = self.iface.activeLayer()
-        if layer == None or layer.wkbType() != QgsWkbTypes.Point:
+        if layer is None or layer.wkbType() != QgsWkbTypes.Point:
             self.azDigitizerDialog.includeStartLabel.setEnabled(False)
             self.azDigitizerDialog.checkBox.setEnabled(False)
         else:
@@ -76,7 +74,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
             self.iface.messageBar().pushMessage("", tr("Either distance or azimuth were invalid"), level=Qgis.Warning, duration=4)
             return
         layer = self.iface.activeLayer()
-        if layer == None:
+        if layer is None:
             self.iface.messageBar().pushMessage("", tr("No point or line layer selected"), level=Qgis.Warning, duration=4)
             return
         
@@ -111,7 +109,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
                 g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
                 ptc = transform.transform(g['lon2'], g['lat2'])
                 pts.append( ptc )
-            feat  = QgsFeature(layer.fields())
+            feat = QgsFeature(layer.fields())
             if layer.wkbType() == QgsWkbTypes.LineString:
                 feat.setGeometry(QgsGeometry.fromPolylineXY(pts))
             else:
@@ -121,4 +119,3 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         layer.updateExtents()
         self.iface.mapCanvas().refresh()
         self.close()
-        
