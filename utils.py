@@ -98,3 +98,74 @@ def intersection_point(lat1, lon1, bearing1, lat2, lon2, bearing2):
     la_3 = lam1 + diff_lam13
 
     return (math.degrees(fo_3), math.degrees(la_3))
+        
+def GCdistanceTo(lat1, lon1, lat2, lon2, R=6371000.0):
+    '''Compute the distance between two points. The average earth
+       radius is 6371000 meters. The returned distance is in the same
+       units as R which by default is meters'''
+    phi1 = math.radians(lat1)
+    lambda1 = math.radians(lon1)
+    phi2 = math.radians(lat2)
+    lambda2 = math.radians(lon2)
+    deltaphi = phi2 - phi1
+    deltalambda = lambda2 - lambda1
+    a = (math.sin(deltaphi/2.0) * math.sin(deltaphi/2.0)
+          + math.cos(phi1) * math.cos(phi2)
+          * math.sin(deltalambda/2.0) * math.sin(deltalambda/2.0))
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0-a))
+    d = R * c
+    return d
+
+def GCintermediatePointTo(lat1, lon1, lat2, lon2, fraction):
+    '''Return the fractional point between [lat1, lon1] and [lat2, lon2]
+       Coordinates are in degrees and fraction is between 0 and 1'''
+    phi1 = math.radians(lat1)
+    lambda1 = math.radians(lon1)
+    phi2 = math.radians(lat2)
+    lambda2 = math.radians(lon2)
+    sinphi1 = math.sin(phi1)
+    cosphi1 = math.cos(phi1)
+    sinlambda1 = math.sin(lambda1)
+    coslambda1 = math.cos(lambda1)
+    sinphi2 = math.sin(phi2)
+    cosphi2 = math.cos(phi2)
+    sinlambda2 = math.sin(lambda2)
+    coslambda2 = math.cos(lambda2)
+
+    # distance between points
+    deltaphi = phi2 - phi1
+    deltalambda = lambda2 - lambda1
+    a = math.sin(deltaphi/2.0) * math.sin(deltaphi/2.0) + math.cos(phi1) * math.cos(phi2) * math.sin(deltalambda/2.0) * math.sin(deltalambda/2.0)
+    delta = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0-a))
+
+    A = math.sin((1.0-fraction)*delta) / math.sin(delta)
+    B = math.sin(fraction*delta) / math.sin(delta)
+
+    x = A * cosphi1 * coslambda1 + B * cosphi2 * coslambda2
+    y = A * cosphi1 * sinlambda1 + B * cosphi2 * sinlambda2
+    z = A * sinphi1 + B * sinphi2
+
+    phi3 = math.atan2(z, math.sqrt(x*x + y*y))
+    lambda3 = math.atan2(y, x)
+
+    # Returns lat, lon and normalize lon from -180 to 180 degrees
+    return math.degrees(phi3), ((math.degrees(lambda3)+540.0)%360.0 - 180.0)
+
+def GCgetPointsOnLine(lat1, lon1, lat2, lon2, minSegLength=1000.0, maxNodes=500):
+    '''Get points along a great circle line between the two coordinates.
+       minSegLength is the minimum segment length in meters before a new
+       node point is created. maxNodes is the maximum number of points on
+       the line to create.'''
+    dist = GCdistanceTo(lat1, lon1, lat2, lon2)
+    numPoints = int(dist / minSegLength)
+    if numPoints > maxNodes:
+        numPoints = maxNodes
+    pts = [QgsPointXY(lon1, lat1)]
+    f = 1.0 / (numPoints - 1.0)
+    i = 1
+    while i < numPoints-1:
+        newlat, newlon = GCintermediatePointTo(lat1, lon1, lat2, lon2, f * i)
+        pts.append(QgsPointXY(newlon, newlat))
+        i += 1
+    pts.append(QgsPointXY(lon2, lat2))
+    return pts

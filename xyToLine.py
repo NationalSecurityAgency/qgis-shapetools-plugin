@@ -19,9 +19,8 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterField,
     QgsProcessingParameterFeatureSink)
 
-from .LatLon import LatLon
 from .settings import settings, epsg4326, geod
-from .utils import checkIdlCrossings, tr
+from .utils import checkIdlCrossings, tr, GCgetPointsOnLine
 #import traceback
 
 class XYToLineAlgorithm(QgsProcessingAlgorithm):
@@ -265,7 +264,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                     else: # The line segment is too short so it is from ptStart to ptEnd
                         pts.append(ptEnd)
                 elif lineType == 1: # Great circle
-                    pts = LatLon.getPointsOnLine(ptStart.y(), ptStart.x(),
+                    pts = GCgetPointsOnLine(ptStart.y(), ptStart.x(),
                         ptEnd.y(), ptEnd.x(),
                         settings.maxSegLength*1000.0, # Put it in meters
                         settings.maxSegments+1)
@@ -348,3 +347,4 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         
     def createInstance(self):
         return XYToLineAlgorithm()
+
