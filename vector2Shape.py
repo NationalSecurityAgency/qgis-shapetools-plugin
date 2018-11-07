@@ -11,11 +11,46 @@ from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 from PyQt4.QtGui import QIcon, QDialog, QDialogButtonBox
 from PyQt4 import uic
 
-from .LatLon import LatLon
 from .settings import settings, epsg4326
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/vector2Shape.ui'))
+
+def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
+    segments = int(math.ceil(segments / 2))
+    two_pi = 2 * math.pi
+    if smi < 0.0001: smi = 0.0001
+    if sma < 0.0001: sma = 0.0001
+    if sma < smi:
+        temp = sma
+        sma = smi
+        smi = temp
+        orient += 90
+    ab = sma * smi
+    step = 18.0 * smi / sma
+    if step < 1.0:
+        minimum = step
+    else:
+        minimum = 1.0
+        
+    maxang = math.pi / 6 * minimum
+    delta = ab * math.pi / segments
+    pts = []
+    azi = 0
+    while azi < two_pi:
+        cos_azi = math.cos(azi)
+        sin_azi = math.sin(azi)
+        rad = ab / math.sqrt(sma * sma * sin_azi * sin_azi + smi * smi * cos_azi * cos_azi)
+        g = geod.Direct(lat, lon, math.degrees(azi) + orient, rad, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+        pts.append(QgsPoint(g['lon2'], g['lat2']))
+        delo = delta / (rad * rad)
+        if maxang < delo:
+            delo = maxang
+        azi += delo
+        
+    # Append the starting point to close the shape
+    pts.append(pts[0])
+    return( pts )
 
 DISTANCE_MEASURE=["Kilometers","Meters","Nautical Miles","Miles","Feet"]
 class Vector2ShapeWidget(QDialog, FORM_CLASS):
@@ -246,19 +281,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.iface.messageBar().pushMessage("", message, level=QgsMessageBar.WARNING, duration=3)
         
     def processEllipse(self, layer, outname, semimajorcol, semiminorcol, orientcol, unitOfMeasure, defSemiMajor, defSemiMinor, defOrientation):
-        measureFactor = 1.0
-        # The ellipse calculation is done in Nautical Miles. This converts
-        # the semi-major and minor axis to nautical miles
-        if unitOfMeasure == 2: # Nautical Miles
-            measureFactor = 1.0
-        elif unitOfMeasure == 0: # Kilometers
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Meters, QGis.NauticalMiles)*1000.0
-        elif unitOfMeasure == 1: # Meters
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Meters, QGis.NauticalMiles)
-        elif unitOfMeasure == 3: # Miles
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.NauticalMiles)*5280.0
-        elif unitOfMeasure == 4: # Feet
-            measureFactor = QGis.fromUnitToUnitFactor(QGis.Feet, QGis.NauticalMiles)
+        measureFactor = self.conversionToMeters(unitOfMeasure)
         
         fields = layer.pendingFields()
         
@@ -288,8 +311,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
-                pts = LatLon.getEllipseCoords(pt.y(), pt.x(), semi_major*measureFactor,
-                    semi_minor*measureFactor, orient)
+                pts = geodesicEllipse(self.geod, pt.y(), pt.x(), semi_major*measureFactor,
+                    semi_minor*measureFactor, orient, 64)
                     
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if self.outputCRS != epsg4326:
@@ -471,8 +494,6 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                     i -= 1
                     g = self.geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPoint(g['lon2'], g['lat2']))
-                    #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), a, d)
-                    #pts.append(QgsPoint(lon2, lat2))
                     
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if self.outputCRS != epsg4326:
@@ -517,12 +538,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 angle = (i * 360.0 / numPoints) + startAngle
                 g = self.geod.Direct(pt.y(), pt.x(), angle, outerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPoint(g['lon2'], g['lat2']))
-                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle, outerRadius)
-                #pts.append(QgsPoint(lon2, lat2))
                 g = self.geod.Direct(pt.y(), pt.x(), angle-half, innerRadius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPoint(g['lon2'], g['lat2']))
-                #lat2, lon2 = LatLon.destinationPointVincenty(pt.y(), pt.x(), angle-half, innerRadius)
-                #pts.append(QgsPoint(lon2, lat2))
                 
             # If the Output crs is not 4326 transform the points to the proper crs
             if self.outputCRS != epsg4326:
