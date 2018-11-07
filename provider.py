@@ -5,6 +5,7 @@ from .geodesicDensify import GeodesicDensifyAlgorithm
 from .geodesicLayerMeasure import GeodesicLayerMeasureAlgorithm
 from .xyToLine import XYToLineAlgorithm
 from .createDonut import CreateDonutAlgorithm
+from .createEllipse import CreateEllipseAlgorithm
 from .createLob import CreateLobAlgorithm
 from .createPolygon import CreatePolygonAlgorithm
 from .idlbreakline import IdlBreakLineAlgorithm
@@ -27,6 +28,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(IdlBreakLineAlgorithm())
         self.addAlgorithm(GeodesicLayerMeasureAlgorithm())
         self.addAlgorithm(XYToLineAlgorithm())
+        self.addAlgorithm(CreateEllipseAlgorithm())
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
         self.addAlgorithm(CreatePieAlgorithm())

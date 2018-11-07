@@ -4,7 +4,6 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.core import QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
 import processing
 
-from .LatLon import LatLon
 from .vector2Shape import Vector2ShapeWidget
 from .settings import SettingsWidget
 from .geodesicMeasureTool import GeodesicMeasureTool

@@ -14,7 +14,7 @@ from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 import processing
 #import traceback
 
-from .LatLon import LatLon
+from .createEllipse import geodesicEllipse
 from .settings import settings, epsg4326, geod
 from .utils import *
 
@@ -303,21 +303,7 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
         self.iface.messageBar().pushMessage("", message, level=Qgis.Warning, duration=3)
         
     def processEllipse(self, layer, outname, shapetype, semimajorcol, semiminorcol, orientcol, unitOfMeasure, defSemiMajor, defSemiMinor, defOrientation):
-        measureFactor = 1.0
-        # The ellipse calculation is done in Nautical Miles. This converts
-        # the semi-major and minor axis to nautical miles
-        if unitOfMeasure == 2: # Nautical Miles
-            measureFactor = 1.0
-        elif unitOfMeasure == 0: # Kilometers
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles)
-        elif unitOfMeasure == 1: # Meters
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
-        elif unitOfMeasure == 3: # Miles
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceNauticalMiles)
-        elif unitOfMeasure == 4: # Yards
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceYards, QgsUnitTypes.DistanceNauticalMiles)
-        elif unitOfMeasure == 5: # Feet
-            measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceFeet, QgsUnitTypes.DistanceNauticalMiles)
+        measureFactor = conversionToMeters(unitOfMeasure)
         
         fields = layer.fields()
         
@@ -350,8 +336,8 @@ class Vector2ShapeWidget(QDialog, FORM_CLASS):
                 pt = feature.geometry().asPoint()
                 # make sure the coordinates are in EPSG:4326
                 pt = self.transform.transform(pt.x(), pt.y())
-                pts = LatLon.getEllipseCoords(pt.y(), pt.x(), semi_major*measureFactor,
-                    semi_minor*measureFactor, orient)
+                pts = geodesicEllipse(geod, pt.y(), pt.x(), semi_major*measureFactor,
+                    semi_minor*measureFactor, orient, 64)
                     
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if self.outputCRS != epsg4326:
