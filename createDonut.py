@@ -157,16 +157,16 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                     pt = geom_to_4326.transform(pt.x(), pt.y())
                 lat = pt.y()
                 lon = pt.x()
+                if inner_col:
+                    inner_radius = float(feature[inner_col]) * measure_factor
+                else:
+                    inner_radius = def_inner_radius
+                if outer_col:
+                    outer_radius = float(feature[outer_col]) * measure_factor
+                else:
+                    outer_radius = def_outer_radius
                 angle = 0
                 while angle < 360:
-                    if inner_col:
-                        inner_radius = float(feature[inner_col]) * measure_factor
-                    else:
-                        inner_radius = def_inner_radius
-                    if outer_col:
-                        outer_radius = float(feature[outer_col]) * measure_factor
-                    else:
-                        outer_radius = def_outer_radius
                     if inner_radius != 0:
                         g = geod.Direct(lat, lon, angle, inner_radius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                         pts_in.append(QgsPointXY(g['lon2'], g['lat2']))
