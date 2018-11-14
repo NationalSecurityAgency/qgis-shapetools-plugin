@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="24"
+   viewBox="0 0 24 24"
+   width="24"
+   version="1.1"
+   id="svg20"
+   sodipodi:docname="transformShape.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:export-filename="..\images\transformShape.png">
+  <metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview22"
+     showgrid="false"
+     inkscape:zoom="16"
+     inkscape:cx="-8.3125"
+     inkscape:cy="12"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg20" />
+  <linearGradient
+     gradientUnits="userSpaceOnUse"
+     x1="23"
+     x2="23"
+     y1="22.999999"
+     y2="28.999999"
+     id="linearGradient6">
+    <stop
+       offset="0"
+       stop-color="#555753"
+       id="stop2" />
+    <stop
+       offset="1"
+       stop-color="#555753"
+       stop-opacity="0"
+       id="stop4" />
+  </linearGradient>
+  <path
+     inkscape:connector-curvature="0"
+     id="path8"
+     style="fill:#1f78b4;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="M 8.2150933,1.4388891 C 5.3967461,1.4855259 2.9272691,2.694145 1.9311095,5.633615 0.9426417,8.550386 3.102596,13.815623 7.8636858,11.474118 15.771427,7.585091 15.767489,12.4375 17.744424,12.4375 c 2.438571,0 4.94037,-1.699566 4.94037,-3.873599 0,-1.944514 0.09638,-3.806388 -0.992208,-4.87712 C 19.715651,1.742267 18.718909,4.674177 13.403515,2.502623 11.709498,1.8105484 9.906102,1.4109061 8.2150933,1.4388891 Z" />
+  <path
+     style="opacity:0.3;fill:#fcffff;fill-rule:evenodd"
+     inkscape:connector-curvature="0"
+     id="path12"
+     d="M 14.000001,18.999999 23,18.9904 c 0,0 0,0 0,-2 C 23,14 22,14 18.5,14 15,14 14,14 14,17 c 0,2 0,2 10e-7,1.999999 z" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:1.5;stroke-linecap:square"
+     inkscape:connector-curvature="0"
+     id="path14"
+     d="m 21.498844,18.2375 c 0,-1.520773 -1.240344,-2.750705 -2.999423,-2.737371 C 16.601216,15.484759 15.5,16.747684 15.5,18.5 c 0,1.439852 1.50029,2.5 3,2.5" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"
+     inkscape:connector-curvature="0"
+     id="path16"
+     d="m 18.58077,19 1.5,2 -1.5,2" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path8-0"
+     style="fill:#ff3230;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 14.689276,13.043 c -1.695325,-0.92621 -3.603022,-1.055425 -5.259125,0.325178 -1.6433127,1.36994 -2.2607369,5.177282 1.42135,5.419787 6.115618,0.402781 4.35876,3.236837 5.536119,3.905648 1.452285,0.824984 3.556748,0.678258 4.342826,-0.592092 0.703088,-1.13623 1.433695,-2.191566 1.172539,-3.185498 -0.474268,-1.805042 -2.127985,-0.429052 -4.508377,-3.496182 -0.75863,-0.977494 -1.688137,-1.821115 -2.705333,-2.376845 z"
+     inkscape:export-filename="..\images\transformShape.png"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96" />
+</svg>

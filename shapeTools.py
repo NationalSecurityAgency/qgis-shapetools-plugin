@@ -86,6 +86,14 @@ class ShapeTools(object):
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureLayerAction)
         self.toolbar.addAction(self.measureLayerAction)
         
+        # Initialize Geodesic transformation tool
+        icon = QIcon(os.path.dirname(__file__) + '/images/transformShape.png')
+        self.transformAction = QAction(icon, tr('Geodesic transformations'), self.iface.mainWindow())
+        self.transformAction.setObjectName('stGeodesicTransformations')        
+        self.transformAction.triggered.connect(self.transformTool)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.transformAction)
+        self.toolbar.addAction(self.transformAction)
+        
         # Initialize the Azimuth Distance Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
         self.digitizeAction = QAction(icon, tr('Azimuth distance digitizer'), self.iface.mainWindow())
@@ -150,6 +158,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicLineBreakAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureLayerAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.transformAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.digitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.lineDigitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
@@ -161,6 +170,7 @@ class ShapeTools(object):
         self.iface.removeToolBarIcon(self.geodesicLineBreakAction)
         self.iface.removeToolBarIcon(self.measureAction)
         self.iface.removeToolBarIcon(self.measureLayerAction)
+        self.iface.removeToolBarIcon(self.transformAction)
         self.iface.removeToolBarIcon(self.digitizeAction)
         self.iface.removeToolBarIcon(self.lineDigitizeAction)
         self.azDigitizerTool = None
@@ -198,6 +208,9 @@ class ShapeTools(object):
         
     def measureLayerTool(self):
         results = processing.execAlgorithmDialog('shapetools:measurelayer', {})
+        
+    def transformTool(self):
+        results = processing.execAlgorithmDialog('shapetools:geodesictransformations', {})
         
     def settings(self):
         if self.settingsDialog is None:

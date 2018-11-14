@@ -6,6 +6,7 @@
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic line break](images/idlbreak.png) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic densifier](images/geodesicDensifier.png) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
+* ![Geodesic transfomations tool](images/transformShape.png) **Geodesic transformations** can geodesically scale, rotate, and translate points, lines and polygons. It retains the its shapes relative dimensions no matter what the projection is.
 * ![Geodesic measure tool](images/measure.png) **Geodesic measure tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Geodesic measurement layer](images/measureLine.png) **Geodesic measurement layer** converts a polygon or line layer a new layer with all geometries measured and labeled.
 * ![Azimuth, distance digitizer](images/dazdigitize.png) **Azimuth, distance digitizer** creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.
@@ -17,6 +18,7 @@
 * [XY to Line](#xy-to-line)
 * [Geodesic Line Break](#geodesic-line-break)
 * [Geodesic Densifier](#geodesic-densifier)
+* [Geodesic Transformations](#geodesic-transformations)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Geodesic Measurement Layer](#geodesic-measure-layer)
 * [Azimuth, Distance Digitizer](#azimuth-distance)
@@ -151,6 +153,21 @@ The following shows the before and after results of running this function on a p
 This function can also be accessed from the **Processing Toolbox**.
 
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
+
+## <a name="geodesic-transfomations"></a> ![Geodesic Transformations](images/transformShape.png) Geodesic Transformations Tool
+
+This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection. 
+
+<div style="text-align:center"><img src="doc/geodesictransform.jpg" alt="Geodesic Transformations"></div>
+
+* **Input vector layer** - Select an existing point, line, or polygon vector layer.
+* **Selected features only** - Checking this box will cause the algorithm to only transform the selected features.
+* **Rotation angle about the centroid** - Rotate the feature about its centroid. A positive angle rotates in a clockwise direction.
+* **Scale factor about the centroid** - Scale the shape about its centroid. A scale factor of 1 retains its same size.
+* **Translation distance** - Distance the shape will be moved along a geodesic path.
+* **Translation azimuth** - Azimuth or direction the shape will be moved along a geodesic path.
+* **Translation distance units** - Units of distance the shape will be move.
+* **Output layer** - The output layer that will be created in QGIS.
 
 ## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
 
