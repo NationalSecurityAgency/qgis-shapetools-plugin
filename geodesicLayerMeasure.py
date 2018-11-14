@@ -241,7 +241,7 @@ class StylePostProcessor(QgsProcessingLayerPostProcessorInterface):
             
         label = QgsPalLayerSettings()
         label.fieldName = 'label'
-        label.placement = QgsPalLayerSettings.AboveLine
+        label.placement = QgsPalLayerSettings.Line
         format = label.format()
         format.setColor(settings.measureTextColor)
         format.setNamedStyle('Bold')
