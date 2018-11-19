@@ -1,7 +1,7 @@
 from qgis.PyQt.QtCore import QUrl, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
+from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton
+from qgis.core import QgsMapLayer, QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
 import processing
 
 from .vector2Shape import Vector2ShapeWidget
@@ -13,6 +13,7 @@ from .lineDigitizer import LineDigitizerTool
 import os.path
 import webbrowser
 from .provider import ShapeToolsProvider
+from .geodesicFlip import flipLayer
 
 def tr(string):
     return QCoreApplication.translate('Processing', string)
@@ -86,13 +87,46 @@ class ShapeTools(object):
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureLayerAction)
         self.toolbar.addAction(self.measureLayerAction)
         
+        menu = QMenu()
         # Initialize Geodesic transformation tool
         icon = QIcon(os.path.dirname(__file__) + '/images/transformShape.png')
-        self.transformAction = QAction(icon, tr('Geodesic transformations'), self.iface.mainWindow())
-        self.transformAction.setObjectName('stGeodesicTransformations')        
-        self.transformAction.triggered.connect(self.transformTool)
-        self.iface.addPluginToVectorMenu('Shape Tools', self.transformAction)
-        self.toolbar.addAction(self.transformAction)
+        self.transformationsAction = menu.addAction(icon, tr('Geodesic transformations'), self.transformTool)
+        self.transformationsAction.setObjectName('stGeodesicTransformations')
+        
+        icon = QIcon(os.path.dirname(__file__) + '/images/flip.png')
+        self.flipRotateAction = menu.addAction(icon, tr('Geodesic flip and rotate'), self.flipRotateTool)
+        self.flipRotateAction.setObjectName('stGeodesicFlipRotate')
+        
+        icon = QIcon(os.path.dirname(__file__) + '/images/flipHorizontal.png')
+        self.flipHorizontalAction = menu.addAction(icon, tr('Flip horizontal'), self.flipHorizontalTool)
+        self.flipHorizontalAction.setObjectName('stGeodesicFlipHorizontal')
+        self.flipHorizontalAction.setEnabled(False)
+        icon = QIcon(os.path.dirname(__file__) + '/images/flipVertical.png')
+        self.flipVerticalAction = menu.addAction(icon, tr('Flip vertical'), self.flipVerticalTool)
+        self.flipVerticalAction.setObjectName('stGeodesicFlipVertical')
+        self.flipVerticalAction.setEnabled(False)
+        icon = QIcon(os.path.dirname(__file__) + '/images/rotate180.png')
+        self.rotate180Action = menu.addAction(icon, tr('Rotate 180\xb0'), self.rotate180Tool)
+        self.rotate180Action.setObjectName('stGeodesicRotate180')
+        self.rotate180Action.setEnabled(False)
+        icon = QIcon(os.path.dirname(__file__) + '/images/rotatecw.png')
+        self.rotate90CWAction = menu.addAction(icon, tr('Rotate 90\xb0 CW'), self.rotate90CWTool)
+        self.rotate90CWAction.setObjectName('stGeodesicRotate90CW')
+        self.rotate90CWAction.setEnabled(False)
+        icon = QIcon(os.path.dirname(__file__) + '/images/rotateccw.png')
+        self.rotate90CCWAction = menu.addAction(icon, tr('Rotate 90\xb0 CCW'), self.rotate90CCWTool)
+        self.rotate90CCWAction.setObjectName('stGeodesicRotate90CCW')
+        self.rotate90CCWAction.setEnabled(False)
+        self.transformsAction = QAction(icon, tr('Geodesic Transforms'), self.iface.mainWindow())
+        self.transformsAction.setMenu(menu)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.transformsAction)
+        
+        self.transformationButton = QToolButton()
+        self.transformationButton.setMenu(menu)
+        self.transformationButton.setDefaultAction(self.transformationsAction)
+        self.transformationButton.setPopupMode(QToolButton.MenuButtonPopup)
+        self.transformationButton.triggered.connect(self.toolButtonTriggered)
+        self.tranformToolbar = self.toolbar.addWidget(self.transformationButton)
         
         # Initialize the Azimuth Distance Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
@@ -130,7 +164,7 @@ class ShapeTools(object):
         
         self.iface.currentLayerChanged.connect(self.currentLayerChanged)
         self.canvas.mapToolSet.connect(self.unsetTool)
-        self.enableDigitizeTool()
+        self.enableTools()
         
         # Add the processing provider
         QgsApplication.processingRegistry().addProvider(self.provider)
@@ -158,7 +192,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicLineBreakAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureLayerAction)
-        self.iface.removePluginVectorMenu('Shape Tools', self.transformAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.transformsAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.digitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.lineDigitizeAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
@@ -170,16 +204,20 @@ class ShapeTools(object):
         self.iface.removeToolBarIcon(self.geodesicLineBreakAction)
         self.iface.removeToolBarIcon(self.measureAction)
         self.iface.removeToolBarIcon(self.measureLayerAction)
-        self.iface.removeToolBarIcon(self.transformAction)
+        self.iface.removeToolBarIcon(self.transformationsAction)
         self.iface.removeToolBarIcon(self.digitizeAction)
         self.iface.removeToolBarIcon(self.lineDigitizeAction)
+        self.iface.removeToolBarIcon(self.tranformToolbar)
         self.azDigitizerTool = None
         self.lineDigitizerTool = None
         # remove the toolbar
         del self.toolbar
 
         QgsApplication.processingRegistry().removeProvider(self.provider)
-        
+    
+    def toolButtonTriggered(self, action):
+        self.transformationButton.setDefaultAction(action)
+    
     def shapeTool(self):
         if self.shapeDialog is None:
             self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
@@ -212,6 +250,29 @@ class ShapeTools(object):
     def transformTool(self):
         results = processing.execAlgorithmDialog('shapetools:geodesictransformations', {})
         
+    def flipRotateTool(self):
+        results = processing.execAlgorithmDialog('shapetools:geodesicflip', {})
+        
+    def flipHorizontalTool(self):
+        layer = self.iface.activeLayer()
+        flipLayer(self.iface, layer, 0)
+        
+    def flipVerticalTool(self):
+        layer = self.iface.activeLayer()
+        flipLayer(self.iface, layer, 1)
+        
+    def rotate180Tool(self):
+        layer = self.iface.activeLayer()
+        flipLayer(self.iface, layer, 2)
+        
+    def rotate90CWTool(self):
+        layer = self.iface.activeLayer()
+        flipLayer(self.iface, layer, 3)
+        
+    def rotate90CCWTool(self):
+        layer = self.iface.activeLayer()
+        flipLayer(self.iface, layer, 4)
+        
     def settings(self):
         if self.settingsDialog is None:
             self.settingsDialog = SettingsWidget(self.iface, self.iface.mainWindow())
@@ -239,22 +300,32 @@ class ShapeTools(object):
                 layer.editingStarted.connect(self.layerEditingChanged)
                 layer.editingStopped.connect(self.layerEditingChanged)
                 self.previousLayer = layer
-        self.enableDigitizeTool()
+        self.enableTools()
 
     def layerEditingChanged(self):
-        self.enableDigitizeTool()
+        self.enableTools()
 
-    def enableDigitizeTool(self):
+    def enableTools(self):
         self.digitizeAction.setEnabled(False)
         self.lineDigitizeAction.setEnabled(False)
+        self.flipHorizontalAction.setEnabled(False)
+        self.flipVerticalAction.setEnabled(False)
+        self.rotate180Action.setEnabled(False)
+        self.rotate90CWAction.setEnabled(False)
+        self.rotate90CCWAction.setEnabled(False)
         layer = self.iface.activeLayer()
         
-        if layer != None and isinstance(layer, QgsVectorLayer) and ((layer.wkbType() == QgsWkbTypes.Point) or (layer.wkbType() == QgsWkbTypes.LineString) or (layer.wkbType() == QgsWkbTypes.MultiLineString)) and layer.isEditable():
+        if not layer or not layer.isValid() or (layer.type() != QgsMapLayer.VectorLayer) or not layer.isEditable():
+            return
+        wkbtype = layer.wkbType()
+        geomtype = QgsWkbTypes.geometryType(wkbtype)
+        self.lineDigitizeAction.setEnabled(True)
+        if geomtype == QgsWkbTypes.PointGeometry or geomtype == QgsWkbTypes.LineGeometry:
             self.digitizeAction.setEnabled(True)
-        else:
-            self.digitizeAction.setChecked(False)
-        if layer != None and isinstance(layer, QgsVectorLayer) and layer.isEditable():
-            self.lineDigitizeAction.setEnabled(True)
-        else:
-            self.lineDigitizeAction.setChecked(False)
+        if geomtype == QgsWkbTypes.LineGeometry or geomtype == QgsWkbTypes.PolygonGeometry :
+            self.flipHorizontalAction.setEnabled(True)
+            self.flipVerticalAction.setEnabled(True)
+            self.rotate180Action.setEnabled(True)
+            self.rotate90CWAction.setEnabled(True)
+            self.rotate90CCWAction.setEnabled(True)
 

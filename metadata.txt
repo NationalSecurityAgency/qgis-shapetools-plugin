@@ -1,20 +1,29 @@
 [general]
 name=Shape Tools
 qgisMinimumVersion=3.2
-description=Shape Tools features geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measure tool, create geodesic measurement layer, geodesic scale, rotate and translate tool, and digitize points at an azimuth & distance tools.
-version=3.3.0
+description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
+version=3.3.1
 author=C Hamilton
 email=adenaculture@gmail.com
-about=Shape Tools features geodesic shapes and tools. "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. "Geodesic Line Break" breaks lines at the International Date Line. "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer. "Geodesic Transformation Tool" can scale, rotate and translate any shape. "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance. Shape Tools is installed in the Vector menu.
+about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
+    "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. 
+    "Geodesic Line Break" breaks lines at the International Date Line. 
+    "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. 
+    "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer.
+    "Geodesic Measurement Layer" converts a polygon or line layer a new layer with all geometries measured and labeled.
+    "Geodesic Transformation Tool" can scale, rotate and translate any shape.
+    "Geodesic flip & rotate tools" provide geodesic flip and rotation vector feature transformations.
+    "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
-tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,translate
+tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate
 homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 category=Vector
 icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    3.3.1 - Added geodesic flip & rotation tools
     3.3.0 - Added geodesic transformation tool
     3.2.4 - Changed ellipse algorithm to be geodesic and made other minor improvements
     3.2.3 - Added max segment length in densifier processing dialog

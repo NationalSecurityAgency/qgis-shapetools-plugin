@@ -2,13 +2,9 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsUnitTypes, QgsVectorLayer,
-    QgsPointXY, QgsPoint, QgsFeature, QgsFields, QgsField, QgsGeometry, 
-    QgsProject, QgsWkbTypes, QgsCoordinateTransform, QgsPalLayerSettings,
-    QgsVectorLayerSimpleLabeling)
+from qgis.core import (QgsPoint, QgsProject, QgsWkbTypes, QgsCoordinateTransform)
     
 from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
@@ -16,9 +12,9 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl, QVariant
+from qgis.PyQt.QtCore import QUrl
 
-from .settings import epsg4326, geod, settings
+from .settings import epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
 class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):

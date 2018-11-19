@@ -1,14 +1,15 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** has the following tools that are installed in the Vector menu, on the toolbar, or from the Processing Toolbox.
+***Shape Tools*** is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. 
 
 * ![Create shapes](images/shapes.png) **Create shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
-* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. Geodesic lines represent the shortest path along the Earth's surface between two points. The input can be a point vector layer or a table layer that contains pairs of coordinates.
+* ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic line break](images/idlbreak.png) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic densifier](images/geodesicDensifier.png) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
-* ![Geodesic transfomations tool](images/transformShape.png) **Geodesic transformations** can geodesically scale, rotate, and translate points, lines and polygons. It retains the its shapes relative dimensions no matter what the projection is.
 * ![Geodesic measure tool](images/measure.png) **Geodesic measure tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Geodesic measurement layer](images/measureLine.png) **Geodesic measurement layer** converts a polygon or line layer a new layer with all geometries measured and labeled.
+* ![Geodesic transfomations tool](images/transformShape.png) **Geodesic transformations** can geodesically scale, rotate, and translate points, lines and polygons. Each vector feature retains their relative dimensions no matter what the projection is.
+* ![Geodesic flip and rotate](images/flip.png) **Geodesic flip & rotate tools** provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.
 * ![Azimuth, distance digitizer](images/dazdigitize.png) **Azimuth, distance digitizer** creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.
 * ![Azimuth distance sequence digitizer](images/linedigitize.png) **Azimuth distance sequence digitizer** digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.
 
@@ -18,9 +19,10 @@
 * [XY to Line](#xy-to-line)
 * [Geodesic Line Break](#geodesic-line-break)
 * [Geodesic Densifier](#geodesic-densifier)
-* [Geodesic Transformations](#geodesic-transformations)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Geodesic Measurement Layer](#geodesic-measure-layer)
+* [Geodesic Transformations](#geodesic-transformations)
+* [Geodesic Flip and Rotate Tools](#geodesic-flip)
 * [Azimuth, Distance Digitizer](#azimuth-distance)
 * [Azimuth Distance Sequence Digitizer](#azimuth-distance-sequence)
 * [Settings](#settings)
@@ -154,21 +156,6 @@ This function can also be accessed from the **Processing Toolbox**.
 
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
-## <a name="geodesic-transfomations"></a> ![Geodesic Transformations](images/transformShape.png) Geodesic Transformations Tool
-
-This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection. 
-
-<div style="text-align:center"><img src="doc/geodesictransform.jpg" alt="Geodesic Transformations"></div>
-
-* **Input vector layer** - Select an existing point, line, or polygon vector layer.
-* **Selected features only** - Checking this box will cause the algorithm to only transform the selected features.
-* **Rotation angle about the centroid** - Rotate the feature about its centroid. A positive angle rotates in a clockwise direction.
-* **Scale factor about the centroid** - Scale the shape about its centroid. A scale factor of 1 retains its same size.
-* **Translation distance** - Distance the shape will be moved along a geodesic path.
-* **Translation azimuth** - Azimuth or direction the shape will be moved along a geodesic path.
-* **Translation distance units** - Units of distance the shape will be move.
-* **Output layer** - The output layer that will be created in QGIS.
-
 ## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
 
 This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are similar to those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be meters, kilometers, feet, yards, miles, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. Notice that the ellipsoid used to calculate measurements is listed in the lower left-hand corner. By default this is set to ***WGS 84***, but it can be changed in the ***Settings*** menu.
@@ -196,6 +183,38 @@ Here is an example of running this on a polygon. Notice how it not only measures
 Here is what the attributes table looks like.
 
 <div style="text-align:center"><img src="doc/measurement-attributes.jpg" alt="Measurement Attributes"></div>
+
+## <a name="geodesic-transformations"></a> ![Geodesic Transformations](images/transformShape.png) Geodesic Transformations Tool
+
+This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection. 
+
+<div style="text-align:center"><img src="doc/geodesictransform.jpg" alt="Geodesic Transformations"></div>
+
+* **Input vector layer** - Select an existing point, line, or polygon vector layer.
+* **Selected features only** - Checking this box will cause the algorithm to only transform the selected features.
+* **Rotation angle about the centroid** - Rotate the feature about its centroid. A positive angle rotates in a clockwise direction.
+* **Scale factor about the centroid** - Scale the shape about its centroid. A scale factor of 1 retains its same size.
+* **Translation distance** - Distance the shape will be moved along a geodesic path.
+* **Translation azimuth** - Azimuth or direction the shape will be moved along a geodesic path.
+* **Translation distance units** - Units of distance the shape will be move.
+* **Output layer** - The output layer that will be created in QGIS.
+
+## <a name="geodesic-flip"></a> ![Geodesic Flip and Rotate Tools](images/flip.png) Geodesic Flip and Rotate Tools
+This is a collection of geodesic tools that transform vector features including the ability to flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees. The first is a processing toolbox algorithm that allows the selection of one of these five transforms.
+
+<div style="text-align:center"><img src="doc/fliptool.jpg" alt="Geodesic Flip and Rotate"></div>
+
+* **Input vector layer** - Select an existing line, or polygon vector layer.
+* **Transform function** - Choose the desired function: ***Flip Horizontal, Flip Vertical, Rotate 180&deg;, Rotate 90&deg; CW,*** or ***Rotate 90&deg; CCW***.
+* **Output layer** - The output layer that will be created in QGIS.
+
+The following geodesic tools work on an editable line or polygon vector layer. If a feature is selected, these functions only operate on that feature; otherwise, it operates on all features in the layer.
+
+* ![Flip horizontal](images/flipHorizontal.png) **Flip horizontal** flips a vector feature horizontally about its centroid.
+* ![Flip vertical](images/flipVertical.png) **Flip vertical** flips a vector feature vertically about its centroid.
+* ![Rotate 180](images/rotate180.png) **Rotate 180&deg; ** rotates a vector feature by 180 degrees.
+* ![Rotate 90 CW](images/rotatecw.png) **Rotate 90&deg; CW** rotates a vector feature by 90 degrees clockwise.
+* ![Rotate 90 CCW](images/rotateccw.png) **Rotate 90&deg; CCW** rotates a vector feature by 90 degrees counter-clockwise.
 
 ## <a name="azimuth-distance"></a> ![Azimuth, Distance Digitizer](images/dazdigitize.png) Azimuth, Distance Digitizer
 

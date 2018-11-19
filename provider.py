@@ -5,6 +5,7 @@ from .geodesicDensify import GeodesicDensifyAlgorithm
 from .geodesicLayerMeasure import GeodesicLayerMeasureAlgorithm
 from .geodesicTransformation import GeodesicTransformationsAlgorithm
 from .xyToLine import XYToLineAlgorithm
+from .geodesicFlip import GeodesicFlipAlgorithm
 from .createDonut import CreateDonutAlgorithm
 from .createEllipse import CreateEllipseAlgorithm
 from .createLob import CreateLobAlgorithm
@@ -30,6 +31,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(GeodesicLayerMeasureAlgorithm())
         self.addAlgorithm(GeodesicTransformationsAlgorithm())
         self.addAlgorithm(XYToLineAlgorithm())
+        self.addAlgorithm(GeodesicFlipAlgorithm())
         self.addAlgorithm(CreateEllipseAlgorithm())
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
