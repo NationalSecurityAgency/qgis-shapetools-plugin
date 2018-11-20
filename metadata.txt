@@ -6,7 +6,8 @@ version=3.3.1
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
-    "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters. "XY to Line" uses pairs of coordinates from each record to create geodesic lines. 
+    "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, and hearts based on the table's fields and other parameters.
+    "XY to Line" uses pairs of coordinates from each record to create geodesic lines. 
     "Geodesic Line Break" breaks lines at the International Date Line. 
     "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. 
     "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer.
