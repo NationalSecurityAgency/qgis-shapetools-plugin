@@ -260,7 +260,10 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
                 
         label = QgsPalLayerSettings()
         label.fieldName = 'label'
-        label.placement = QgsPalLayerSettings.AboveLine
+        try:
+            label.placement = QgsPalLayerSettings.Line
+        except:
+            label.placement = QgsPalLayerSettings.AboveLine
         format = label.format()
         format.setColor(settings.measureTextColor)
         format.setNamedStyle('Bold')
