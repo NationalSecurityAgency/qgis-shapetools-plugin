@@ -68,7 +68,7 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         try:
             distance = float(self.distLineEdit.text())
             azimuth = float(self.azimuthLineEdit.text())
-            units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 ft
+            units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 yards, 5 ft, 6 inches, 7 cm
             start = self.checkBox.isChecked()
         except:
             self.iface.messageBar().pushMessage("", tr("Either distance or azimuth were invalid"), level=Qgis.Warning, duration=4)

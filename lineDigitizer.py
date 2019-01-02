@@ -81,7 +81,7 @@ class LineDigitizerWidget(QDialog, FORM_CLASS):
                 return
             for x, v in enumerate(values):
                 values[x] = float(v)
-            units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 ft
+            units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 yards, 5 feet, 6 inches, 7 cm
         except:
             self.iface.messageBar().pushMessage("", tr("One or more entered values were invalid"), level=Qgis.Warning, duration=4)
             return

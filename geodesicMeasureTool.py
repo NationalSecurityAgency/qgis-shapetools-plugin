@@ -13,7 +13,8 @@ from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.PyQt import uic
 
 from .settings import epsg4326, settings, geod
-from .utils import tr
+from .utils import tr, DISTANCE_LABELS
+unitsAbbr = ['km','m','cm','mi','yd','ft','in','nm']
 
 class GeodesicMeasureTool(QgsMapTool):
     
@@ -70,8 +71,6 @@ class GeodesicMeasureTool(QgsMapTool):
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/geodesicMeasureDialog.ui'))
 
-UNITS = [tr('meters'), tr('kilometers'), tr('feet'), tr('yards'),tr('miles'),tr('nautical miles')]
-
 class GeodesicMeasureDialog(QDialog, FORM_CLASS):
     def __init__(self, iface, parent):
         super(GeodesicMeasureDialog, self).__init__(parent)
@@ -87,7 +86,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.saveToLayerButton.clicked.connect(self.saveToLayer)
         self.saveToLayerButton.setEnabled(False)
 
-        self.unitsComboBox.addItems(UNITS)
+        self.unitsComboBox.addItems(DISTANCE_LABELS)
 
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setSortingEnabled(False)
@@ -135,7 +134,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.geodLabel.setText(label)
 
     def unitsChanged(self):
-        label = "Distance [{}]".format(UNITS[self.unitsComboBox.currentIndex()])
+        label = "Distance [{}]".format(DISTANCE_LABELS[self.unitsComboBox.currentIndex()])
         item = QTableWidgetItem(label)
         self.tableWidget.setHorizontalHeaderItem(2, item)
         ptcnt = len(self.capturedPoints)
@@ -321,31 +320,23 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
     def unitDistance(self, distance):
         units = self.unitsComboBox.currentIndex()
-        if units == 0: # meters
-            return distance
-        elif units == 1: # kilometers
+        if units == 0: # kilometers
             return distance / 1000.0
-        elif units == 2: # feet
-            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet)
-        elif units == 3: # yards
-            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceYards)
-        elif units == 4: # miles
+        elif units == 1: # meters
+            return distance
+        elif units == 2: # centimeters
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceCentimeters)
+        elif units == 3: # miles
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles)
-        else: # nautical miles
+        elif units == 4: # yards
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceYards)
+        elif units == 5: # feet
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet)
+        elif units == 6: # inches
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet) * 12
+        elif units == 7: # nautical miles
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
     
     def unitDesignator(self):
         units = self.unitsComboBox.currentIndex()
-        if units == 0: # meters
-            return 'm'
-        elif units == 1: # kilometers
-            return 'km'
-        elif units == 2: # feet
-            return 'ft'
-        elif units == 3: # yards
-            return 'yd'
-        elif units == 4: # miles
-            return 'mi'
-        else: # nautical miles
-            return 'nm'
-            
+        return unitsAbbr[units]

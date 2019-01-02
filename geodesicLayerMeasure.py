@@ -22,7 +22,7 @@ from qgis.PyQt.QtCore import QUrl, QVariant
 from .settings import epsg4326, geod, settings
 from .utils import tr, DISTANCE_LABELS
 
-unitsAbbr = ['km', 'm', 'nm', 'mi','yd','ft']
+unitsAbbr = ['km','m','cm','mi','yd','ft','in','nm']
 
 class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
     """
@@ -198,14 +198,18 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
             return distance / 1000.0
         elif units == 1: # meters
             return distance
-        elif units == 2: # nautical miles
-            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
+        elif units == 2: # centimeters
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceCentimeters)
         elif units == 3: # miles
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles)
         elif units == 4: # yards
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceYards)
-        else: # feet
+        elif units == 5: # feet
             return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet)
+        elif units == 6: # inches
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet) * 12
+        elif units == 7: # nautical miles
+            return distance * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
         
     def name(self):
         return 'measurelayer'
