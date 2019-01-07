@@ -4,7 +4,6 @@ from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton
 from qgis.core import QgsMapLayer, QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
 import processing
 
-from .vector2Shape import Vector2ShapeWidget
 from .settings import SettingsWidget
 from .geodesicMeasureTool import GeodesicMeasureTool
 from .azDigitizer import AzDigitizerTool
@@ -23,7 +22,6 @@ class ShapeTools(object):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.settingsDialog = None
-        self.shapeDialog = None
         self.xyLineDialog = None
         self.geodesicDensifyDialog = None
         self.azDigitizerTool = None
@@ -37,13 +35,57 @@ class ShapeTools(object):
         self.azDigitizerTool = AzDigitizerTool(self.iface)
         self.lineDigitizerTool = LineDigitizerTool(self.iface)
         
-        # Initialize the create shape menu item
+        # Initialize the create shape menu items
+        menu = QMenu()
+        # Initialize Create Arc Wedge tool
+        icon = QIcon(os.path.dirname(__file__) + '/images/arc.png')
+        self.createArcAction = menu.addAction(icon, tr('Create arc wedge'), self.createArc)
+        self.createArcAction.setObjectName('stCreateArcWedge')
+        icon = QIcon(os.path.dirname(__file__) + '/images/donut.png')
+        self.createDonutAction = menu.addAction(icon, tr('Create donut'), self.createDonut)
+        self.createDonutAction.setObjectName('stCreateDonut')
+        icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
+        self.createEllipseAction = menu.addAction(icon, tr('Create ellipse'), self.createEllipse)
+        self.createEllipseAction.setObjectName('stCreateEllipse')
+        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
+        self.createEllipseRoseAction = menu.addAction(icon, tr('Create ellipse rose'), self.createEllipseRose)
+        self.createEllipseRoseAction.setObjectName('stCreateEllipseRose')
+        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
+        self.createEpicycloidAction = menu.addAction(icon, tr('Create epicycloid'), self.createEpicycloid)
+        self.createEpicycloidAction.setObjectName('stCreateEpicycloid')
+        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        self.createHeartAction = menu.addAction(icon, tr('Create heart'), self.createHeart)
+        self.createHeartAction.setObjectName('stCreateHeart')
+        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
+        self.createHypocycloidAction = menu.addAction(icon, tr('Create hypocycloid'), self.createHypocycloid)
+        self.createHypocycloidAction.setObjectName('stCreateHypocycloid')
+        icon = QIcon(os.path.dirname(__file__) + '/images/line.png')
+        self.createLOBAction = menu.addAction(icon, tr('Create line of bearing'), self.createLOB)
+        self.createLOBAction.setObjectName('stCreateLineOfBearing')
+        icon = QIcon(os.path.dirname(__file__) + '/images/pie.png')
+        self.createPieAction = menu.addAction(icon, tr('Create pie wedge'), self.createPie)
+        self.createPieAction.setObjectName('stCreatePie')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
+        self.createPolyfoilAction = menu.addAction(icon, tr('Create polyfoil'), self.createPolyfoil)
+        self.createPolyfoilAction.setObjectName('stCreatePolyfoil')
+        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
+        self.createPolygonAction = menu.addAction(icon, tr('Create polygon'), self.createPolygon)
+        self.createPolygonAction.setObjectName('stCreatePolygon')
+        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
+        self.createStarAction = menu.addAction(icon, tr('Create star'), self.createStar)
+        self.createStarAction.setObjectName('stCreateStar')
+        # Add the shape creation tools to the menu
         icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
-        self.shapeAction = QAction(icon, tr('Create shapes'), self.iface.mainWindow())
-        self.shapeAction.setObjectName('stCreateShapes')
-        self.shapeAction.triggered.connect(self.shapeTool)
-        self.iface.addPluginToVectorMenu('Shape Tools', self.shapeAction)
-        self.toolbar.addAction(self.shapeAction)
+        self.createShapesAction = QAction(icon, tr('Create shapes'), self.iface.mainWindow())
+        self.createShapesAction.setMenu(menu)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.createShapesAction)
+        # Add the shape creation tools to the toolbar
+        self.createShapeButton = QToolButton()
+        self.createShapeButton.setMenu(menu)
+        self.createShapeButton.setDefaultAction(self.createDonutAction)
+        self.createShapeButton.setPopupMode(QToolButton.MenuButtonPopup)
+        self.createShapeButton.triggered.connect(self.createShapeTriggered)
+        self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
         
         # Initialize the XY to Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
@@ -186,7 +228,7 @@ class ShapeTools(object):
         self.canvas.unsetMapTool(self.lineDigitizerTool)
         
         # remove from menu
-        self.iface.removePluginVectorMenu('Shape Tools', self.shapeAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.createShapesAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicLineBreakAction)
@@ -198,7 +240,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.settingsAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.helpAction)
         # Remove from toolbar
-        self.iface.removeToolBarIcon(self.shapeAction)
+        self.iface.removeToolBarIcon(self.createShapeToolbar)
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.geodesicDensifyAction)
         self.iface.removeToolBarIcon(self.geodesicLineBreakAction)
@@ -218,10 +260,8 @@ class ShapeTools(object):
     def toolButtonTriggered(self, action):
         self.transformationButton.setDefaultAction(action)
     
-    def shapeTool(self):
-        if self.shapeDialog is None:
-            self.shapeDialog = Vector2ShapeWidget(self.iface, self.iface.mainWindow())
-        self.shapeDialog.show()
+    def createShapeTriggered(self, action):
+        self.createShapeButton.setDefaultAction(action)
         
     def setShowAzDigitizerTool(self):
         self.digitizeAction.setChecked(True)
@@ -243,6 +283,42 @@ class ShapeTools(object):
     def measureTool(self):
         self.measureAction.setChecked(True)
         self.canvas.setMapTool(self.geodesicMeasureTool)
+        
+    def createArc(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createarc', {})
+        
+    def createDonut(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createdonut', {})
+        
+    def createEllipse(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createellipse', {})
+        
+    def createEllipseRose(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createrose', {})
+        
+    def createEpicycloid(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createepicycloid', {})
+        
+    def createHeart(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createheart', {})
+        
+    def createHypocycloid(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createhypocycloid', {})
+        
+    def createLOB(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createlob', {})
+        
+    def createPie(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createpie', {})
+        
+    def createPolyfoil(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createpolyfoil', {})
+        
+    def createPolygon(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createpolygon', {})
+        
+    def createStar(sefl):
+        results = processing.execAlgorithmDialog('shapetools:createstar', {})
         
     def measureLayerTool(self):
         results = processing.execAlgorithmDialog('shapetools:measurelayer', {})
