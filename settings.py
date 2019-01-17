@@ -90,7 +90,8 @@ class Settings():
         '''Load the user selected settings. The settings are retained even when
         the user quits QGIS.'''
         qset = QSettings()
-        self.guessNames = int(qset.value('/ShapeTools/GuessNames', 2))
+        self.geomXName = qset.value('ShapeTools/GeomXName', 'geom_x')
+        self.geomYName = qset.value('ShapeTools/GeomYName', 'geom_y')
         self.maxSegLength =  float(qset.value('/ShapeTools/MaxSegLength', 20.0)) # In km
         self.maxSegments =  int(qset.value('/ShapeTools/MaxSegments', 1000))
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
@@ -104,6 +105,19 @@ class Settings():
         self.measureTextColor = QColor(color)
         acronym = qset.value('ShapeTools/Ellipsoid', 'WGS84')
         self.setEllipsoid(acronym)
+        
+    def getGeomNames(self, names=[]):
+        index = 1
+        name_x = self.geomXName
+        names = set(names)
+        while name_x in names:
+            name_x = '{}{}'.format(self.geomXName,index)
+            index += 1
+        name_y = self.geomYName
+        while name_y in names:
+            name_y = '{}{}'.format(self.geomYName,index)
+            index += 1
+        return (name_x, name_y)
         
     def setEllipsoid(self, acronym):
         if not ellipsoids.valid(acronym):
@@ -170,7 +184,14 @@ class SettingsWidget(QDialog, FORM_CLASS):
     def accept(self):
         '''Accept the settings and save them for next time.'''
         qset = QSettings()
-        qset.setValue('/ShapeTools/GuessNames', self.guessCheckBox.checkState())
+        name = self.xColumnNameLineEdit.text()
+        if name == '':
+            name = 'geom_x'
+        qset.setValue('/ShapeTools/GeomXName', name)
+        name = self.yColumnNameLineEdit.text()
+        if name == '':
+            name = 'geom_y'
+        qset.setValue('/ShapeTools/GeomYName', name)
         qset.setValue('/ShapeTools/MaxSegments', self.maxSegmentsSpinBox.value())
         qset.setValue('/ShapeTools/MaxSegLength', self.segLengthSpinBox.value())
         qset.setValue('/ShapeTools/MtAzMode', self.mtAzComboBox.currentIndex())
@@ -200,7 +221,8 @@ class SettingsWidget(QDialog, FORM_CLASS):
         read the settings and update the dialog box with the previously
         selected settings.'''
         settings.readSettings()
-        self.guessCheckBox.setCheckState(settings.guessNames)
+        self.xColumnNameLineEdit.setText(settings.geomXName)
+        self.yColumnNameLineEdit.setText(settings.geomYName)
         self.maxSegmentsSpinBox.setValue(settings.maxSegments)
         self.segLengthSpinBox.setValue(settings.maxSegLength)
         self.mtAzComboBox.setCurrentIndex(settings.mtAzMode)

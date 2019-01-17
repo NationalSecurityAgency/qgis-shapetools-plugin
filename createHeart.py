@@ -3,12 +3,13 @@ import math
 from geographiclib.geodesic import Geodesic
 
 from qgis.core import (QgsVectorLayer,
-    QgsPointXY, QgsFeature, QgsGeometry, 
+    QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
     
 from qgis.core import (QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
+    QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
@@ -16,9 +17,9 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QVariant, QUrl
 
-from .settings import epsg4326, geod
+from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
 SHAPE_TYPE=[tr("Polygon"),tr("Line")]
@@ -37,6 +38,7 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
     PrmStartingAngle = 'StartingAngle'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmDrawingSegments = 'DrawingSegments'
+    PrmExportInputGeometry = 'ExportInputGeometry'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -106,6 +108,13 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
                 optional=True)
             )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmExportInputGeometry,
+                tr('Add input geometry fields to output table'),
+                False,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
@@ -120,6 +129,7 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
         startAngle = self.parameterAsDouble(parameters, self.PrmStartingAngle, context)
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
+        export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
         
         # The algorithm creates the heart on its side so this rotates
         # it so that it is upright.
@@ -129,13 +139,19 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
         radius *= measureFactor
 
         srcCRS = source.sourceCrs()
+        fields = source.fields()
+        if export_geom:
+            names = fields.names()
+            name_x, name_y = settings.getGeomNames(names)
+            fields.append(QgsField(name_x, QVariant.Double))
+            fields.append(QgsField(name_y, QVariant.Double))
         if shapetype == 0:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
+                self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, srcCRS)
         else:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
+                self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.LineString, srcCRS)
                 
         if srcCRS != epsg4326:
@@ -165,6 +181,8 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
                 continue
             pts = []
             pt = feature.geometry().asPoint()
+            pt_orig_x = pt.x()
+            pt_orig_y = pt.y()
             # make sure the coordinates are in EPSG:4326
             if srcCRS != epsg4326:
                 pt = geomTo4326.transform(pt.x(), pt.y())
@@ -190,7 +208,11 @@ class CreateHeartAlgorithm(QgsProcessingAlgorithm):
                 f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             else:
                 f.setGeometry(QgsGeometry.fromPolylineXY(pts))
-            f.setAttributes(feature.attributes())
+            attr = feature.attributes()
+            if export_geom:
+                attr.append(pt_orig_x)
+                attr.append(pt_orig_y)
+            f.setAttributes(attr)
             sink.addFeature(f)
             
             if index % 100 == 0:

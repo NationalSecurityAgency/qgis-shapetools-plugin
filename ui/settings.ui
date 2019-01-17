@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>471</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,18 +20,28 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Create Shapes Settings</string>
+      <string>Create Shapes default column names for input  X,Y (Lat, Lon) geometry</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="guessCheckBox">
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Try to guess column names</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+         <string>Column name for X (Longitude) </string>
         </property>
        </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="xColumnNameLineEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Column name for Y (Latitude) </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="yColumnNameLineEdit"/>
       </item>
      </layout>
     </widget>
@@ -105,7 +115,7 @@
         </item>
         <item row="0" column="1">
          <widget class="QgsColorButton" name="rubberBandColorButton">
-          <property name="color">
+          <property name="color" stdset="0">
            <color>
             <red>222</red>
             <green>167</green>
@@ -123,7 +133,7 @@
         </item>
         <item row="1" column="1">
          <widget class="QgsColorButton" name="measureLineColorButton">
-          <property name="color">
+          <property name="color" stdset="0">
            <color>
             <red>0</red>
             <green>255</green>
@@ -141,7 +151,7 @@
         </item>
         <item row="2" column="1">
          <widget class="QgsColorButton" name="measureTextColorButton">
-          <property name="color">
+          <property name="color" stdset="0">
            <color>
             <red>0</red>
             <green>255</green>

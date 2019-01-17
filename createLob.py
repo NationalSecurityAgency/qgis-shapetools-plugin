@@ -3,12 +3,13 @@ import math
 from geographiclib.geodesic import Geodesic
 
 from qgis.core import (QgsVectorLayer,
-    QgsPointXY, QgsFeature, QgsGeometry, 
+    QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
     
 from qgis.core import (QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
+    QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
@@ -16,7 +17,7 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import epsg4326, geod, settings
 from .utils import tr, conversionToMeters,DISTANCE_LABELS
@@ -33,6 +34,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
     PrmDefaultAzimuth = 'DefaultAzimuth'
     PrmDefaultDistance = 'DefaultDistance'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
+    PrmExportInputGeometry = 'ExportInputGeometry'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -85,6 +87,13 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 optional=False)
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmExportInputGeometry,
+                tr('Add input geometry fields to output table'),
+                False,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
@@ -97,6 +106,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
         defaultBearing = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth, context)
         defaultDist = self.parameterAsDouble(parameters, self.PrmDefaultDistance, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
+        export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
         
         measureFactor = conversionToMeters(units)
             
@@ -105,8 +115,14 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
         maxSegments = settings.maxSegments
         
         srcCRS = source.sourceCrs()
+        fields = source.fields()
+        if export_geom:
+            names = fields.names()
+            name_x, name_y = settings.getGeomNames(names)
+            fields.append(QgsField(name_x, QVariant.Double))
+            fields.append(QgsField(name_y, QVariant.Double))
         (sink, dest_id) = self.parameterAsSink(parameters,
-            self.PrmOutputLayer, context, source.fields(),
+            self.PrmOutputLayer, context, fields,
             QgsWkbTypes.LineString, srcCRS)
                 
         if srcCRS != epsg4326:
@@ -133,6 +149,8 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 else:
                     distance = defaultDist
                 pt = feature.geometry().asPoint()
+                pt_orig_x = pt.x()
+                pt_orig_y = pt.y()
                 # make sure the coordinates are in EPSG:4326
                 if srcCRS != epsg4326:
                     pt = geomTo4326.transform(pt.x(), pt.y())
@@ -154,7 +172,11 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                             
                 f  = QgsFeature()
                 f.setGeometry(QgsGeometry.fromPolylineXY(pts))
-                f.setAttributes(feature.attributes())
+                attr = feature.attributes()
+                if export_geom:
+                    attr.append(pt_orig_x)
+                    attr.append(pt_orig_y)
+                f.setAttributes(attr)
                 sink.addFeature(f)
             except:
                 numbad += 1

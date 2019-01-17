@@ -31,24 +31,28 @@
 
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
-All of these shapes are now available as processing algorithms.
+All of these shapes can be accessed from the ShapeTools processing algorithms.
 
 <div style="text-align:center"><img src="doc/processing-shapes.jpg" alt="Processing Shapes"></div>
 
-Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that the layer created is a memory layer and will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin. If you run the algorithms from the processing toolbox, then you have the option to save them in various ways.
+They can also be accessed from the *Vector->Shape Tools->Create Shapes* menu.
+
+<div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create Shapes"></div>
+
+Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
 
 The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:
 
-* **Input points layer** - Select the desired points layer.
-* **Output layer name** - Select a name for the output layer that will be created in QGIS as a memory layer.
-* **Output CRS** - Specify the output layer's coordinate reference system (CRS). This can either be the same as that of the input layer, the same as the project CRS, or WGS 84. It defaults to the input layer's CRS.
+* **Input point layer** - Select the desired points layer.
+* **Output layer** - Select either ***[Create temporary layer]***, ***Save to file...***, ***Save to GeoPackage...***, or ***Save to PostGIS Table...***.
 * **Shape Type** - Specify whether the shape should be drawn as a polygon or as a line.
+* **Add input geometry fields to output table** - If checked, the input point geometry will be added to fields in the output shape table. By default these fields are named ***geom_x*** and ***geom_y***, but can be changed in **Settings**.
 
 ### Ellipse
 
 <div style="text-align:center"><img src="doc/ellipse.jpg" alt="Ellipse"></div>
 
-Select a points vector layer and an output layer name or use the default name. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation the axis is measured in degrees in a clockwise direction from the north line. Units of measure for semi-major, and semi-minor lengths are defined by ***Axis units of measure***.
+Select a point vector layer and an output layer or use the default temporary output layer. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation the axis is measured in degrees in a clockwise direction from the north line. The units of measure for semi-major, and semi-minor lengths are defined by ***Radius units***.
 
 If a field in the layer represents the semi-major axis, semi-minor axis, or orientation of axis, then the field can be selected and the data from the layer will be used, otherwise the default values will be used.
 
@@ -58,7 +62,7 @@ If a field in the layer represents the semi-major axis, semi-minor axis, or orie
 
 ### Pie Wedge
 
-Depending on the **Azimuth mode**, if it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer data fields or from the **Default** parameters. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes.
+If **Azimuth mode** it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer data fields or from the **Default** parameters. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes.
 
 ### Donut
 
@@ -239,7 +243,7 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
 
 <div style="text-align:center"><img src="doc/settings.jpg" alt="Settings"></div>
 
-* **Try to guess column names** - By default the ellipse and line of bearing shapes will try to guess the vector fields that contain the appropriate parameters such as semi-major axis, semi-minor axis, axis orientation, bearing, and distance. If it finds one of the fields that has a name similar to these it will set the drop down menu to that item. If you do not want this behavior, then uncheck this box.
+* **Create Shapes default column names for input X,Y (Lat,Lon) geometry** - All of the different shapes have a check box called **Add input geometry fields to output table**. When checked, the input point geometry will be added to fields in the output shape table. By default these fields are named ***geom_x*** and ***geom_y***, but can be changed here. If the input layer has a field by the same name, then a number is appended to make it unique.
 * **Geodesic Line Settings** - These settings are used when drawing geodesic and great circle lines.
     * **Maximum segment length before creating a new segment** - In order to draw a smooth curved line, multiple line segments are required. This defines how far to travel before a new line segment is created. This parameter is in kilometers. 
     * **Maximum number of segments per line** - This is the maximum number of line segments that will be created for any line even though the maximum segment length may be exceeded. This takes precedence.

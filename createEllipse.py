@@ -2,11 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry,
+from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
     
 from qgis.core import (QgsProcessing,
     QgsProcessingAlgorithm,
+    QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
@@ -14,9 +15,9 @@ from qgis.core import (QgsProcessing,
     QgsProcessingParameterFeatureSink)
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QVariant, QUrl
 
-from .settings import epsg4326, geod
+from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 import traceback
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
@@ -73,6 +74,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
     PrmDefaultOrientation = 'DefaultOrientation'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmDrawingSegments = 'DrawingSegments'
+    PrmExportInputGeometry = 'ExportInputGeometry'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -162,6 +164,13 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                 optional=True)
             )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmExportInputGeometry,
+                tr('Add input geometry fields to output table'),
+                False,
+                optional=True)
+            )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
@@ -178,6 +187,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
         def_orientation = self.parameterAsDouble(parameters, self.PrmDefaultOrientation, context)
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
+        export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
         
         measure_factor = conversionToMeters(units)
         
@@ -185,13 +195,19 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
         default_semi_minor *= measure_factor
         
         src_crs = source.sourceCrs()
+        fields = source.fields()
+        if export_geom:
+            names = fields.names()
+            name_x, name_y = settings.getGeomNames(names)
+            fields.append(QgsField(name_x, QVariant.Double))
+            fields.append(QgsField(name_y, QVariant.Double))
         if shape_type == 0:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
+                self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, src_crs)
         else:
             (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, source.fields(),
+                self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.LineString, src_crs)
                 
         if src_crs != epsg4326:
@@ -209,6 +225,8 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
             try:
                 pts = []
                 pt = feature.geometry().asPoint()
+                pt_orig_x = pt.x()
+                pt_orig_y = pt.y()
                 # make sure the coordinates are in EPSG:4326
                 if src_crs != epsg4326:
                     pt = geom_to_4326.transform(pt.x(), pt.y())
@@ -239,7 +257,11 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                     f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
                 else:
                     f.setGeometry(QgsGeometry.fromPolylineXY(pts))
-                f.setAttributes(feature.attributes())
+                attr = feature.attributes()
+                if export_geom:
+                    attr.append(pt_orig_x)
+                    attr.append(pt_orig_y)
+                f.setAttributes(attr)
                 sink.addFeature(f)
             except:
                 num_bad += 1
