@@ -15,7 +15,7 @@ from qgis.core import (QgsProcessing,
 
 from .settings import epsg4326
 from .utils import checkIdlCrossings, normalizeLongitude, tr
-import traceback
+#import traceback
 
 class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
     """
@@ -91,8 +91,8 @@ class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
                 sink.addFeature(f)
                     
             except:
-                s = traceback.format_exc()
-                feedback.pushInfo(s)
+                '''s = traceback.format_exc()
+                feedback.pushInfo(s)'''
                 pass
             
             if cnt % 100 == 0:
