@@ -95,6 +95,7 @@ class Settings():
         self.maxSegLength =  float(qset.value('/ShapeTools/MaxSegLength', 20.0)) # In km
         self.maxSegments =  int(qset.value('/ShapeTools/MaxSegments', 1000))
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
+        self.measureSignificantDigits = int(qset.value('ShapeTools/MeasureSignificantDigits', 2))
         color = qset.value('ShapeTools/RubberBandColor', '#dea743')
         self.rubberBandColor = QColor(color)
         value = int(qset.value('ShapeTools/RubberBandOpacity', 192))
@@ -206,7 +207,6 @@ class SettingsWidget(QDialog, FORM_CLASS):
             index = self.systemEllipsoidComboBox.currentIndex()
             name = self.systemEllipsoidComboBox.itemData(index)
         qset.setValue('/ShapeTools/Ellipsoid', name)
-        settings.readSettings()
         settings.rubberBandColor  = self.rubberBandColorButton.color()
         settings.measureLineColor = self.measureLineColorButton.color()
         settings.measureTextColor = self.measureTextColorButton.color()
@@ -214,6 +214,8 @@ class SettingsWidget(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/RubberBandOpacity', settings.rubberBandColor.alpha())
         qset.setValue('/ShapeTools/MeasureLineColor', settings.measureLineColor.name())
         qset.setValue('/ShapeTools/MeasureTextColor', settings.measureTextColor.name())
+        qset.setValue('/ShapeTools/MeasureSignificantDigits', self.significantDigitsSpinBox.value())
+        settings.readSettings()
         self.close()
         
     def showEvent(self, e):
@@ -225,6 +227,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.yColumnNameLineEdit.setText(settings.geomYName)
         self.maxSegmentsSpinBox.setValue(settings.maxSegments)
         self.segLengthSpinBox.setValue(settings.maxSegLength)
+        self.significantDigitsSpinBox.setValue(settings.measureSignificantDigits)
         self.mtAzComboBox.setCurrentIndex(settings.mtAzMode)
         self.rubberBandColorButton.setColor(settings.rubberBandColor)
         self.measureLineColorButton.setColor(settings.measureLineColor)

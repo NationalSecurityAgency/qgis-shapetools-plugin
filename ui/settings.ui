@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>487</height>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,7 +115,7 @@
         </item>
         <item row="0" column="1">
          <widget class="QgsColorButton" name="rubberBandColorButton">
-          <property name="color" stdset="0">
+          <property name="color">
            <color>
             <red>222</red>
             <green>167</green>
@@ -133,7 +133,7 @@
         </item>
         <item row="1" column="1">
          <widget class="QgsColorButton" name="measureLineColorButton">
-          <property name="color" stdset="0">
+          <property name="color">
            <color>
             <red>0</red>
             <green>255</green>
@@ -151,12 +151,29 @@
         </item>
         <item row="2" column="1">
          <widget class="QgsColorButton" name="measureTextColorButton">
-          <property name="color" stdset="0">
+          <property name="color">
            <color>
             <red>0</red>
             <green>255</green>
             <blue>255</blue>
            </color>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Copy to clipboard significant digits</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="significantDigitsSpinBox">
+          <property name="maximum">
+           <number>16</number>
+          </property>
+          <property name="value">
+           <number>2</number>
           </property>
          </widget>
         </item>
@@ -236,7 +253,7 @@
  <customwidgets>
   <customwidget>
    <class>QgsColorButton</class>
-   <extends>QPushButton</extends>
+   <extends>QToolButton</extends>
    <header>qgscolorbutton.h</header>
   </customwidget>
  </customwidgets>

@@ -164,6 +164,15 @@ This function can also be accessed from the **Processing Toolbox**.
 
 This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are similar to those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be kilometers, meters, centimeters, miles, yards, feet, inches, and nautical miles. Simply click on the ***Geodesic Measure Tool*** icon and start clicking on the map. Notice that the ellipsoid used to calculate measurements is listed in the lower left-hand corner. By default this is set to ***WGS 84***, but it can be changed in the ***Settings*** menu.
 
+While using the geodesic measure tool the user can quickly copy values of the last heading to, heading from, distance, and total distance onto the clipboard by typing one of the following keys:
+
+* **1 or T** - Copies the most recent 'Heading to' value onto the clipboard.
+* **2 or F** - Copies the most recent 'Heading from' value onto the clipboard.
+* **3 or D** - Copies the most recent 'Distance' value onto the clipboard.
+* **4 or A** - Copies the 'Total distance' value onto the clipboard.
+
+The number of significant decimal digits of the value copied onto the clipboard is determined in the ***Settings***.
+
 <div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
 
 The **Save to Layer** button will create a **Measurement** layer that contains the distance and by default the distance label will be displayed.
@@ -252,6 +261,7 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
     * **Rubber band color** - Selects the rubber band line color used by the measure tool.
     * **Measurement layer color** - Vector line color when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
     * **Measurement layer text** - Color of the text when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
+    * **Copy to clipboard significant digits** - This is the number of significant decimal digits that are copied onto the clipboard when the user is using the ***Geodesic measure tool*** and presses on one of the copy to clipboard keys.
 * **Ellipsoid Used for Measurements** - Selects the ellipsoid used for calculating the geodesic distances within Shape Tools. By default this should normally be *WGS 84*
     * **Ellipsoid group** - Choose the default *WGS 84* setting or enable *System Ellipsoids* or *Historical Ellipsoids*.
     * **System Ellipsoids** - This is enabled if **Ellipsoid group** is set to *System Ellipsoids*.

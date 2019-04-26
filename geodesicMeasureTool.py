@@ -4,8 +4,8 @@ from geographiclib.geodesic import Geodesic
 
 from qgis.PyQt.QtCore import Qt, QSettings, QVariant, QByteArray, QCoreApplication
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog
-from qgis.core import (QgsCoordinateTransform, 
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog, QApplication
+from qgis.core import (Qgis, QgsCoordinateTransform, 
     QgsUnitTypes, QgsWkbTypes, QgsGeometry, QgsFields, QgsField, 
     QgsProject, QgsVectorLayer, QgsFeature, 
     QgsPalLayerSettings, QgsVectorLayerSimpleLabeling)
@@ -34,7 +34,14 @@ class GeodesicMeasureTool(QgsMapTool):
         '''Close the geodesic measure tool dialog box.'''
         if self.measureDialog.isVisible():
             self.measureDialog.closeDialog()
+    
+    def keyPressEvent(self, event):
+        if not self.measureDialog.isVisible():
+            return
+        key = event.key()
+        self.measureDialog.keyPressed(key)
         
+    
     def canvasPressEvent(self, event):
         '''Capture the coordinates when the user click on the mouse for measurements.'''
         if not self.measureDialog.isVisible():
@@ -97,6 +104,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.capturedPoints = []
         self.distances = []
         self.activeMeasuring = True
+        self.lastMotionPt = None
         self.unitsChanged()
         self.currentDistance = 0.0
         
@@ -115,6 +123,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         
     def stop(self):
         self.activeMeasuring = False
+        self.lastMotionPt = None
         
     def closeEvent(self, event):
         self.closeDialog()
@@ -133,6 +142,49 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         label = tr('Ellipsoid: ') + settings.ellipseDescription
         self.geodLabel.setText(label)
 
+    def keyPressed(self, key):
+        index = len(self.capturedPoints)
+        if index <= 0:
+            return
+        if self.motionReady():
+            if self.lastMotionPt == None:
+                return
+            (distance, startAngle, endAngle) = self.calcParameters(self.capturedPoints[index-1], self.lastMotionPt)
+        else:
+            if index < 2:
+                return
+            (distance, startAngle, endAngle) = self.calcParameters(self.capturedPoints[index-2], self.capturedPoints[index-1])
+        
+        distance = self.unitDistance(distance)
+        clipboard = QApplication.clipboard()
+        if key == Qt.Key_1 or key == Qt.Key_F:
+            s = '{:.{prec}f}'.format(startAngle, prec=settings.measureSignificantDigits)
+            clipboard.setText(s)
+            self.iface.messageBar().pushMessage("", "Heading to {} copied to the clipboard".format(s), level=Qgis.Info, duration=3)
+        elif key == Qt.Key_2 or key == Qt.Key_T:
+            s = '{:.{prec}f}'.format(endAngle, prec=settings.measureSignificantDigits)
+            clipboard.setText(s)
+            self.iface.messageBar().pushMessage("", "Heading from {} copied to the clipboard".format(s), level=Qgis.Info, duration=3)
+        elif key == Qt.Key_3 or key == Qt.Key_D:
+            s = '{:.{prec}f}'.format(distance, prec=settings.measureSignificantDigits)
+            clipboard.setText(s)
+            self.iface.messageBar().pushMessage("", "Distance {} copied to the clipboard".format(s), level=Qgis.Info, duration=3)
+        elif key == Qt.Key_4 or key == Qt.Key_A:
+            total = 0.0
+            num = len(self.capturedPoints)
+            for i in range(1,num):
+                (d, startA, endA) = self.calcParameters(self.capturedPoints[i-1], self.capturedPoints[i])
+                total += d
+            total = self.unitDistance(total)
+            # Add in the motion distance
+            if self.motionReady():
+                total += distance
+            s = '{:.{prec}f}'.format(total, prec=settings.measureSignificantDigits)
+            clipboard.setText(s)
+            self.iface.messageBar().pushMessage("", "Total distance {} copied to the clipboard".format(s), level=Qgis.Info, duration=3)
+        else:
+            return
+            
     def unitsChanged(self):
         label = "Distance [{}]".format(DISTANCE_LABELS[self.unitsComboBox.currentIndex()])
         item = QTableWidgetItem(label)
@@ -182,6 +234,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.insertParams(index, self.currentDistance, startAngle, endAngle)
         self.formatTotal()
         linePts = self.getLinePts(self.currentDistance, self.capturedPoints[index-1], pt)
+        self.lastMotionPt = pt
         self.tempRb.setToGeometry(QgsGeometry.fromPolylineXY( linePts ), None)
         
     def calcParameters(self, pt1, pt2):
