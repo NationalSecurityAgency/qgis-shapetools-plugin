@@ -18,24 +18,24 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
     """Class to interact with the map canvas to capture the coordinate
     when the mouse button is pressed and to display the coordinate in
     in the status bar."""
-    
+
     def __init__(self, iface):
         QgsMapToolEmitPoint.__init__(self, iface.mapCanvas())
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.canvasClicked.connect(self.clicked)
         self.azDigitizerDialog = None
-        
+
     def activate(self):
         """When activated set the cursor to a crosshair."""
         self.canvas.setCursor(Qt.CrossCursor)
-        
+
     def clicked(self, pt, b):
         """Capture the coordinate when the mouse button has been released."""
         if self.azDigitizerDialog is None:
             from .azDigitizer import AzDigitizerWidget
             self.azDigitizerDialog = AzDigitizerWidget(self.iface, self.iface.mainWindow())
-        
+
         layer = self.iface.activeLayer()
         if layer is None or layer.wkbType() != QgsWkbTypes.Point:
             self.azDigitizerDialog.includeStartLabel.setEnabled(False)
@@ -49,18 +49,18 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
             pt4326 = transform.transform(pt.x(), pt.y())
             self.azDigitizerDialog.setPoint(pt4326)
             self.azDigitizerDialog.show()
-        except:
+        except Exception:
             self.iface.messageBar().pushMessage("", tr("Clicked location is invalid"), level=Qgis.Warning, duration=4)
-            
+
 class AzDigitizerWidget(QDialog, FORM_CLASS):
-    
+
     def __init__(self, iface, parent):
         super(AzDigitizerWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.unitsComboBox.addItems(DISTANCE_LABELS)
-        
+
     def setPoint(self, pt):
         self.pt = pt
 
@@ -68,16 +68,16 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         try:
             distance = float(self.distLineEdit.text())
             azimuth = float(self.azimuthLineEdit.text())
-            units = self.unitsComboBox.currentIndex() # 0 km, 1 m, 2 nm, 3 miles, 4 yards, 5 ft, 6 inches, 7 cm
+            units = self.unitsComboBox.currentIndex()  # 0 km, 1 m, 2 nm, 3 miles, 4 yards, 5 ft, 6 inches, 7 cm
             start = self.checkBox.isChecked()
-        except:
+        except Exception:
             self.iface.messageBar().pushMessage("", tr("Either distance or azimuth were invalid"), level=Qgis.Warning, duration=4)
             return
         layer = self.iface.activeLayer()
         if layer is None:
             self.iface.messageBar().pushMessage("", tr("No point or line layer selected"), level=Qgis.Warning, duration=4)
             return
-        
+
         measureFactor = conversionToMeters(units)
 
         distance = distance * measureFactor
@@ -87,35 +87,35 @@ class AzDigitizerWidget(QDialog, FORM_CLASS):
         if layer.wkbType() == QgsWkbTypes.Point:
             g = geod.Direct(pt.y(), pt.x(), azimuth, distance, Geodesic.LATITUDE | Geodesic.LONGITUDE)
             if start:
-                ptStart = transform.transform(self.pt.x(),self.pt.y())
+                ptStart = transform.transform(self.pt.x(), self.pt.y())
                 feat = QgsFeature(layer.fields())
                 feat.setGeometry(QgsGeometry.fromPointXY(ptStart))
                 layer.addFeature(feat)
-            pt = transform.transform(g['lon2'],g['lat2'])
+            pt = transform.transform(g['lon2'], g['lat2'])
             feat = QgsFeature(layer.fields())
             feat.setGeometry(QgsGeometry.fromPointXY(pt))
             layer.addFeature(feat)
-        else: # It will either be a LineString or MultiLineString
-            maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
+        else:  # It will either be a LineString or MultiLineString
+            maxseglen = settings.maxSegLength * 1000.0  # Needs to be in meters
             maxSegments = settings.maxSegments
-            l = geod.Line(pt.y(), pt.x(), azimuth)
+            gline = geod.Line(pt.y(), pt.x(), azimuth)
             n = int(math.ceil(distance / maxseglen))
             if n > maxSegments:
                 n = maxSegments
             seglen = distance / n
             pts = []
-            for i in range(0,n+1):
+            for i in range(0, n + 1):
                 s = seglen * i
-                g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                g = gline.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
                 ptc = transform.transform(g['lon2'], g['lat2'])
-                pts.append( ptc )
+                pts.append(ptc)
             feat = QgsFeature(layer.fields())
             if layer.wkbType() == QgsWkbTypes.LineString:
                 feat.setGeometry(QgsGeometry.fromPolylineXY(pts))
             else:
                 feat.setGeometry(QgsGeometry.fromMultiPolylineXY([pts]))
             layer.addFeatures([feat])
-            
+
         layer.updateExtents()
         self.iface.mapCanvas().refresh()
         self.close()

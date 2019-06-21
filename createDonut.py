@@ -1,10 +1,12 @@
 import os
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry, QgsField, 
+from qgis.core import (
+    QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -79,7 +81,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=20.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDefaultInnerRadius,
@@ -88,7 +90,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=10.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -105,20 +107,20 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=36,
                 minValue=4,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmExportInputGeometry,
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
@@ -129,12 +131,12 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
-        
+
         measure_factor = conversionToMeters(units)
-            
+
         def_inner_radius *= measure_factor
         def_outer_radius *= measure_factor
-        
+
         pt_spacing = 360.0 / segments
         src_crs = source.sourceCrs()
         fields = source.fields()
@@ -144,21 +146,21 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
         if shape_type == 0:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, src_crs)
         else:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.MultiLineString, src_crs)
-                
+
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
             to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
-        
+
         feature_count = source.featureCount()
         total = 100.0 / feature_count if feature_count else 0
-        
+
         iterator = source.getFeatures()
         num_bad = 0
         for cnt, feature in enumerate(iterator):
@@ -194,7 +196,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 if inner_radius != 0:
                     pts_in.append(pts_in[0])
                 pts_out.append(pts_out[0])
-                
+
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if src_crs != epsg4326:
                     if inner_radius != 0:
@@ -202,7 +204,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                             pts_in[x] = to_sink_crs.transform(pt_out)
                     for x, pt_out in enumerate(pts_out):
                         pts_out[x] = to_sink_crs.transform(pt_out)
-                        
+
                 f = QgsFeature()
                 if shape_type == 0:
                     if inner_radius == 0:
@@ -220,37 +222,36 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                     attr.append(pt_orig_y)
                 f.setAttributes(attr)
                 sink.addFeature(f)
-            except:
+            except Exception:
                 num_bad += 1
-                
+
             feedback.setProgress(int(cnt * total))
-            
+
         if num_bad > 0:
             feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(num_bad, feature_count)))
-            
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createdonut'
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'images/donut.png'))
-    
+
     def displayName(self):
         return tr('Create donut')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreateDonutAlgorithm()
-

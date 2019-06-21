@@ -159,7 +159,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
@@ -196,13 +196,13 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
         if shape_type == 0:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                   self.PrmOutputLayer, context, fields,
-                   QgsWkbTypes.Polygon, src_crs)
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
+                QgsWkbTypes.Polygon, src_crs)
         else:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                   self.PrmOutputLayer, context, fields,
-                   QgsWkbTypes.LineString, src_crs)
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
+                QgsWkbTypes.LineString, src_crs)
 
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
@@ -291,7 +291,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                     attr.append(pt_orig_y)
                 f.setAttributes(attr)
                 sink.addFeature(f)
-            except:
+            except Exception:
                 num_bad += 1
 
             feedback.setProgress(int(cnt * total))
@@ -325,4 +325,3 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return CreateArcAlgorithm()
-

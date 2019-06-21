@@ -2,12 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsVectorLayer,
+from qgis.core import (
     QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -22,7 +22,7 @@ from qgis.PyQt.QtCore import QVariant, QUrl
 from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
-SHAPE_TYPE=[tr("Polygon"),tr("Line")]
+SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
 class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
     """
@@ -92,7 +92,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=5,
                 minValue=1,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmStartingAngle,
@@ -100,7 +100,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmRadius,
@@ -109,7 +109,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=40.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -126,20 +126,20 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=720,
                 minValue=4,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmExportInputGeometry,
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
@@ -152,7 +152,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
-        
+
         measureFactor = conversionToMeters(units)
         radius *= measureFactor
         r2 = radius / (lobes + 2.0)
@@ -165,21 +165,21 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
         if shapetype == 0:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, srcCRS)
         else:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.LineString, srcCRS)
-                
+
         if srcCRS != epsg4326:
             geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
             toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
-        
+
         featureCount = source.featureCount()
         total = 100.0 / featureCount if featureCount else 0
-        
+
         step = 360.0 / segments
         iterator = source.getFeatures()
         numbad = 0
@@ -203,7 +203,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                     r = radius2 / (lobes2 + 2.0)
                 else:
                     r = r2
-            except:
+            except Exception:
                 numbad += 1
                 continue
             pts = []
@@ -216,19 +216,19 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
             angle = 0.0
             while angle <= 360.0:
                 a = math.radians(angle)
-                x = r * (lobes2 + 1.0)*math.cos(a) - r * math.cos((lobes2 + 1.0) * a)
-                y = r * (lobes2 + 1.0)*math.sin(a) - r * math.sin((lobes2 + 1.0) * a)
-                a2 = math.degrees(math.atan2(y,x))+sangle
-                dist = math.sqrt(x*x + y*y)
+                x = r * (lobes2 + 1.0) * math.cos(a) - r * math.cos((lobes2 + 1.0) * a)
+                y = r * (lobes2 + 1.0) * math.sin(a) - r * math.sin((lobes2 + 1.0) * a)
+                a2 = math.degrees(math.atan2(y, x)) + sangle
+                dist = math.sqrt(x * x + y * y)
                 g = geod.Direct(pt.y(), pt.x(), a2, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += step
-                
+
             # If the Output crs is not 4326 transform the points to the proper crs
             if srcCRS != epsg4326:
                 for x, ptout in enumerate(pts):
                     pts[x] = toSinkCrs.transform(ptout)
-                    
+
             f = QgsFeature()
             if shapetype == 0:
                 f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
@@ -240,36 +240,35 @@ class CreateEpicycloidAlgorithm(QgsProcessingAlgorithm):
                 attr.append(pt_orig_y)
             f.setAttributes(attr)
             sink.addFeature(f)
-            
+
             if index % 100 == 0:
                 feedback.setProgress(int(index * total))
-        
+
         if numbad > 0:
             feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
-            
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createepicycloid'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/epicycloid.png'))
-    
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/epicycloid.png'))
+
     def displayName(self):
         return tr('Create epicycloid')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreateEpicycloidAlgorithm()
-

@@ -2,10 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry, QgsField,
+from qgis.core import (
+    QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -19,13 +21,16 @@ from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
-import traceback
+# import traceback
+
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
 def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
     segments = int(math.ceil(segments / 2))
-    if smi < 0.0001: smi = 0.0001
-    if sma < 0.0001: sma = 0.0001
+    if smi < 0.0001:
+        smi = 0.0001
+    if sma < 0.0001:
+        sma = 0.0001
     if sma < smi:
         temp = sma
         sma = smi
@@ -37,7 +42,7 @@ def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
         minimum = step
     else:
         minimum = 1.0
-        
+
     maxang = math.pi / 6 * minimum
     delta = ab * math.pi / segments
     pts = []
@@ -52,11 +57,11 @@ def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
         if maxang < delo:
             delo = maxang
         azi += delo
-        
+
     # Append the starting point to close the shape
     pts.append(pts[0])
-    return( pts )
-    
+    return(pts)
+
 
 class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
     """
@@ -68,7 +73,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
     PrmShapeType = 'ShapeType'
     PrmSemiMajorAxisField = 'SemiMajorAxisField'
     PrmSemiMinorAxisField = 'SemiMinorAxisField'
-    PrmOrientationField   = 'OrientationField'
+    PrmOrientationField = 'OrientationField'
     PrmDefaultSemiMajorAxis = 'DefaultSemiMajorAxis'
     PrmDefaultSemiMinorAxis = 'DefaultSemiMinorAxis'
     PrmDefaultOrientation = 'DefaultOrientation'
@@ -126,7 +131,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=40.0,
                 minValue=0.00001,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDefaultSemiMinorAxis,
@@ -135,7 +140,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=20.0,
                 minValue=0.00001,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDefaultOrientation,
@@ -145,7 +150,7 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                 minValue=-360,
                 maxValue=360,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -162,20 +167,20 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=64,
                 minValue=8,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmExportInputGeometry,
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
@@ -188,12 +193,12 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
-        
+
         measure_factor = conversionToMeters(units)
-        
+
         default_semi_major *= measure_factor
         default_semi_minor *= measure_factor
-        
+
         src_crs = source.sourceCrs()
         fields = source.fields()
         if export_geom:
@@ -202,21 +207,21 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
         if shape_type == 0:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, src_crs)
         else:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.LineString, src_crs)
-                
+
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
             to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
-        
+
         feature_count = source.featureCount()
         total = 100.0 / feature_count if feature_count else 0
-        
+
         iterator = source.getFeatures()
         num_bad = 0
         for cnt, feature in enumerate(iterator):
@@ -244,14 +249,14 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                     orient = float(feature[orientation_col])
                 else:
                     orient = def_orientation
-                
+
                 pts = geodesicEllipse(geod, lat, lon, sma, smi, orient, segments)
-                
+
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if src_crs != epsg4326:
                     for x, ptout in enumerate(pts):
                         pts[x] = to_sink_crs.transform(ptout)
-                        
+
                 f = QgsFeature()
                 if shape_type == 0:
                     f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
@@ -263,39 +268,38 @@ class CreateEllipseAlgorithm(QgsProcessingAlgorithm):
                     attr.append(pt_orig_y)
                 f.setAttributes(attr)
                 sink.addFeature(f)
-            except:
+            except Exception:
                 num_bad += 1
                 '''s = traceback.format_exc()
                 feedback.pushInfo(s)'''
-                
+
             feedback.setProgress(int(cnt * total))
-            
+
         if num_bad > 0:
             feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(num_bad, feature_count)))
-            
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createellipse'
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'images/ellipse.png'))
-    
+
     def displayName(self):
         return tr('Create ellipse')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreateEllipseAlgorithm()
-

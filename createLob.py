@@ -2,12 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsVectorLayer,
+from qgis.core import (
     QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -20,7 +20,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import epsg4326, geod, settings
-from .utils import tr, conversionToMeters,DISTANCE_LABELS
+from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
 class CreateLobAlgorithm(QgsProcessingAlgorithm):
     """
@@ -68,7 +68,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmDefaultDistance,
@@ -77,7 +77,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=1000.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -92,13 +92,13 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         bearingcol = self.parameterAsString(parameters, self.PrmAzimuthField, context)
@@ -107,13 +107,13 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
         defaultDist = self.parameterAsDouble(parameters, self.PrmDefaultDistance, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
-        
+
         measureFactor = conversionToMeters(units)
-            
+
         defaultDist *= measureFactor
-        maxseglen = settings.maxSegLength*1000.0 # Needs to be in meters
+        maxseglen = settings.maxSegLength * 1000.0  # Needs to be in meters
         maxSegments = settings.maxSegments
-        
+
         srcCRS = source.sourceCrs()
         fields = source.fields()
         if export_geom:
@@ -121,17 +121,17 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
             name_x, name_y = settings.getGeomNames(names)
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
-        (sink, dest_id) = self.parameterAsSink(parameters,
-            self.PrmOutputLayer, context, fields,
+        (sink, dest_id) = self.parameterAsSink(
+            parameters, self.PrmOutputLayer, context, fields,
             QgsWkbTypes.LineString, srcCRS)
-                
+
         if srcCRS != epsg4326:
             geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
             toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
-        
+
         featureCount = source.featureCount()
         total = 100.0 / featureCount if featureCount else 0
-        
+
         num_features = 0
         numbad = 0
         iterator = source.getFeatures()
@@ -145,7 +145,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 else:
                     bearing = defaultBearing
                 if distcol:
-                    distance = float(feature[distcol])*measureFactor
+                    distance = float(feature[distcol]) * measureFactor
                 else:
                     distance = defaultDist
                 pt = feature.geometry().asPoint()
@@ -155,22 +155,22 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                 if srcCRS != epsg4326:
                     pt = geomTo4326.transform(pt.x(), pt.y())
                 pts = [pt]
-                l = geod.Line(pt.y(), pt.x(), bearing)
+                gline = geod.Line(pt.y(), pt.x(), bearing)
                 n = int(math.ceil(distance / maxseglen))
                 if n > maxSegments:
                     n = maxSegments
                 seglen = distance / n
-                for i in range(1,n+1):
+                for i in range(1, n + 1):
                     s = seglen * i
-                    g = l.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
-                    pts.append( QgsPointXY(g['lon2'], g['lat2']) )
-                    
+                    g = gline.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
+                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
+
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if srcCRS != epsg4326:
                     for x, ptout in enumerate(pts):
                         pts[x] = toSinkCrs.transform(ptout)
-                            
-                f  = QgsFeature()
+
+                f = QgsFeature()
                 f.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 attr = feature.attributes()
                 if export_geom:
@@ -178,37 +178,36 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                     attr.append(pt_orig_y)
                 f.setAttributes(attr)
                 sink.addFeature(f)
-            except:
+            except Exception:
                 numbad += 1
-                
+
             feedback.setProgress(int(cnt * total))
-            
+
         if numbad > 0:
             feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
-            
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createlob'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/line.png'))
-    
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/line.png'))
+
     def displayName(self):
         return tr('Create line of bearing')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreateLobAlgorithm()
-

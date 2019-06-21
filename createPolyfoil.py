@@ -2,12 +2,12 @@ import os
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsVectorLayer,
+from qgis.core import (
     QgsPointXY, QgsFeature, QgsGeometry, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
-    QgsFeatureSink,
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -22,7 +22,7 @@ from qgis.PyQt.QtCore import QVariant, QUrl
 from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
 
-SHAPE_TYPE=[tr("Polygon"),tr("Line")]
+SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
 class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
     """CreatePolyfoilAlgorithm
@@ -92,7 +92,7 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=5,
                 minValue=3,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmStartingAngle,
@@ -100,7 +100,7 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmRadius,
@@ -109,7 +109,7 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=40.0,
                 minValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -126,20 +126,20 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=720,
                 minValue=4,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmExportInputGeometry,
                 tr('Add input geometry fields to output table'),
                 False,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
@@ -152,7 +152,7 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
-        
+
         measureFactor = conversionToMeters(units)
         radius *= measureFactor
         r = radius / lobes
@@ -165,21 +165,21 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
             fields.append(QgsField(name_x, QVariant.Double))
             fields.append(QgsField(name_y, QVariant.Double))
         if shapetype == 0:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.Polygon, srcCRS)
         else:
-            (sink, dest_id) = self.parameterAsSink(parameters,
-                self.PrmOutputLayer, context, fields,
+            (sink, dest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputLayer, context, fields,
                 QgsWkbTypes.LineString, srcCRS)
-                
+
         if srcCRS != epsg4326:
             geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
             toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
-        
+
         featureCount = source.featureCount()
         total = 100.0 / featureCount if featureCount else 0
-        
+
         step = 360.0 / segments
         numbad = 0
         iterator = source.getFeatures()
@@ -200,7 +200,7 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 else:
                     radius2 = radius
                 r = radius2 / lobes2
-            except:
+            except Exception:
                 numbad += 1
                 continue
             pts = []
@@ -212,19 +212,19 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 pt = geomTo4326.transform(pt.x(), pt.y())
             angle = 0.0
             while angle <= 360.0:
-                a = math.radians(angle-sangle)
-                x = r * (lobes2 - 1.0)*math.cos(a) + r * math.cos((lobes2 - 1.0) * a)
-                y = r * (lobes2 - 1.0)*math.sin(a) - r * math.sin((lobes2 - 1.0) * a)
-                dist = math.sqrt(x*x + y*y)
+                a = math.radians(angle - sangle)
+                x = r * (lobes2 - 1.0) * math.cos(a) + r * math.cos((lobes2 - 1.0) * a)
+                y = r * (lobes2 - 1.0) * math.sin(a) - r * math.sin((lobes2 - 1.0) * a)
+                dist = math.sqrt(x * x + y * y)
                 g = geod.Direct(pt.y(), pt.x(), angle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
                 angle += step
-                
+
             # If the Output crs is not 4326 transform the points to the proper crs
             if srcCRS != epsg4326:
                 for x, ptout in enumerate(pts):
                     pts[x] = toSinkCrs.transform(ptout)
-                    
+
             f = QgsFeature()
             if shapetype == 0:
                 f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
@@ -236,33 +236,32 @@ class CreatePolyfoilAlgorithm(QgsProcessingAlgorithm):
                 attr.append(pt_orig_y)
             f.setAttributes(attr)
             sink.addFeature(f)
-            
+
             if index % 100 == 0:
                 feedback.setProgress(int(index * total))
-            
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'createpolyfoil'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/polyfoil.png'))
-    
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/polyfoil.png'))
+
     def displayName(self):
         return tr('Create polyfoil')
-    
+
     def group(self):
         return tr('Geodesic vector creation')
-        
+
     def groupId(self):
         return 'vectorcreation'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-        
+
     def createInstance(self):
         return CreatePolyfoilAlgorithm()
-

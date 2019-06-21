@@ -1,7 +1,7 @@
 from qgis.PyQt.QtCore import QUrl, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton
-from qgis.core import QgsMapLayer, QgsVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsApplication
+from qgis.core import QgsMapLayer, QgsVectorLayer, QgsWkbTypes, QgsApplication
 import processing
 
 from .settings import SettingsWidget
@@ -34,7 +34,7 @@ class ShapeTools(object):
     def initGui(self):
         self.azDigitizerTool = AzDigitizerTool(self.iface)
         self.lineDigitizerTool = LineDigitizerTool(self.iface)
-        
+
         # Initialize the create shape menu items
         menu = QMenu()
         # Initialize Create Arc Wedge tool
@@ -86,59 +86,59 @@ class ShapeTools(object):
         self.createShapeButton.setPopupMode(QToolButton.MenuButtonPopup)
         self.createShapeButton.triggered.connect(self.createShapeTriggered)
         self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
-        
+
         # Initialize the XY to Line menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
         self.xyLineAction = QAction(icon, tr('XY to Line'), self.iface.mainWindow())
-        self.xyLineAction.setObjectName('stXYtoLine')        
+        self.xyLineAction.setObjectName('stXYtoLine')
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.xyLineAction)
         self.toolbar.addAction(self.xyLineAction)
-        
+
         # Initialize the Geodesic Densifier menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
         self.geodesicDensifyAction = QAction(icon, tr('Geodesic shape densifier'), self.iface.mainWindow())
-        self.geodesicDensifyAction.setObjectName('stGeodesicDensifier')        
+        self.geodesicDensifyAction.setObjectName('stGeodesicDensifier')
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.toolbar.addAction(self.geodesicDensifyAction)
-        
+
         # Initialize the Geodesic line break menu item
         icon = QIcon(os.path.dirname(__file__) + '/images/idlbreak.png')
         self.geodesicLineBreakAction = QAction(icon, tr('Geodesic line break at -180,180'), self.iface.mainWindow())
-        self.geodesicLineBreakAction.setObjectName('stGeodesicLineBreak')        
+        self.geodesicLineBreakAction.setObjectName('stGeodesicLineBreak')
         self.geodesicLineBreakAction.triggered.connect(self.geodesicLineBreakTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicLineBreakAction)
         self.toolbar.addAction(self.geodesicLineBreakAction)
-        
+
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
         icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
         self.measureAction = QAction(icon, tr('Geodesic measure tool'), self.iface.mainWindow())
-        self.measureAction.setObjectName('stGeodesicMeasureTool')        
+        self.measureAction.setObjectName('stGeodesicMeasureTool')
         self.measureAction.triggered.connect(self.measureTool)
         self.measureAction.setCheckable(True)
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureAction)
         self.toolbar.addAction(self.measureAction)
-        
+
         # Initialize Geodesic Measurement layer
         icon = QIcon(os.path.dirname(__file__) + '/images/measureLine.png')
         self.measureLayerAction = QAction(icon, tr('Geodesic measurement layer'), self.iface.mainWindow())
-        self.measureLayerAction.setObjectName('stGeodesicLineBreak')        
+        self.measureLayerAction.setObjectName('stGeodesicLineBreak')
         self.measureLayerAction.triggered.connect(self.measureLayerTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.measureLayerAction)
         self.toolbar.addAction(self.measureLayerAction)
-        
+
         menu = QMenu()
         # Initialize Geodesic transformation tool
         icon = QIcon(os.path.dirname(__file__) + '/images/transformShape.png')
         self.transformationsAction = menu.addAction(icon, tr('Geodesic transformations'), self.transformTool)
         self.transformationsAction.setObjectName('stGeodesicTransformations')
-        
+
         icon = QIcon(os.path.dirname(__file__) + '/images/flip.png')
         self.flipRotateAction = menu.addAction(icon, tr('Geodesic flip and rotate'), self.flipRotateTool)
         self.flipRotateAction.setObjectName('stGeodesicFlipRotate')
-        
+
         icon = QIcon(os.path.dirname(__file__) + '/images/flipHorizontal.png')
         self.flipHorizontalAction = menu.addAction(icon, tr('Flip horizontal'), self.flipHorizontalTool)
         self.flipHorizontalAction.setObjectName('stGeodesicFlipHorizontal')
@@ -162,55 +162,55 @@ class ShapeTools(object):
         self.transformsAction = QAction(icon, tr('Geodesic Transforms'), self.iface.mainWindow())
         self.transformsAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.transformsAction)
-        
+
         self.transformationButton = QToolButton()
         self.transformationButton.setMenu(menu)
         self.transformationButton.setDefaultAction(self.transformationsAction)
         self.transformationButton.setPopupMode(QToolButton.MenuButtonPopup)
         self.transformationButton.triggered.connect(self.toolButtonTriggered)
         self.tranformToolbar = self.toolbar.addWidget(self.transformationButton)
-        
+
         # Initialize the Azimuth Distance Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
         self.digitizeAction = QAction(icon, tr('Azimuth distance digitizer'), self.iface.mainWindow())
-        self.digitizeAction.setObjectName('stAzDistanceDigitizer')        
+        self.digitizeAction.setObjectName('stAzDistanceDigitizer')
         self.digitizeAction.triggered.connect(self.setShowAzDigitizerTool)
         self.digitizeAction.setCheckable(True)
         self.digitizeAction.setEnabled(False)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.digitizeAction)
         self.toolbar.addAction(self.digitizeAction)
-        
+
         # Initialize the multi point azimuth Digitize function
         icon = QIcon(os.path.dirname(__file__) + '/images/linedigitize.png')
         self.lineDigitizeAction = QAction(icon, tr('Azimuth distance sequence digitizer'), self.iface.mainWindow())
-        self.lineDigitizeAction.setObjectName('stLineDigitizer')        
+        self.lineDigitizeAction.setObjectName('stLineDigitizer')
         self.lineDigitizeAction.triggered.connect(self.setShowLineDigitizeTool)
         self.lineDigitizeAction.setCheckable(True)
         self.lineDigitizeAction.setEnabled(False)
         self.iface.addPluginToVectorMenu(u'Shape Tools', self.lineDigitizeAction)
         self.toolbar.addAction(self.lineDigitizeAction)
-        
+
         # Settings
         icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
         self.settingsAction = QAction(icon, tr('Settings'), self.iface.mainWindow())
-        self.settingsAction.setObjectName('shapeToolsSettings')        
+        self.settingsAction.setObjectName('shapeToolsSettings')
         self.settingsAction.triggered.connect(self.settings)
         self.iface.addPluginToVectorMenu('Shape Tools', self.settingsAction)
-        
+
         # Help
         icon = QIcon(os.path.dirname(__file__) + '/images/help.png')
         self.helpAction = QAction(icon, tr('Shape Tools help'), self.iface.mainWindow())
-        self.helpAction.setObjectName('shapeToolsHelp')        
+        self.helpAction.setObjectName('shapeToolsHelp')
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToVectorMenu('Shape Tools', self.helpAction)
-        
+
         self.iface.currentLayerChanged.connect(self.currentLayerChanged)
         self.canvas.mapToolSet.connect(self.unsetTool)
         self.enableTools()
-        
+
         # Add the processing provider
         QgsApplication.processingRegistry().addProvider(self.provider)
-        
+
     def unsetTool(self, tool):
         try:
             if not isinstance(tool, GeodesicMeasureTool):
@@ -220,13 +220,13 @@ class ShapeTools(object):
                 self.digitizeAction.setChecked(False)
             if not isinstance(tool, LineDigitizerTool):
                 self.lineDigitizeAction.setChecked(False)
-        except:
+        except Exception:
             pass
 
     def unload(self):
         self.canvas.unsetMapTool(self.azDigitizerTool)
         self.canvas.unsetMapTool(self.lineDigitizerTool)
-        
+
         # remove from menu
         self.iface.removePluginVectorMenu('Shape Tools', self.createShapesAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
@@ -256,122 +256,122 @@ class ShapeTools(object):
         del self.toolbar
 
         QgsApplication.processingRegistry().removeProvider(self.provider)
-    
+
     def toolButtonTriggered(self, action):
         self.transformationButton.setDefaultAction(action)
-    
+
     def createShapeTriggered(self, action):
         self.createShapeButton.setDefaultAction(action)
-        
+
     def setShowAzDigitizerTool(self):
         self.digitizeAction.setChecked(True)
         self.canvas.setMapTool(self.azDigitizerTool)
-        
+
     def setShowLineDigitizeTool(self):
         self.lineDigitizeAction.setChecked(True)
         self.canvas.setMapTool(self.lineDigitizerTool)
-        
+
     def xyLineTool(self):
-        results = processing.execAlgorithmDialog('shapetools:xy2line', {})
-        
+        processing.execAlgorithmDialog('shapetools:xy2line', {})
+
     def geodesicDensifyTool(self):
-        results = processing.execAlgorithmDialog('shapetools:geodesicdensifier', {})
-        
+        processing.execAlgorithmDialog('shapetools:geodesicdensifier', {})
+
     def geodesicLineBreakTool(self):
-        results = processing.execAlgorithmDialog('shapetools:linebreak', {})
-        
+        processing.execAlgorithmDialog('shapetools:linebreak', {})
+
     def measureTool(self):
         self.measureAction.setChecked(True)
         self.canvas.setMapTool(self.geodesicMeasureTool)
-        
+
     def createArc(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createarc', {})
-        
+        processing.execAlgorithmDialog('shapetools:createarc', {})
+
     def createDonut(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createdonut', {})
-        
+        processing.execAlgorithmDialog('shapetools:createdonut', {})
+
     def createEllipse(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createellipse', {})
-        
+        processing.execAlgorithmDialog('shapetools:createellipse', {})
+
     def createEllipseRose(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createrose', {})
-        
+        processing.execAlgorithmDialog('shapetools:createrose', {})
+
     def createEpicycloid(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createepicycloid', {})
-        
+        processing.execAlgorithmDialog('shapetools:createepicycloid', {})
+
     def createHeart(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createheart', {})
-        
+        processing.execAlgorithmDialog('shapetools:createheart', {})
+
     def createHypocycloid(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createhypocycloid', {})
-        
+        processing.execAlgorithmDialog('shapetools:createhypocycloid', {})
+
     def createLOB(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createlob', {})
-        
+        processing.execAlgorithmDialog('shapetools:createlob', {})
+
     def createPie(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createpie', {})
-        
+        processing.execAlgorithmDialog('shapetools:createpie', {})
+
     def createPolyfoil(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createpolyfoil', {})
-        
+        processing.execAlgorithmDialog('shapetools:createpolyfoil', {})
+
     def createPolygon(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createpolygon', {})
-        
+        processing.execAlgorithmDialog('shapetools:createpolygon', {})
+
     def createStar(sefl):
-        results = processing.execAlgorithmDialog('shapetools:createstar', {})
-        
+        processing.execAlgorithmDialog('shapetools:createstar', {})
+
     def measureLayerTool(self):
-        results = processing.execAlgorithmDialog('shapetools:measurelayer', {})
-        
+        processing.execAlgorithmDialog('shapetools:measurelayer', {})
+
     def transformTool(self):
-        results = processing.execAlgorithmDialog('shapetools:geodesictransformations', {})
-        
+        processing.execAlgorithmDialog('shapetools:geodesictransformations', {})
+
     def flipRotateTool(self):
-        results = processing.execAlgorithmDialog('shapetools:geodesicflip', {})
-        
+        processing.execAlgorithmDialog('shapetools:geodesicflip', {})
+
     def flipHorizontalTool(self):
         layer = self.iface.activeLayer()
         flipLayer(self.iface, layer, 0)
-        
+
     def flipVerticalTool(self):
         layer = self.iface.activeLayer()
         flipLayer(self.iface, layer, 1)
-        
+
     def rotate180Tool(self):
         layer = self.iface.activeLayer()
         flipLayer(self.iface, layer, 2)
-        
+
     def rotate90CWTool(self):
         layer = self.iface.activeLayer()
         flipLayer(self.iface, layer, 3)
-        
+
     def rotate90CCWTool(self):
         layer = self.iface.activeLayer()
         flipLayer(self.iface, layer, 4)
-        
+
     def settings(self):
         if self.settingsDialog is None:
             self.settingsDialog = SettingsWidget(self.iface, self.iface.mainWindow())
         self.settingsDialog.show()
-    
+
     def help(self):
         '''Display a help page'''
         url = QUrl.fromLocalFile(os.path.dirname(__file__) + '/index.html').toString()
         webbrowser.open(url, new=2)
-        
+
     def currentLayerChanged(self):
         layer = self.iface.activeLayer()
-        if self.previousLayer != None:
+        if self.previousLayer is not None:
             try:
                 self.previousLayer.editingStarted.disconnect(self.layerEditingChanged)
-            except:
+            except Exception:
                 pass
             try:
                 self.previousLayer.editingStopped.disconnect(self.layerEditingChanged)
-            except:
+            except Exception:
                 pass
         self.previousLayer = None
-        if layer != None:
+        if layer is not None:
             if isinstance(layer, QgsVectorLayer):
                 layer.editingStarted.connect(self.layerEditingChanged)
                 layer.editingStopped.connect(self.layerEditingChanged)
@@ -390,7 +390,7 @@ class ShapeTools(object):
         self.rotate90CWAction.setEnabled(False)
         self.rotate90CCWAction.setEnabled(False)
         layer = self.iface.activeLayer()
-        
+
         if not layer or not layer.isValid() or (layer.type() != QgsMapLayer.VectorLayer) or not layer.isEditable():
             return
         wkbtype = layer.wkbType()
@@ -398,10 +398,9 @@ class ShapeTools(object):
         self.lineDigitizeAction.setEnabled(True)
         if geomtype == QgsWkbTypes.PointGeometry or geomtype == QgsWkbTypes.LineGeometry:
             self.digitizeAction.setEnabled(True)
-        if geomtype == QgsWkbTypes.LineGeometry or geomtype == QgsWkbTypes.PolygonGeometry :
+        if geomtype == QgsWkbTypes.LineGeometry or geomtype == QgsWkbTypes.PolygonGeometry:
             self.flipHorizontalAction.setEnabled(True)
             self.flipVerticalAction.setEnabled(True)
             self.rotate180Action.setEnabled(True)
             self.rotate90CWAction.setEnabled(True)
             self.rotate90CCWAction.setEnabled(True)
-
