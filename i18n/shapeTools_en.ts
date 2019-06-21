@@ -8,17 +8,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createDonut.py" line="240"/>
+        <location filename="../createDonut.py" line="242"/>
         <source>Create donut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="285"/>
+        <location filename="../createEllipse.py" line="290"/>
         <source>Create ellipse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createRose.py" line="205"/>
+        <location filename="../createRose.py" line="204"/>
         <source>Create ellipse rose</source>
         <translation type="unfinished"></translation>
     </message>
@@ -43,7 +43,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createPie.py" line="274"/>
+        <location filename="../createPie.py" line="273"/>
         <source>Create pie wedge</source>
         <translation type="unfinished"></translation>
     </message>
@@ -53,12 +53,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createPolygon.py" line="237"/>
+        <location filename="../createPolygon.py" line="236"/>
         <source>Create polygon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="275"/>
+        <location filename="../createStar.py" line="274"/>
         <source>Create star</source>
         <translation type="unfinished"></translation>
     </message>
@@ -303,12 +303,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicDensify.py" line="90"/>
+        <location filename="../geodesicDensify.py" line="92"/>
         <source>{} out of {} features from input layer failed to process correctly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicDensify.py" line="101"/>
+        <location filename="../geodesicDensify.py" line="103"/>
         <source>Geodesic densifier</source>
         <translation type="unfinished"></translation>
     </message>
@@ -393,47 +393,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="23"/>
+        <location filename="../createEllipse.py" line="26"/>
         <source>Polygon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="23"/>
+        <location filename="../createEllipse.py" line="26"/>
         <source>Line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="80"/>
+        <location filename="../createEllipse.py" line="85"/>
         <source>Input point layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="86"/>
+        <location filename="../createEllipse.py" line="91"/>
         <source>Shape type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="71"/>
+        <location filename="../createStar.py" line="70"/>
         <source>Outer radius field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="80"/>
+        <location filename="../createStar.py" line="79"/>
         <source>Inner radius field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="107"/>
+        <location filename="../createStar.py" line="106"/>
         <source>Default outer radius</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="116"/>
+        <location filename="../createStar.py" line="115"/>
         <source>Default inner radius</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="149"/>
+        <location filename="../createEllipse.py" line="154"/>
         <source>Radius units</source>
         <translation type="unfinished"></translation>
     </message>
@@ -443,17 +443,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="166"/>
+        <location filename="../createEllipse.py" line="171"/>
         <source>Add input geometry fields to output table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="274"/>
+        <location filename="../createEllipse.py" line="279"/>
         <source>{} out of {} features had invalid parameters and were ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="288"/>
+        <location filename="../createEllipse.py" line="293"/>
         <source>Geodesic vector creation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -478,7 +478,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createPolygon.py" line="59"/>
+        <location filename="../createPolygon.py" line="58"/>
         <source>Number of sides field</source>
         <translation type="unfinished"></translation>
     </message>
@@ -493,17 +493,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createPolygon.py" line="86"/>
+        <location filename="../createPolygon.py" line="85"/>
         <source>Default number of sides</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="125"/>
+        <location filename="../createStar.py" line="124"/>
         <source>Default starting angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createPie.py" line="120"/>
+        <location filename="../createPie.py" line="119"/>
         <source>Default radius</source>
         <translation type="unfinished"></translation>
     </message>
@@ -543,17 +543,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="62"/>
+        <location filename="../createStar.py" line="61"/>
         <source>Number of star points field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="98"/>
+        <location filename="../createStar.py" line="97"/>
         <source>Default number of points on the star</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createRose.py" line="56"/>
+        <location filename="../createRose.py" line="55"/>
         <source>Number of petals</source>
         <translation type="unfinished"></translation>
     </message>
@@ -638,37 +638,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="94"/>
+        <location filename="../createEllipse.py" line="99"/>
         <source>Semi-major axis field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="103"/>
+        <location filename="../createEllipse.py" line="108"/>
         <source>Semi-minor axis field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="112"/>
+        <location filename="../createEllipse.py" line="117"/>
         <source>Orientation of axis field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="121"/>
+        <location filename="../createEllipse.py" line="126"/>
         <source>Default semi-major axis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="130"/>
+        <location filename="../createEllipse.py" line="135"/>
         <source>Default semi-minor axis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="139"/>
+        <location filename="../createEllipse.py" line="144"/>
         <source>Default orientation of axis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createEllipse.py" line="157"/>
+        <location filename="../createEllipse.py" line="162"/>
         <source>Number of drawing segments (approximate)</source>
         <translation type="unfinished"></translation>
     </message>
