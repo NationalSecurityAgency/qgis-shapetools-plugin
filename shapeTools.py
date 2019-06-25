@@ -15,7 +15,7 @@ from .provider import ShapeToolsProvider
 from .geodesicFlip import flipLayer
 
 def tr(string):
-    return QCoreApplication.translate('Processing', string)
+    return QCoreApplication.translate('@default', string)
 
 class ShapeTools(object):
     def __init__(self, iface):
