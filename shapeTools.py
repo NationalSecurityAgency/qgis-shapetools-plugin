@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import QUrl, QCoreApplication
+from qgis.PyQt.QtCore import QUrl, QCoreApplication, QSettings, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton
 from qgis.core import QgsMapLayer, QgsVectorLayer, QgsWkbTypes, QgsApplication
@@ -30,6 +30,22 @@ class ShapeTools(object):
         self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
         self.toolbar.setObjectName('ShapeToolsToolbar')
         self.provider = ShapeToolsProvider()
+        # Initialize the plugin path directory
+        self.plugin_dir = os.path.dirname(__file__)
+
+        # initialize locale
+        try:
+            locale = QSettings().value("locale/userLocale", "en", type=str)[0:2]
+        except Exception:
+            locale = "en"
+        locale_path = os.path.join(
+            self.plugin_dir,
+            'i18n',
+            'shapeTools_{}.qm'.format(locale))
+        if os.path.exists(locale_path):
+            self.translator = QTranslator()
+            self.translator.load(locale_path)
+            QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
         self.azDigitizerTool = AzDigitizerTool(self.iface)
@@ -38,44 +54,44 @@ class ShapeTools(object):
         # Initialize the create shape menu items
         menu = QMenu()
         # Initialize Create Arc Wedge tool
-        icon = QIcon(os.path.dirname(__file__) + '/images/arc.png')
+        icon = QIcon(self.plugin_dir + '/images/arc.png')
         self.createArcAction = menu.addAction(icon, tr('Create arc wedge'), self.createArc)
         self.createArcAction.setObjectName('stCreateArcWedge')
-        icon = QIcon(os.path.dirname(__file__) + '/images/donut.png')
+        icon = QIcon(self.plugin_dir + '/images/donut.png')
         self.createDonutAction = menu.addAction(icon, tr('Create donut'), self.createDonut)
         self.createDonutAction.setObjectName('stCreateDonut')
-        icon = QIcon(os.path.dirname(__file__) + '/images/ellipse.png')
+        icon = QIcon(self.plugin_dir + '/images/ellipse.png')
         self.createEllipseAction = menu.addAction(icon, tr('Create ellipse'), self.createEllipse)
         self.createEllipseAction.setObjectName('stCreateEllipse')
-        icon = QIcon(os.path.dirname(__file__) + '/images/rose.png')
+        icon = QIcon(self.plugin_dir + '/images/rose.png')
         self.createEllipseRoseAction = menu.addAction(icon, tr('Create ellipse rose'), self.createEllipseRose)
         self.createEllipseRoseAction.setObjectName('stCreateEllipseRose')
-        icon = QIcon(os.path.dirname(__file__) + '/images/epicycloid.png')
+        icon = QIcon(self.plugin_dir + '/images/epicycloid.png')
         self.createEpicycloidAction = menu.addAction(icon, tr('Create epicycloid'), self.createEpicycloid)
         self.createEpicycloidAction.setObjectName('stCreateEpicycloid')
-        icon = QIcon(os.path.dirname(__file__) + '/images/heart.png')
+        icon = QIcon(self.plugin_dir + '/images/heart.png')
         self.createHeartAction = menu.addAction(icon, tr('Create heart'), self.createHeart)
         self.createHeartAction.setObjectName('stCreateHeart')
-        icon = QIcon(os.path.dirname(__file__) + '/images/hypocycloid.png')
+        icon = QIcon(self.plugin_dir + '/images/hypocycloid.png')
         self.createHypocycloidAction = menu.addAction(icon, tr('Create hypocycloid'), self.createHypocycloid)
         self.createHypocycloidAction.setObjectName('stCreateHypocycloid')
-        icon = QIcon(os.path.dirname(__file__) + '/images/line.png')
+        icon = QIcon(self.plugin_dir + '/images/line.png')
         self.createLOBAction = menu.addAction(icon, tr('Create line of bearing'), self.createLOB)
         self.createLOBAction.setObjectName('stCreateLineOfBearing')
-        icon = QIcon(os.path.dirname(__file__) + '/images/pie.png')
+        icon = QIcon(self.plugin_dir + '/images/pie.png')
         self.createPieAction = menu.addAction(icon, tr('Create pie wedge'), self.createPie)
         self.createPieAction.setObjectName('stCreatePie')
-        icon = QIcon(os.path.dirname(__file__) + '/images/polyfoil.png')
+        icon = QIcon(self.plugin_dir + '/images/polyfoil.png')
         self.createPolyfoilAction = menu.addAction(icon, tr('Create polyfoil'), self.createPolyfoil)
         self.createPolyfoilAction.setObjectName('stCreatePolyfoil')
-        icon = QIcon(os.path.dirname(__file__) + '/images/polygon.png')
+        icon = QIcon(self.plugin_dir + '/images/polygon.png')
         self.createPolygonAction = menu.addAction(icon, tr('Create polygon'), self.createPolygon)
         self.createPolygonAction.setObjectName('stCreatePolygon')
-        icon = QIcon(os.path.dirname(__file__) + '/images/star.png')
+        icon = QIcon(self.plugin_dir + '/images/star.png')
         self.createStarAction = menu.addAction(icon, tr('Create star'), self.createStar)
         self.createStarAction.setObjectName('stCreateStar')
         # Add the shape creation tools to the menu
-        icon = QIcon(os.path.dirname(__file__) + '/images/shapes.png')
+        icon = QIcon(self.plugin_dir + '/images/shapes.png')
         self.createShapesAction = QAction(icon, tr('Create shapes'), self.iface.mainWindow())
         self.createShapesAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.createShapesAction)
@@ -88,7 +104,7 @@ class ShapeTools(object):
         self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
 
         # Initialize the XY to Line menu item
-        icon = QIcon(os.path.dirname(__file__) + '/images/xyline.png')
+        icon = QIcon(self.plugin_dir + '/images/xyline.png')
         self.xyLineAction = QAction(icon, tr('XY to Line'), self.iface.mainWindow())
         self.xyLineAction.setObjectName('stXYtoLine')
         self.xyLineAction.triggered.connect(self.xyLineTool)
@@ -96,7 +112,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.xyLineAction)
 
         # Initialize the Geodesic Densifier menu item
-        icon = QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
+        icon = QIcon(self.plugin_dir + '/images/geodesicDensifier.png')
         self.geodesicDensifyAction = QAction(icon, tr('Geodesic shape densifier'), self.iface.mainWindow())
         self.geodesicDensifyAction.setObjectName('stGeodesicDensifier')
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
@@ -104,7 +120,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.geodesicDensifyAction)
 
         # Initialize the Geodesic line break menu item
-        icon = QIcon(os.path.dirname(__file__) + '/images/idlbreak.png')
+        icon = QIcon(self.plugin_dir + '/images/idlbreak.png')
         self.geodesicLineBreakAction = QAction(icon, tr('Geodesic line break at -180,180'), self.iface.mainWindow())
         self.geodesicLineBreakAction.setObjectName('stGeodesicLineBreak')
         self.geodesicLineBreakAction.triggered.connect(self.geodesicLineBreakTool)
@@ -113,7 +129,7 @@ class ShapeTools(object):
 
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
-        icon = QIcon(os.path.dirname(__file__) + '/images/measure.png')
+        icon = QIcon(self.plugin_dir + '/images/measure.png')
         self.measureAction = QAction(icon, tr('Geodesic measure tool'), self.iface.mainWindow())
         self.measureAction.setObjectName('stGeodesicMeasureTool')
         self.measureAction.triggered.connect(self.measureTool)
@@ -122,7 +138,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.measureAction)
 
         # Initialize Geodesic Measurement layer
-        icon = QIcon(os.path.dirname(__file__) + '/images/measureLine.png')
+        icon = QIcon(self.plugin_dir + '/images/measureLine.png')
         self.measureLayerAction = QAction(icon, tr('Geodesic measurement layer'), self.iface.mainWindow())
         self.measureLayerAction.setObjectName('stGeodesicLineBreak')
         self.measureLayerAction.triggered.connect(self.measureLayerTool)
@@ -131,31 +147,31 @@ class ShapeTools(object):
 
         menu = QMenu()
         # Initialize Geodesic transformation tool
-        icon = QIcon(os.path.dirname(__file__) + '/images/transformShape.png')
+        icon = QIcon(self.plugin_dir + '/images/transformShape.png')
         self.transformationsAction = menu.addAction(icon, tr('Geodesic transformations'), self.transformTool)
         self.transformationsAction.setObjectName('stGeodesicTransformations')
 
-        icon = QIcon(os.path.dirname(__file__) + '/images/flip.png')
+        icon = QIcon(self.plugin_dir + '/images/flip.png')
         self.flipRotateAction = menu.addAction(icon, tr('Geodesic flip and rotate'), self.flipRotateTool)
         self.flipRotateAction.setObjectName('stGeodesicFlipRotate')
 
-        icon = QIcon(os.path.dirname(__file__) + '/images/flipHorizontal.png')
+        icon = QIcon(self.plugin_dir + '/images/flipHorizontal.png')
         self.flipHorizontalAction = menu.addAction(icon, tr('Flip horizontal'), self.flipHorizontalTool)
         self.flipHorizontalAction.setObjectName('stGeodesicFlipHorizontal')
         self.flipHorizontalAction.setEnabled(False)
-        icon = QIcon(os.path.dirname(__file__) + '/images/flipVertical.png')
+        icon = QIcon(self.plugin_dir + '/images/flipVertical.png')
         self.flipVerticalAction = menu.addAction(icon, tr('Flip vertical'), self.flipVerticalTool)
         self.flipVerticalAction.setObjectName('stGeodesicFlipVertical')
         self.flipVerticalAction.setEnabled(False)
-        icon = QIcon(os.path.dirname(__file__) + '/images/rotate180.png')
+        icon = QIcon(self.plugin_dir + '/images/rotate180.png')
         self.rotate180Action = menu.addAction(icon, tr('Rotate 180\xb0'), self.rotate180Tool)
         self.rotate180Action.setObjectName('stGeodesicRotate180')
         self.rotate180Action.setEnabled(False)
-        icon = QIcon(os.path.dirname(__file__) + '/images/rotatecw.png')
+        icon = QIcon(self.plugin_dir + '/images/rotatecw.png')
         self.rotate90CWAction = menu.addAction(icon, tr('Rotate 90\xb0 CW'), self.rotate90CWTool)
         self.rotate90CWAction.setObjectName('stGeodesicRotate90CW')
         self.rotate90CWAction.setEnabled(False)
-        icon = QIcon(os.path.dirname(__file__) + '/images/rotateccw.png')
+        icon = QIcon(self.plugin_dir + '/images/rotateccw.png')
         self.rotate90CCWAction = menu.addAction(icon, tr('Rotate 90\xb0 CCW'), self.rotate90CCWTool)
         self.rotate90CCWAction.setObjectName('stGeodesicRotate90CCW')
         self.rotate90CCWAction.setEnabled(False)
@@ -171,7 +187,7 @@ class ShapeTools(object):
         self.tranformToolbar = self.toolbar.addWidget(self.transformationButton)
 
         # Initialize the Azimuth Distance Digitize function
-        icon = QIcon(os.path.dirname(__file__) + '/images/dazdigitize.png')
+        icon = QIcon(self.plugin_dir + '/images/dazdigitize.png')
         self.digitizeAction = QAction(icon, tr('Azimuth distance digitizer'), self.iface.mainWindow())
         self.digitizeAction.setObjectName('stAzDistanceDigitizer')
         self.digitizeAction.triggered.connect(self.setShowAzDigitizerTool)
@@ -181,7 +197,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.digitizeAction)
 
         # Initialize the multi point azimuth Digitize function
-        icon = QIcon(os.path.dirname(__file__) + '/images/linedigitize.png')
+        icon = QIcon(self.plugin_dir + '/images/linedigitize.png')
         self.lineDigitizeAction = QAction(icon, tr('Azimuth distance sequence digitizer'), self.iface.mainWindow())
         self.lineDigitizeAction.setObjectName('stLineDigitizer')
         self.lineDigitizeAction.triggered.connect(self.setShowLineDigitizeTool)
@@ -191,14 +207,14 @@ class ShapeTools(object):
         self.toolbar.addAction(self.lineDigitizeAction)
 
         # Settings
-        icon = QIcon(os.path.dirname(__file__) + '/images/settings.png')
+        icon = QIcon(self.plugin_dir + '/images/settings.png')
         self.settingsAction = QAction(icon, tr('Settings'), self.iface.mainWindow())
         self.settingsAction.setObjectName('shapeToolsSettings')
         self.settingsAction.triggered.connect(self.settings)
         self.iface.addPluginToVectorMenu('Shape Tools', self.settingsAction)
 
         # Help
-        icon = QIcon(os.path.dirname(__file__) + '/images/help.png')
+        icon = QIcon(self.plugin_dir + '/images/help.png')
         self.helpAction = QAction(icon, tr('Shape Tools help'), self.iface.mainWindow())
         self.helpAction.setObjectName('shapeToolsHelp')
         self.helpAction.triggered.connect(self.help)
@@ -356,7 +372,7 @@ class ShapeTools(object):
 
     def help(self):
         '''Display a help page'''
-        url = QUrl.fromLocalFile(os.path.dirname(__file__) + '/index.html').toString()
+        url = QUrl.fromLocalFile(self.plugin_dir + '/index.html').toString()
         webbrowser.open(url, new=2)
 
     def currentLayerChanged(self):

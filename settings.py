@@ -13,10 +13,11 @@ geod = Geodesic.WGS84
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/settings.ui'))
-    
+
 def tr(string):
     return QCoreApplication.translate('Processing', string)
-    
+
+
 historical_ellipsoids = {
     '165': ['165', 6378165.000, 298.3],
     'ans': ['ANS', 6378160, 298.25],
@@ -26,46 +27,47 @@ historical_ellipsoids = {
 
 class Ellipsoids():
     acronymList = {}
+
     def __init__(self):
         # This returns the acronym, description, & parameters
         definitions = QgsEllipsoidUtils.definitions()
-        
+
         # Create a dictionary of definitions keyed on the acronym
         for item in definitions:
             self.acronymList[item.acronym] = item
-    
+
     def ellipsoidDescription(self, acronym):
         '''Return an acronym's description'''
         if acronym == 'WGS84':
-            return( 'WGS 84' )
+            return('WGS 84')
         elif acronym in self.acronymList:
             return(self.acronymList[acronym].description)
         elif acronym in historical_ellipsoids:
             return(historical_ellipsoids[acronym][0])
         else:
             return(None)
-    
+
     def valid(self, acronym):
         '''Check for a valid acronym'''
         if acronym == 'WGS84':
-            return( True )
+            return(True)
         elif acronym in self.acronymList:
-            return( True )
+            return(True)
         elif acronym in historical_ellipsoids:
             return(True)
         else:
-            return( False )
-            
+            return(False)
+
     def isSystemEllipsoid(self, acronym):
         if acronym in self.acronymList:
-            return( True )
-        return( False )
-        
+            return(True)
+        return(False)
+
     def isHistoricalEllipsoid(self, acronym):
         if acronym in historical_ellipsoids:
-            return( True )
-        return( False )
-    
+            return(True)
+        return(False)
+
     def ellipsoid(self, acronym):
         '''Return the ellipsoid associated with the acronym'''
         if acronym == 'WGS84':
@@ -77,12 +79,11 @@ class Ellipsoids():
             return(Geodesic(historical_ellipsoids[acronym][1], 1.0 / historical_ellipsoids[acronym][2]))
         else:
             return(None)
-            
-ellipsoids = Ellipsoids()
-            
-    
-class Settings():
 
+
+ellipsoids = Ellipsoids()
+
+class Settings():
     def __init__(self):
         self.readSettings()
 
@@ -92,8 +93,8 @@ class Settings():
         qset = QSettings()
         self.geomXName = qset.value('ShapeTools/GeomXName', 'geom_x')
         self.geomYName = qset.value('ShapeTools/GeomYName', 'geom_y')
-        self.maxSegLength =  float(qset.value('/ShapeTools/MaxSegLength', 20.0)) # In km
-        self.maxSegments =  int(qset.value('/ShapeTools/MaxSegments', 1000))
+        self.maxSegLength = float(qset.value('/ShapeTools/MaxSegLength', 20.0))  # In km
+        self.maxSegments = int(qset.value('/ShapeTools/MaxSegments', 1000))
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
         self.measureSignificantDigits = int(qset.value('ShapeTools/MeasureSignificantDigits', 2))
         color = qset.value('ShapeTools/RubberBandColor', '#dea743')
@@ -106,27 +107,27 @@ class Settings():
         self.measureTextColor = QColor(color)
         acronym = qset.value('ShapeTools/Ellipsoid', 'WGS84')
         self.setEllipsoid(acronym)
-        
+
     def getGeomNames(self, names=[]):
         index = 1
         name_x = self.geomXName
         names = set(names)
         while name_x in names:
-            name_x = '{}{}'.format(self.geomXName,index)
+            name_x = '{}{}'.format(self.geomXName, index)
             index += 1
         name_y = self.geomYName
         while name_y in names:
-            name_y = '{}{}'.format(self.geomYName,index)
+            name_y = '{}{}'.format(self.geomYName, index)
             index += 1
         return (name_x, name_y)
-        
+
     def setEllipsoid(self, acronym):
         if not ellipsoids.valid(acronym):
             acronym = 'WGS84'
-        geod = ellipsoids.ellipsoid(acronym)
         self.ellipseAcronym = acronym
         self.ellipseDescription = ellipsoids.ellipsoidDescription(acronym)
-            
+
+
 settings = Settings()
 
 class SettingsWidget(QDialog, FORM_CLASS):
@@ -137,17 +138,17 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.iface = iface
         ellipseDef = QgsEllipsoidUtils.definitions()
         self.wgs84index = 0
-        for i,item in enumerate(ellipseDef):
+        for i, item in enumerate(ellipseDef):
             desc = item.description
             if item.description != item.acronym:
-                desc += " ("+item.acronym+")"
+                desc += " (" + item.acronym + ")"
             self.systemEllipsoidComboBox.addItem(desc, item.acronym)
             if item.acronym == 'WGS84':
                 self.wgs84index = i
         for key in historical_ellipsoids.keys():
             desc = historical_ellipsoids[key][0]
             self.historicalEllipsoidComboBox.addItem(desc, key)
-            
+
         self.mtAzComboBox.addItems([tr('Azimuth Range -180 to 180'), tr('Azimuth Range 0 tp 360')])
         self.ellipsoidComboBox.addItems(['WGS84', tr('System Ellipsoids'), tr('Historical Ellipsoids')])
         self.ellipsoidComboBox.activated.connect(self.initEllipsoid)
@@ -160,28 +161,28 @@ class SettingsWidget(QDialog, FORM_CLASS):
         else:
             self.ellipsoidComboBox.setCurrentIndex(2)
         self.initEllipsoid()
-        
+
     def initEllipsoid(self):
-        if self.ellipsoidComboBox.currentIndex() == 0: # WGS84
+        if self.ellipsoidComboBox.currentIndex() == 0:  # WGS84
             self.systemEllipsoidComboBox.setCurrentIndex(self.wgs84index)
             self.systemEllipsoidComboBox.setEnabled(False)
             self.historicalEllipsoidComboBox.setEnabled(False)
-        elif self.ellipsoidComboBox.currentIndex() == 2: # Historical Ellipsoids
+        elif self.ellipsoidComboBox.currentIndex() == 2:  # Historical Ellipsoids
             index = self.historicalEllipsoidComboBox.findData(settings.ellipseAcronym, flags=Qt.MatchExactly)
             if index == -1:
                 index = 0
             self.historicalEllipsoidComboBox.setCurrentIndex(index)
             self.systemEllipsoidComboBox.setEnabled(False)
-            self.historicalEllipsoidComboBox.setEnabled(True)            
-        else: # System Ellipsoids
+            self.historicalEllipsoidComboBox.setEnabled(True)
+        else:  # System Ellipsoids
             index = self.systemEllipsoidComboBox.findData(settings.ellipseAcronym, flags=Qt.MatchExactly)
             if index == -1:
                 settings.setEllipsoid('WGS84')
                 index = self.wgs84index
             self.systemEllipsoidComboBox.setCurrentIndex(index)
             self.systemEllipsoidComboBox.setEnabled(True)
-            self.historicalEllipsoidComboBox.setEnabled(False)            
-        
+            self.historicalEllipsoidComboBox.setEnabled(False)
+
     def accept(self):
         '''Accept the settings and save them for next time.'''
         qset = QSettings()
@@ -200,14 +201,14 @@ class SettingsWidget(QDialog, FORM_CLASS):
         # we have put the acronymns in the data field
         if self.ellipsoidComboBox.currentIndex() == 0:
             name = 'WGS84'
-        elif self.ellipsoidComboBox.currentIndex() == 2: # Historical ellipsoids
+        elif self.ellipsoidComboBox.currentIndex() == 2:  # Historical ellipsoids
             index = self.historicalEllipsoidComboBox.currentIndex()
             name = self.historicalEllipsoidComboBox.itemData(index)
         else:
             index = self.systemEllipsoidComboBox.currentIndex()
             name = self.systemEllipsoidComboBox.itemData(index)
         qset.setValue('/ShapeTools/Ellipsoid', name)
-        settings.rubberBandColor  = self.rubberBandColorButton.color()
+        settings.rubberBandColor = self.rubberBandColorButton.color()
         settings.measureLineColor = self.measureLineColorButton.color()
         settings.measureTextColor = self.measureTextColorButton.color()
         qset.setValue('/ShapeTools/RubberBandColor', settings.rubberBandColor.name())
@@ -217,7 +218,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/MeasureSignificantDigits', self.significantDigitsSpinBox.value())
         settings.readSettings()
         self.close()
-        
+
     def showEvent(self, e):
         '''The user has selected the settings dialog box so we need to
         read the settings and update the dialog box with the previously
@@ -235,5 +236,3 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.ellipsoidComboBox.blockSignals(True)
         self.ellipsoidComboBox.blockSignals(False)
         self.initEllipsoid()
-            
-        

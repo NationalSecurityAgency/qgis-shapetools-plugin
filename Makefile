@@ -6,6 +6,7 @@ EXTRAS = metadata.txt
 deploy:
 	mkdir -p $(PLUGINS)
 	mkdir -p $(PLUGINS)/images
+	mkdir -p $(PLUGINS)/i18n
 	cp -vf $(PY_FILES) $(PLUGINS)
 	cp -vf $(EXTRAS) $(PLUGINS)
 	cp -vrf images $(PLUGINS)

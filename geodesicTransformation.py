@@ -1,10 +1,10 @@
 import os
-import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.core import (QgsPoint, QgsProject, QgsWkbTypes, QgsCoordinateTransform)
-    
-from qgis.core import (QgsProcessing,
+from qgis.core import (QgsPoint, QgsProject, QgsCoordinateTransform)
+
+from qgis.core import (
+    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
@@ -35,7 +35,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.PrmInputLayer,
                 tr('Input vector layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ])
+                [QgsProcessing.TypeVectorAnyGeometry])
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -44,7 +44,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmTransformScale,
@@ -52,7 +52,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=1,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmTransformDistance,
@@ -60,7 +60,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PrmTransformAzimuth,
@@ -68,7 +68,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0,
                 optional=True)
-            )
+        )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmTransformUnits,
@@ -81,8 +81,8 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSink(
                 self.PrmOutputLayer,
                 tr('Output layer'))
-            )
-    
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         angle = self.parameterAsDouble(parameters, self.PrmTransformRotation, context)
@@ -90,25 +90,21 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
         azimuth = self.parameterAsDouble(parameters, self.PrmTransformAzimuth, context)
         distance = self.parameterAsDouble(parameters, self.PrmTransformDistance, context)
         units = self.parameterAsInt(parameters, self.PrmTransformUnits, context)
-        
+
         to_meters = conversionToMeters(units)
         distance = distance * to_meters
         src_crs = source.sourceCrs()
         wkbtype = source.wkbType()
-        
-            
-        (sink, dest_id) = self.parameterAsSink(parameters,
-            self.PrmOutputLayer, context, source.fields(), wkbtype, src_crs)
-                
+
+        (sink, dest_id) = self.parameterAsSink(
+            parameters, self.PrmOutputLayer, context, source.fields(), wkbtype, src_crs)
+
         geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
         to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
-        
-        geomtype = QgsWkbTypes.geometryType(wkbtype)
-            
-        
+
         featureCount = source.featureCount()
         total = 100.0 / featureCount if featureCount else 0
-        
+
         iterator = source.getFeatures()
         for cnt, feature in enumerate(iterator):
             if feedback.isCanceled():
@@ -124,17 +120,17 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 new_centroid = QgsPoint(g['lon2'], g['lat2'])
             else:
                 new_centroid = centroid
-            
+
             # Find the x & y coordinates of the new centroid
             ncy = new_centroid.y()
             ncx = new_centroid.x()
-            
+
             vertices = geom.vertices()
             for vcnt, vertex in enumerate(vertices):
                 v = geom_to_4326.transform(vertex.x(), vertex.y())
-                l = geod.Inverse(cy, cx, v.y(), v.x())
-                vdist = l['s12']
-                vazi = l['azi1']
+                gline = geod.Inverse(cy, cx, v.y(), v.x())
+                vdist = gline['s12']
+                vazi = gline['azi1']
                 if scale != 1:
                     vdist = vdist * scale
                 if angle != 0:
@@ -144,40 +140,40 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
                 geom.moveVertex(new_vertex.x(), new_vertex.y(), vcnt)
             feature.setGeometry(geom)
             sink.addFeature(feature)
-                    
+
             if cnt % 100 == 0:
                 feedback.setProgress(int(cnt * total))
-                
+
         return {self.PrmOutputLayer: dest_id}
-        
+
     def name(self):
         return 'geodesictransformations'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__),'images/transformShape.png'))
-    
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/transformShape.png'))
+
     def displayName(self):
         return tr('Geodesic transformations')
-    
+
     def group(self):
         return tr('Vector geometry')
-        
+
     def groupId(self):
         return 'vectorgeometry'
-        
+
     def helpUrl(self):
-        file = os.path.dirname(__file__)+'/index.html'
+        file = os.path.dirname(__file__) + '/index.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-    
+
     def shortHelpString(self):
-        file = os.path.dirname(__file__)+'/doc/GeodesicTransformationsAlgorithm.help'
+        file = os.path.dirname(__file__) + '/doc/GeodesicTransformationsAlgorithm.help'
         if not os.path.exists(file):
             return ''
         with open(file) as helpf:
-            help=helpf.read()
+            help = helpf.read()
         return help
-        
+
     def createInstance(self):
         return GeodesicTransformationsAlgorithm()

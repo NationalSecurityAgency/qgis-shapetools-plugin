@@ -47,7 +47,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
-        
+
     def id(self):
         return 'shapetools'
 
