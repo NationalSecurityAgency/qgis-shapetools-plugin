@@ -24,7 +24,7 @@ icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
-    3.3.6 - Added language support
+    3.3.6 - Added Chinese language support
     3.3.5 - Added the ability to quickly copy geodesic measurement values onto the clipboard.
     3.3.4 - Moved all shapes to processing only and added the option to include input point geometry into the output table of the created shapes.
     3.3.3 - Added inches and centimeters for units of measure in all the respective tools.
