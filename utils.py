@@ -5,7 +5,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from .settings import geod
 
 def tr(string):
-    return QCoreApplication.translate('Processing', string)
+    return QCoreApplication.translate('@default', string)
 
 
 DISTANCE_LABELS = [tr("Kilometers"), tr("Meters"), tr("Centimeters"), tr("Miles"), tr('Yards'), tr("Feet"), tr("Inches"), tr("Nautical Miles")]

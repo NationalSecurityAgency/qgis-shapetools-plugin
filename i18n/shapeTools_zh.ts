@@ -80,7 +80,7 @@
     <message>
         <location filename="../idlbreakline.py" line="105"/>
         <source>Geodesic line break at -180,180</source>
-        <translation>测地的线条在-180，180处分列</translation>
+        <translation>测地的线条在-180,180处分裂</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="133"/>
