@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh" sourcelanguage="eo">
+<!DOCTYPE TS><TS version="2.0" language="zh" sourcelanguage="eo">
 <context>
     <name>@default</name>
     <message>
@@ -64,27 +63,27 @@
         <translation>星形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="79"/>
+        <location filename="../shapeTools.py" line="95"/>
         <source>Create shapes</source>
         <translation>创建形状</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="92"/>
+        <location filename="../shapeTools.py" line="108"/>
         <source>XY to Line</source>
         <translation>点构造线条</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="100"/>
+        <location filename="../shapeTools.py" line="116"/>
         <source>Geodesic shape densifier</source>
         <translation>测地形状增密器</translation>
     </message>
     <message>
-        <location filename="../idlbreakline.py" line="110"/>
+        <location filename="../idlbreakline.py" line="105"/>
         <source>Geodesic line break at -180,180</source>
         <translation>测地的线条在-180，180处分列</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="117"/>
+        <location filename="../shapeTools.py" line="133"/>
         <source>Geodesic measure tool</source>
         <translation>大地测量工具</translation>
     </message>
@@ -94,197 +93,197 @@
         <translation>大地测量图层</translation>
     </message>
     <message>
-        <location filename="../geodesicTransformation.py" line="160"/>
+        <location filename="../geodesicTransformation.py" line="156"/>
         <source>Geodesic transformations</source>
         <translation>测地变换</translation>
     </message>
     <message>
-        <location filename="../geodesicFlip.py" line="114"/>
+        <location filename="../geodesicFlip.py" line="111"/>
         <source>Geodesic flip and rotate</source>
         <translation>测地翻转和旋转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="143"/>
+        <location filename="../shapeTools.py" line="159"/>
         <source>Flip horizontal</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="147"/>
+        <location filename="../shapeTools.py" line="163"/>
         <source>Flip vertical</source>
         <translation>垂直翻转</translation>
     </message>
     <message>
         <location filename="../geodesicFlip.py" line="35"/>
-        <source>Rotate 180°</source>
+        <source>Rotate 180&#xb0;</source>
         <translation>旋转180°</translation>
     </message>
     <message>
         <location filename="../geodesicFlip.py" line="35"/>
-        <source>Rotate 90° CW</source>
+        <source>Rotate 90&#xb0; CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
         <location filename="../geodesicFlip.py" line="35"/>
-        <source>Rotate 90° CCW</source>
+        <source>Rotate 90&#xb0; CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="162"/>
+        <location filename="../shapeTools.py" line="178"/>
         <source>Geodesic Transforms</source>
         <translation>测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="175"/>
+        <location filename="../shapeTools.py" line="191"/>
         <source>Azimuth distance digitizer</source>
         <translation>方位角距离图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="185"/>
+        <location filename="../shapeTools.py" line="201"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation>方位和角距离对图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="195"/>
+        <location filename="../shapeTools.py" line="211"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="202"/>
+        <location filename="../shapeTools.py" line="218"/>
         <source>Shape Tools help</source>
         <translation>Shape Tools 帮助</translation>
     </message>
     <message>
-        <location filename="../idlbreakline.py" line="30"/>
+        <location filename="../idlbreakline.py" line="27"/>
         <source>Input layer</source>
         <translation>输入图层</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="56"/>
+        <location filename="../xyToLine.py" line="54"/>
         <source>Input CRS for coordinates within the vector fields</source>
         <translation>输入点的坐标参考系统</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="62"/>
+        <location filename="../xyToLine.py" line="60"/>
         <source>Output layer CRS</source>
         <translation>输出图层的坐标参考系统</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="68"/>
+        <location filename="../xyToLine.py" line="66"/>
         <source>Line type</source>
         <translation>线条类型</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="76"/>
+        <location filename="../xyToLine.py" line="74"/>
         <source>Use the point geometry for the line starting point</source>
         <translation>使用点的几何形状作为线条的起点</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="83"/>
+        <location filename="../xyToLine.py" line="81"/>
         <source>Starting X Field (lon)</source>
         <translation>起点X坐标（经度）所在列</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="92"/>
+        <location filename="../xyToLine.py" line="90"/>
         <source>Starting Y Field (lat)</source>
         <translation>起点Y坐标（纬度）所在列</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="101"/>
+        <location filename="../xyToLine.py" line="99"/>
         <source>Use the point geometry for the line ending point</source>
         <translation>使用点的几何形状作为线条的终点</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="108"/>
+        <location filename="../xyToLine.py" line="106"/>
         <source>Ending X Field (lon)</source>
         <translation>终点X坐标（经度）所在列</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="117"/>
+        <location filename="../xyToLine.py" line="115"/>
         <source>Ending Y Field (lat)</source>
         <translation>终点Y坐标（纬度）所在列</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="126"/>
+        <location filename="../xyToLine.py" line="124"/>
         <source>Show starting point</source>
         <translation>显示起点</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="133"/>
+        <location filename="../xyToLine.py" line="131"/>
         <source>Show ending point</source>
         <translation>显示终点</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="140"/>
+        <location filename="../xyToLine.py" line="138"/>
         <source>Break lines at -180, 180 boundary for better rendering</source>
         <translation>为了更好的显示效果，在-180°和180°的边界处裂线</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="147"/>
+        <location filename="../xyToLine.py" line="145"/>
         <source>Output line layer</source>
         <translation>输出线条图层</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="152"/>
+        <location filename="../xyToLine.py" line="150"/>
         <source>Output point layer</source>
         <translation>输出点图层</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="194"/>
+        <location filename="../xyToLine.py" line="192"/>
         <source>Output point layer was set to [skip output]. No point layer will be generated.</source>
         <translation>输出点图层被设置为忽略输出，不生成点图层。</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="198"/>
+        <location filename="../xyToLine.py" line="196"/>
         <source>In order to use the layer geometry for the start or ending points, the input layer must be of type Point</source>
         <translation>为了使用起点终点图层的几何属性，输入图层必须是点类型</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="203"/>
+        <location filename="../xyToLine.py" line="201"/>
         <source>Please select valid starting and ending point columns</source>
         <translation>请选择起点和终点的有效列</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="207"/>
+        <location filename="../xyToLine.py" line="205"/>
         <source>In order to select the input layer&apos;s geometry as a beginning or ending point it must be a Point vector layer.</source>
         <translation>为了选择输入图层的几何属性作为起点或终点，它必须是矢量点图层</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="314"/>
+        <location filename="../xyToLine.py" line="312"/>
         <source>{} out of {} features from the input layer were invalid and were ignored.</source>
         <translation>{}超出输入图层的要素数{}，无效，已忽略。</translation>
     </message>
     <message>
-        <location filename="../xyToLine.py" line="326"/>
+        <location filename="../xyToLine.py" line="323"/>
         <source>XY to line</source>
         <translation>点构造线条</translation>
     </message>
     <message>
-        <location filename="../geodesicTransformation.py" line="163"/>
+        <location filename="../geodesicTransformation.py" line="159"/>
         <source>Vector geometry</source>
         <translation>矢量几何属性</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="151"/>
+        <location filename="../settings.py" line="152"/>
         <source>Azimuth Range -180 to 180</source>
         <translation>方位角范围 -180 ~ 180</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="151"/>
+        <location filename="../settings.py" line="152"/>
         <source>Azimuth Range 0 tp 360</source>
         <translation>方位角范围 0 ~ 360</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="152"/>
+        <location filename="../settings.py" line="153"/>
         <source>System Ellipsoids</source>
         <translation>系统椭球体</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="152"/>
+        <location filename="../settings.py" line="153"/>
         <source>Historical Ellipsoids</source>
         <translation>曾用椭球体</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="39"/>
+        <location filename="../geodesicLayerMeasure.py" line="40"/>
         <source>Line or polygon layer</source>
         <translation>线形或多边形图层</translation>
     </message>
@@ -314,7 +313,7 @@
         <translation>测地增密器</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="45"/>
+        <location filename="../geodesicLayerMeasure.py" line="46"/>
         <source>Measure total length rather than each line segment</source>
         <translation>测量总长度而不是每条线段长度</translation>
     </message>
@@ -324,32 +323,32 @@
         <translation>距离单位</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="60"/>
+        <location filename="../geodesicLayerMeasure.py" line="61"/>
         <source>Use automatic styling</source>
         <translation>使用自动样式</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="100"/>
+        <location filename="../geodesicMeasureTool.py" line="99"/>
         <source>Heading To</source>
         <translation>航向角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="100"/>
+        <location filename="../geodesicMeasureTool.py" line="99"/>
         <source>Heading From</source>
         <translation>返航角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="100"/>
+        <location filename="../geodesicMeasureTool.py" line="99"/>
         <source>Distance</source>
         <translation>距离</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="142"/>
+        <location filename="../geodesicMeasureTool.py" line="141"/>
         <source>Ellipsoid: </source>
         <translation>椭球体</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="59"/>
+        <location filename="../lineDigitizer.py" line="58"/>
         <source>Clicked location is invalid</source>
         <translation>点击的位置无效</translation>
     </message>
@@ -359,17 +358,17 @@
         <translation>距离或方位角无效</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="90"/>
+        <location filename="../lineDigitizer.py" line="88"/>
         <source>No point or line layer selected</source>
         <translation>没有选择点或线图层</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="80"/>
+        <location filename="../lineDigitizer.py" line="78"/>
         <source>Enter bearing distance pairs</source>
         <translation>输入配对的方位角和距离</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="86"/>
+        <location filename="../lineDigitizer.py" line="84"/>
         <source>One or more entered values were invalid</source>
         <translation>一个或多个输入值无效</translation>
     </message>
@@ -599,42 +598,42 @@
         <translation>最大半径</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Kilometers</source>
         <translation>千米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Meters</source>
         <translation>米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Centimeters</source>
         <translation>厘米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Miles</source>
         <translation>英里</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Yards</source>
         <translation>码</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Feet</source>
         <translation>英尺</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Inches</source>
         <translation>英寸</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="10"/>
+        <location filename="../utils.py" line="11"/>
         <source>Nautical Miles</source>
         <translation>海里</translation>
     </message>
