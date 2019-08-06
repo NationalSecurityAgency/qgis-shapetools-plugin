@@ -328,22 +328,22 @@
         <translation>使用自动样式</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Heading To</source>
         <translation>航向角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Heading From</source>
         <translation>返航角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Distance</source>
         <translation>距离</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="141"/>
+        <location filename="../geodesicMeasureTool.py" line="156"/>
         <source>Ellipsoid: </source>
         <translation>椭球体</translation>
     </message>
@@ -598,42 +598,42 @@
         <translation>最大半径</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Kilometers</source>
         <translation>千米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Meters</source>
         <translation>米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Centimeters</source>
         <translation>厘米</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Miles</source>
         <translation>英里</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Yards</source>
         <translation>码</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Feet</source>
         <translation>英尺</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Inches</source>
         <translation>英寸</translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Nautical Miles</source>
         <translation>海里</translation>
     </message>
@@ -736,22 +736,22 @@
         <translation>总距离</translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="53"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="63"/>
         <source>Ellipsoid: </source>
         <translation>椭圆体: </translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="73"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="83"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="80"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="90"/>
         <source>Save to Layer</source>
         <translation>保存到图层</translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="87"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="97"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -854,6 +854,16 @@
         <location filename="../ui/settings.ui" line="216"/>
         <source>Historical Ellipsoids</source>
         <translation>曾用椭球体</translation>
+    </message>
+    <message>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="46"/>
+        <source>Show manual coordinate entry dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="49"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

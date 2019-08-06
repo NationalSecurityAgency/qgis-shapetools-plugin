@@ -328,22 +328,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Heading To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Heading From</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="99"/>
+        <location filename="../geodesicMeasureTool.py" line="110"/>
         <source>Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="141"/>
+        <location filename="../geodesicMeasureTool.py" line="156"/>
         <source>Ellipsoid: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -598,42 +598,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Kilometers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Meters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Centimeters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Miles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Yards</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Feet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Inches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../utils.py" line="11"/>
+        <location filename="../utils.py" line="12"/>
         <source>Nautical Miles</source>
         <translation type="unfinished"></translation>
     </message>
@@ -736,22 +736,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="53"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="63"/>
         <source>Ellipsoid: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="73"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="83"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="80"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="90"/>
         <source>Save to Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/geodesicMeasureDialog.ui" line="87"/>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="97"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -853,6 +853,16 @@
     <message>
         <location filename="../ui/settings.ui" line="216"/>
         <source>Historical Ellipsoids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="46"/>
+        <source>Show manual coordinate entry dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/geodesicMeasureDialog.ui" line="49"/>
+        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -231,7 +231,7 @@ class ShapeTools(object):
         try:
             if not isinstance(tool, GeodesicMeasureTool):
                 self.measureAction.setChecked(False)
-                self.geodesicMeasureTool.closeDialog()
+                self.geodesicMeasureTool.endInteractiveLine()
             if not isinstance(tool, AzDigitizerTool):
                 self.digitizeAction.setChecked(False)
             if not isinstance(tool, LineDigitizerTool):

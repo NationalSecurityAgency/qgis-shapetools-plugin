@@ -183,6 +183,10 @@ By right-mouse clicking on the **Measurement** layer and selecting **Open Attrib
 
 <div style="text-align:center"><img src="doc/geodesicmeasure3.jpg" alt="Geodesic Measure Tool"></div>
 
+By clicking on the ***Add measurement point*** icon ![Add measurement point](images/manualpoint.png), a new dialog windows is displayed were precise measurement points can be added. The coordinates can be in WGS 84 (EPSG:4326), the project CRS, or some other custom projection. In the drop down menus specify the projection and the coordinate order in which the coordinates are entered.
+
+<div style="text-align:center"><img src="doc/geodesicmeasure4.jpg" alt="Add measurement point"></div>
+
 ## <a name="geodesic-measure-layer"></a> ![Geodesic Measurement Layer](images/linedigitize.png) Geodesic Measurement Layer
 
 This take either a polygon or line layer and for each of the geometries calculates the geodesic distances of each feature. The user can choose whether each line segment is measured and output as a line measurement or whether the entire line/polygon geometry is measured. It outputs a new line layer of lines that contain attributes with all the measurements. If measuring individual line segments the attributes are a label, distance, units of measure, azimuth/bearing to the next point, and the total distance of the geometry. If measuring the entire geometry then the attributes are a label, distance, and units of measure. The input is either a line or polygon layer. Select whether you want to measure the entire line or polygon or each line segment within the line or polygon. **Distance units** can be kilometers, meters, centimeters, miles, yards, feet, inches, or nautical miles. **Use automatic styling** styles the QGIS layer with the label string in the attribute table and with the text and line colors found in **Settings**.
