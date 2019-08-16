@@ -3,15 +3,15 @@ import re
 import math
 from geographiclib.geodesic import Geodesic
 
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtCore import QSize, Qt, QSettings, QVariant, QByteArray
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QDialog, QApplication, QMenu
 from qgis.core import (
     Qgis, QgsCoordinateTransform, QgsCoordinateReferenceSystem,
     QgsUnitTypes, QgsWkbTypes, QgsGeometry, QgsFields, QgsField,
     QgsProject, QgsVectorLayer, QgsFeature, QgsPointXY,
-    QgsPalLayerSettings, QgsVectorLayerSimpleLabeling)
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsProjectionSelectionDialog
+    QgsPalLayerSettings, QgsVectorLayerSimpleLabeling, QgsSettings)
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsProjectionSelectionDialog, QgsVertexMarker
 from qgis.PyQt import uic
 # import traceback
 
@@ -26,15 +26,18 @@ class GeodesicMeasureTool(QgsMapTool):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.measureDialog = GeodesicMeasureDialog(iface, parent)
+        self.vertex = None
 
     def activate(self):
         '''When activated set the cursor to a crosshair.'''
         self.canvas.setCursor(Qt.CrossCursor)
         self.measureDialog.initGeodLabel()
         self.measureDialog.show()
+        self.snapcolor = QgsSettings().value( "/qgis/digitizing/snap_color" , QColor( Qt.magenta ) )
 
     def closeDialog(self):
         '''Close the geodesic measure tool dialog box.'''
+        self.removeVertexMarker()
         if self.measureDialog.isVisible():
             self.measureDialog.closeDialog()
 
@@ -50,6 +53,7 @@ class GeodesicMeasureTool(QgsMapTool):
 
     def canvasPressEvent(self, event):
         '''Capture the coordinates when the user click on the mouse for measurements.'''
+        self.removeVertexMarker()
         if not self.measureDialog.isVisible():
             self.measureDialog.initGeodLabel()
             self.measureDialog.show()
@@ -57,7 +61,7 @@ class GeodesicMeasureTool(QgsMapTool):
             return
         if not self.measureDialog.ready():
             return
-        pt = event.mapPoint()
+        pt = self.snappoint(event.originalPixelPoint())
         button = event.button()
         canvasCRS = self.canvas.mapSettings().destinationCrs()
         if canvasCRS != epsg4326:
@@ -70,9 +74,10 @@ class GeodesicMeasureTool(QgsMapTool):
     def canvasMoveEvent(self, event):
         '''Capture the coordinate as the user moves the mouse over
         the canvas.'''
+        if self.measureDialog.ready():
+            pt = self.snappoint(event.originalPixelPoint())
         if self.measureDialog.motionReady():
             try:
-                pt = event.mapPoint()
                 canvasCRS = self.canvas.mapSettings().destinationCrs()
                 if canvasCRS != epsg4326:
                     transform = QgsCoordinateTransform(canvasCRS, epsg4326, QgsProject.instance())
@@ -80,6 +85,26 @@ class GeodesicMeasureTool(QgsMapTool):
                 self.measureDialog.inMotion(pt)
             except Exception:
                 return
+
+    def snappoint(self, qpoint):
+        match = self.canvas.snappingUtils().snapToMap(qpoint)
+        if match.isValid():
+            if self.vertex is None:
+                self.vertex = QgsVertexMarker(self.canvas)
+                self.vertex.setIconSize(12)
+                self.vertex.setPenWidth(2)
+                self.vertex.setColor(self.snapcolor)
+                self.vertex.setIconType(QgsVertexMarker.ICON_BOX)
+            self.vertex.setCenter(match.point())
+            return (match.point()) # Returns QgsPointXY
+        else:
+            self.removeVertexMarker()
+            return self.toMapCoordinates(qpoint) # QPoint input, returns QgsPointXY
+
+    def removeVertexMarker(self):
+        if self.vertex is not None:
+            self.canvas.scene().removeItem(self.vertex)
+            self.vertex = None
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -146,7 +171,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         QSettings().setValue(
             "ShapeTools/MeasureDialogGeometry", self.saveGeometry())
         self.close()
-        self.pointDigitizerDialog.close()
+        self.pointDigitizerDialog.closeDialog()
 
     def newDialog(self):
         self.clear()
@@ -469,15 +494,19 @@ class AddMeasurePointWidget(QDialog, FORM_CLASS2):
         self.crsButton.triggered.connect(self.crsTriggered)
 
         self.addButton.clicked.connect(self.addPoint)
-        self.exitButton.clicked.connect(self.exit)
+        self.exitButton.clicked.connect(self.closeDialog)
 
         self.readSettings()
         self.configButtons()
+        
+        self.restoreGeometry(QSettings().value("ShapeTools/AddMeasurePointGeometry", QByteArray(), type=QByteArray))
 
     def showEvent(self, e):
         self.labelUpdate()
 
-    def exit(self):
+    def closeDialog(self):
+        QSettings().setValue(
+            "ShapeTools/AddMeasurePointGeometry", self.saveGeometry())
         self.close()
 
     def addPoint(self):
