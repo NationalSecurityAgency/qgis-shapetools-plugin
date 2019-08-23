@@ -2,10 +2,11 @@ import os
 import math
 
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.uic import loadUiType
-from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, QgsProject, QgsWkbTypes
-from qgis.gui import QgsMapToolEmitPoint
+from qgis.core import Qgis, QgsCoordinateTransform, QgsFeature, QgsGeometry, QgsProject, QgsWkbTypes, QgsSettings
+from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from geographiclib.geodesic import Geodesic
 from .settings import settings, epsg4326, geod
@@ -23,15 +24,21 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
         QgsMapToolEmitPoint.__init__(self, iface.mapCanvas())
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.canvasClicked.connect(self.clicked)
         self.azDigitizerDialog = None
+        self.vertex = None
 
     def activate(self):
         """When activated set the cursor to a crosshair."""
         self.canvas.setCursor(Qt.CrossCursor)
+        self.snapcolor = QgsSettings().value( "/qgis/digitizing/snap_color" , QColor( Qt.magenta ) )
 
-    def clicked(self, pt, b):
+    def deactivate(self):
+        self.removeVertexMarker()
+
+    def canvasPressEvent(self, event):
         """Capture the coordinate when the mouse button has been released."""
+        pt = self.snappoint(event.originalPixelPoint())
+        self.removeVertexMarker()
         if self.azDigitizerDialog is None:
             from .azDigitizer import AzDigitizerWidget
             self.azDigitizerDialog = AzDigitizerWidget(self.iface, self.iface.mainWindow())
@@ -51,6 +58,30 @@ class AzDigitizerTool(QgsMapToolEmitPoint):
             self.azDigitizerDialog.show()
         except Exception:
             self.iface.messageBar().pushMessage("", tr("Clicked location is invalid"), level=Qgis.Warning, duration=4)
+
+    def canvasMoveEvent(self, event):
+        '''Show when the user mouses over a vector vertex in snapping mode.'''
+        self.snappoint(event.originalPixelPoint()) # input is QPoint
+
+    def snappoint(self, qpoint):
+        match = self.canvas.snappingUtils().snapToMap(qpoint)
+        if match.isValid():
+            if self.vertex is None:
+                self.vertex = QgsVertexMarker(self.canvas)
+                self.vertex.setIconSize(12)
+                self.vertex.setPenWidth(2)
+                self.vertex.setColor(self.snapcolor)
+                self.vertex.setIconType(QgsVertexMarker.ICON_BOX)
+            self.vertex.setCenter(match.point())
+            return (match.point()) # Returns QgsPointXY
+        else:
+            self.removeVertexMarker()
+            return self.toMapCoordinates(qpoint) # QPoint input, returns QgsPointXY
+
+    def removeVertexMarker(self):
+        if self.vertex is not None:
+            self.canvas.scene().removeItem(self.vertex)
+            self.vertex = None
 
 class AzDigitizerWidget(QDialog, FORM_CLASS):
 
