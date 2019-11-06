@@ -1,8 +1,8 @@
 [general]
 name=Shape Tools
-qgisMinimumVersion=3.2
+qgisMinimumVersion=3.4
 description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
-version=3.3.9
+version=3.3.10
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
@@ -10,6 +10,7 @@ about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is i
     "XY to Line" uses pairs of coordinates from each record to create geodesic lines. 
     "Geodesic Line Break" breaks lines at the International Date Line. 
     "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. 
+    "Geodesic distance & Time Decimation" remove points or vertices from a point or line layer using geodesic distances or time.
     "Geodesic Measure Tool" measures distances using the WGS 84 ellipsoid and includes the bearing or heading between points. It will even saves the measurements as a layer.
     "Geodesic Measurement Layer" converts a polygon or line layer a new layer with all geometries measured and labeled.
     "Geodesic Transformation Tool" can scale, rotate and translate any shape.
@@ -17,13 +18,14 @@ about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is i
     "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
-tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate
+tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,decimate,decimation,simplify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate
 homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 category=Vector
 icon=images/shapes.png
 experimental=False
 deprecated=False
 changelog=
+    3.3.10 - Added geodesic decimation and time decimation.
     3.3.9 - Snapping enabled in Azimuth Distance Digitizers.
     3.3.8 - Snapping was added to geodesic measurement tool.
     3.3.7 - Added exact coordinate entry in measurement tool.

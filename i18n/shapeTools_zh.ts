@@ -70,7 +70,7 @@
     <message>
         <location filename="../shapeTools.py" line="108"/>
         <source>XY to Line</source>
-        <translation>点构造线条</translation>
+        <translation type="obsolete">点构造线条</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="116"/>
@@ -83,7 +83,7 @@
         <translation>测地的线条在-180,180处分裂</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="133"/>
+        <location filename="../shapeTools.py" line="154"/>
         <source>Geodesic measure tool</source>
         <translation>大地测量工具</translation>
     </message>
@@ -103,12 +103,12 @@
         <translation>测地翻转和旋转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="159"/>
+        <location filename="../shapeTools.py" line="180"/>
         <source>Flip horizontal</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="163"/>
+        <location filename="../shapeTools.py" line="184"/>
         <source>Flip vertical</source>
         <translation>垂直翻转</translation>
     </message>
@@ -130,25 +130,25 @@
     <message>
         <location filename="../shapeTools.py" line="178"/>
         <source>Geodesic Transforms</source>
-        <translation>测地变换</translation>
+        <translation type="obsolete">测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="191"/>
+        <location filename="../shapeTools.py" line="212"/>
         <source>Azimuth distance digitizer</source>
         <translation>方位角距离图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="201"/>
+        <location filename="../shapeTools.py" line="222"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation>方位和角距离对图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="211"/>
+        <location filename="../shapeTools.py" line="232"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="218"/>
+        <location filename="../shapeTools.py" line="239"/>
         <source>Shape Tools help</source>
         <translation>Shape Tools 帮助</translation>
     </message>
@@ -328,47 +328,47 @@
         <translation>使用自动样式</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Heading To</source>
         <translation>航向角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Heading From</source>
         <translation>返航角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Distance</source>
         <translation>距离</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="156"/>
+        <location filename="../geodesicMeasureTool.py" line="181"/>
         <source>Ellipsoid: </source>
         <translation>椭球体</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="58"/>
+        <location filename="../lineDigitizer.py" line="65"/>
         <source>Clicked location is invalid</source>
         <translation>点击的位置无效</translation>
     </message>
     <message>
-        <location filename="../azDigitizer.py" line="74"/>
+        <location filename="../azDigitizer.py" line="105"/>
         <source>Either distance or azimuth were invalid</source>
         <translation>距离或方位角无效</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="88"/>
+        <location filename="../lineDigitizer.py" line="119"/>
         <source>No point or line layer selected</source>
         <translation>没有选择点或线图层</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="78"/>
+        <location filename="../lineDigitizer.py" line="109"/>
         <source>Enter bearing distance pairs</source>
         <translation>输入配对的方位角和距离</translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="84"/>
+        <location filename="../lineDigitizer.py" line="115"/>
         <source>One or more entered values were invalid</source>
         <translation>一个或多个输入值无效</translation>
     </message>
@@ -696,6 +696,26 @@
         <location filename="../geodesicTransformation.py" line="72"/>
         <source>Translation distance units</source>
         <translation>变换距离单位</translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="125"/>
+        <source>Geodesic line decimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="128"/>
+        <source>Geodesic point decimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="132"/>
+        <source>Geodesic geometry simplification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="199"/>
+        <source>Geodesic transforms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

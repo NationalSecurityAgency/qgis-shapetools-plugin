@@ -1,0 +1,15 @@
+Reduce the number of points within a point vector layer either using geodesic distances or the time interval between points. 
+
+* Input point layer - Select an existing line layer.
+* Output Layer - Specifies the output layer that will be created in QGIS.
+* Point order field - A field that orders of the points to be processed. A time field can be used with GPS data to order the points by the time they were acquired.
+* Group field - Specify a field that contains groupings of points. Each group is processed individually.
+* Preserve final point - If this is checked then the final point will not be discarded even though it may not meet the distance or time criteria.
+* Remove points that are less than the minimum distance - Enables geodesic distance decimation.
+* Minimum distance beween points - Sprecifies the minimum distance between points. Distances less than this are targeted for deletion.
+* Distance units - Specifies the units of measure for the geodesic minimum distance.
+* Remove points by minimum time interval - Enables time decimation.
+* Time field - Select a DateTime field to use for time decimation.
+* Minimum time between points - Points not meeting the minimum time difference are removed.
+* Time units - Specifies the time units of the above value.
+* When both decimate by distance and time are selected, preserve points if - This specifies whether both distance and time requements must be met or one or the other.

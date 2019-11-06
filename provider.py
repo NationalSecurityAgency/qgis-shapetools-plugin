@@ -2,6 +2,8 @@ import os
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 from .geodesicDensify import GeodesicDensifyAlgorithm
+from .geodesicPointDecimate import GeodesicPointDecimateAlgorithm
+from .geodesicLineDecimate import GeodesicLineDecimateAlgorithm
 from .geodesicLayerMeasure import GeodesicLayerMeasureAlgorithm
 from .geodesicTransformation import GeodesicTransformationsAlgorithm
 from .xyToLine import XYToLineAlgorithm
@@ -27,6 +29,8 @@ class ShapeToolsProvider(QgsProcessingProvider):
 
     def loadAlgorithms(self):
         self.addAlgorithm(GeodesicDensifyAlgorithm())
+        self.addAlgorithm(GeodesicPointDecimateAlgorithm())
+        self.addAlgorithm(GeodesicLineDecimateAlgorithm())
         self.addAlgorithm(IdlBreakLineAlgorithm())
         self.addAlgorithm(GeodesicLayerMeasureAlgorithm())
         self.addAlgorithm(GeodesicTransformationsAlgorithm())

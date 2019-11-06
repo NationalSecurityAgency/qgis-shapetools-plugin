@@ -68,11 +68,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="108"/>
-        <source>XY to Line</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../shapeTools.py" line="116"/>
         <source>Geodesic shape densifier</source>
         <translation type="unfinished"></translation>
@@ -83,7 +78,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="133"/>
+        <location filename="../shapeTools.py" line="154"/>
         <source>Geodesic measure tool</source>
         <translation type="unfinished"></translation>
     </message>
@@ -103,12 +98,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="159"/>
+        <location filename="../shapeTools.py" line="180"/>
         <source>Flip horizontal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="163"/>
+        <location filename="../shapeTools.py" line="184"/>
         <source>Flip vertical</source>
         <translation type="unfinished"></translation>
     </message>
@@ -128,27 +123,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="178"/>
-        <source>Geodesic Transforms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shapeTools.py" line="191"/>
+        <location filename="../shapeTools.py" line="212"/>
         <source>Azimuth distance digitizer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="201"/>
+        <location filename="../shapeTools.py" line="222"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="211"/>
+        <location filename="../shapeTools.py" line="232"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="218"/>
+        <location filename="../shapeTools.py" line="239"/>
         <source>Shape Tools help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -328,47 +318,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Heading To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Heading From</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="110"/>
+        <location filename="../geodesicMeasureTool.py" line="135"/>
         <source>Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="156"/>
+        <location filename="../geodesicMeasureTool.py" line="181"/>
         <source>Ellipsoid: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="58"/>
+        <location filename="../lineDigitizer.py" line="65"/>
         <source>Clicked location is invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../azDigitizer.py" line="74"/>
+        <location filename="../azDigitizer.py" line="105"/>
         <source>Either distance or azimuth were invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="88"/>
+        <location filename="../lineDigitizer.py" line="119"/>
         <source>No point or line layer selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="78"/>
+        <location filename="../lineDigitizer.py" line="109"/>
         <source>Enter bearing distance pairs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lineDigitizer.py" line="84"/>
+        <location filename="../lineDigitizer.py" line="115"/>
         <source>One or more entered values were invalid</source>
         <translation type="unfinished"></translation>
     </message>
@@ -695,6 +685,26 @@
     <message>
         <location filename="../geodesicTransformation.py" line="72"/>
         <source>Translation distance units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="125"/>
+        <source>Geodesic line decimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="128"/>
+        <source>Geodesic point decimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="132"/>
+        <source>Geodesic geometry simplification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="199"/>
+        <source>Geodesic transforms</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

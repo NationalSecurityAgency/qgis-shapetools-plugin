@@ -105,7 +105,7 @@ class ShapeTools(object):
 
         # Initialize the XY to Line menu item
         icon = QIcon(self.plugin_dir + '/images/xyline.png')
-        self.xyLineAction = QAction(icon, tr('XY to Line'), self.iface.mainWindow())
+        self.xyLineAction = QAction(icon, tr('XY to line'), self.iface.mainWindow())
         self.xyLineAction.setObjectName('stXYtoLine')
         self.xyLineAction.triggered.connect(self.xyLineTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.xyLineAction)
@@ -118,6 +118,27 @@ class ShapeTools(object):
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
         self.iface.addPluginToVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.toolbar.addAction(self.geodesicDensifyAction)
+        
+        # Initialize the Geodesic decimation menu items
+        menu = QMenu()
+        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.png')
+        self.lineDecimateAction = menu.addAction(icon, tr('Geodesic line decimate'), self.lineDecimateTool)
+        self.lineDecimateAction.setObjectName('stGeodesicLineDecimate')
+        icon = QIcon(self.plugin_dir + '/images/geodesicPointDecimate.png')
+        self.pointDecimateAction = menu.addAction(icon, tr('Geodesic point decimate'), self.pointDecimateTool)
+        self.pointDecimateAction.setObjectName('stGeodesicPointDecimate')
+        # Add the decimation tools to the menu
+        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.png')
+        self.simplifyGeomAction = QAction(icon, tr('Geodesic geometry simplification'), self.iface.mainWindow())
+        self.simplifyGeomAction.setMenu(menu)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.simplifyGeomAction)
+        # Add the shape creation tools to the toolbar
+        self.simplifyButton = QToolButton()
+        self.simplifyButton.setMenu(menu)
+        self.simplifyButton.setDefaultAction(self.lineDecimateAction)
+        self.simplifyButton.setPopupMode(QToolButton.MenuButtonPopup)
+        self.simplifyButton.triggered.connect(self.simplifyTriggered)
+        self.simplifyToolbar = self.toolbar.addWidget(self.simplifyButton)
 
         # Initialize the Geodesic line break menu item
         icon = QIcon(self.plugin_dir + '/images/idlbreak.png')
@@ -175,7 +196,7 @@ class ShapeTools(object):
         self.rotate90CCWAction = menu.addAction(icon, tr('Rotate 90\xb0 CCW'), self.rotate90CCWTool)
         self.rotate90CCWAction.setObjectName('stGeodesicRotate90CCW')
         self.rotate90CCWAction.setEnabled(False)
-        self.transformsAction = QAction(icon, tr('Geodesic Transforms'), self.iface.mainWindow())
+        self.transformsAction = QAction(icon, tr('Geodesic transforms'), self.iface.mainWindow())
         self.transformsAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.transformsAction)
 
@@ -247,6 +268,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.createShapesAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.simplifyGeomAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicLineBreakAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.measureLayerAction)
@@ -259,6 +281,7 @@ class ShapeTools(object):
         self.iface.removeToolBarIcon(self.createShapeToolbar)
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.geodesicDensifyAction)
+        self.iface.removeToolBarIcon(self.simplifyToolbar)
         self.iface.removeToolBarIcon(self.geodesicLineBreakAction)
         self.iface.removeToolBarIcon(self.measureAction)
         self.iface.removeToolBarIcon(self.measureLayerAction)
@@ -279,6 +302,9 @@ class ShapeTools(object):
     def createShapeTriggered(self, action):
         self.createShapeButton.setDefaultAction(action)
 
+    def simplifyTriggered(self, action):
+        self.simplifyButton.setDefaultAction(action)
+
     def setShowAzDigitizerTool(self):
         self.digitizeAction.setChecked(True)
         self.canvas.setMapTool(self.azDigitizerTool)
@@ -292,6 +318,12 @@ class ShapeTools(object):
 
     def geodesicDensifyTool(self):
         processing.execAlgorithmDialog('shapetools:geodesicdensifier', {})
+
+    def pointDecimateTool(self):
+        processing.execAlgorithmDialog('shapetools:geodesicpointdecimate', {})
+
+    def lineDecimateTool(self):
+        processing.execAlgorithmDialog('shapetools:geodesiclinedecimate', {})
 
     def geodesicLineBreakTool(self):
         processing.execAlgorithmDialog('shapetools:linebreak', {})

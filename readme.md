@@ -6,6 +6,8 @@
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic line break](images/idlbreak.png) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic densifier](images/geodesicDensifier.png) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
+* ![Geodesic line decimate](images/geodesicLineDecimate.png) **Geodesic line decimate** removes vertices in a line that who's geodesic distance is less than a certain value.
+* ![Geodesic point decimate](images/geodesicPointDecimate.png) **Geodesic point decimate** removes points in a point layer who's geodesic distance is less than a certain value or who's time difference between points is less than a certain value.
 * ![Geodesic measure tool](images/measure.png) **Geodesic measure tool** provides geodesic line measuring, similar to that implemented in Google Earth.
 * ![Geodesic measurement layer](images/measureLine.png) **Geodesic measurement layer** converts a polygon or line layer a new layer with all geometries measured and labeled.
 * ![Geodesic transfomations tool](images/transformShape.png) **Geodesic transformations** can geodesically scale, rotate, and translate points, lines and polygons. Each vector feature retains their relative dimensions no matter what the projection is.
@@ -19,6 +21,8 @@
 * [XY to Line](#xy-to-line)
 * [Geodesic Line Break](#geodesic-line-break)
 * [Geodesic Densifier](#geodesic-densifier)
+* [Geodesic Line Decimate](#geodesic-line-decimate)
+* [Geodesic Point Decimate](#geodesic-point-decimate)
 * [Geodesic Measure Tool](#geodesic-measure)
 * [Geodesic Measurement Layer](#geodesic-measure-layer)
 * [Geodesic Transformations](#geodesic-transformations)
@@ -159,6 +163,42 @@ The following shows the before and after results of running this function on a p
 This function can also be accessed from the **Processing Toolbox**.
 
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
+
+## <a name="geodesic-line-decimate"></a> ![Geodesic Line Decimate](images/geodesicLineDecimate.png) Geodesic Line Decimate
+
+This simplifies the geometry of a line layer by removing vertices who's distance to the previous vertex is less than the specified value. For each line, the geodesic distance is calculated between vertices and if the distance is less than the specified minimum distance then the vertex is deleted. This repeats until the distance threshold is exceeded. The only exception to this rule is if ***Preserve final vertex*** is selected in which case the final vertex is always saved.
+
+<div style="text-align:center"><img src="doc/geodesiclinedecimate.jpg" alt="Geodesic line decimate"></div>
+
+The following shows the before and after results o frunning this funciton on a line layer.
+
+<div style="text-align:center"><img src="doc/geodesicdecimation.jpg" alt="Geodesic decimation"></div>
+
+**Parameters**
+
+* **Input layer** - Select an existing line layer.
+* **Output layer** - Specifies the output layer that will be created.
+* **Preserve final vertex** - If checked then the final vertex will not be discarded. If the distance between the previous saved vertex and the final vertex is less than the minimum distance then the next to the last saved vertex will be deleted or if there are only two vertices left, than the distance between the first and final vertex may be less than the minimum distance.
+* **Decimation minimum distance beween vertices** - Sprecifies the minimum distance between vertices. Distances less than this are deleted.
+* **Distance units** - Specifies the units of measure for the "Decimation minimum distance betwee vertices."
+
+## <a name="geodesic-point-decimate"></a> ![Geodesic Point Decimate](images/geodesicPointDecimate.png) Geodesic Point Decimate
+This reduces the number of points within a point vector layer by using geodesic distances mesurements between points and/or the time interval between points. This assumes that the points are ordered or that there is a property field that specifies the order of the points. Poiint can also be grouped together based on an attributed in the table in which case points from each grouping are processed separately.
+
+**Parameters**
+
+* **Input point layer** - Select an existing line layer.
+* **Output layer** - Specifies the output layer that will be created.
+* **Point order field** - This specifies a field that defines the order of the points to be processed. A time field can be used with GPS data to order the points by the time they were acquired.
+* **Preserve final point** - If checked then the final point in each group will not be discarded.
+* **Remove points that are less than the minimum distance** - Enables geodesic distance decimation.
+    * **Minimum distance beween points** - Sprecifies the minimum distance between points. Distances less than this are targeted for deletion.
+    * **Distance units** - Specifies the units of measure for the geodesic minimum distance.
+* **Remove points by minimum time interval** - Enables time decimation.
+    * **Time field** - Select a DateTime field to use for time decimation. If time is specified as a string then the field will need to be converted to a DateTime fields.
+    * **Minimum time between points** - Points not meeting the minimum time difference are removed.
+    * **Time units** - Specifies the time units of the above value. The units of time can be ***Seconds***, ***Minutes***, ***Hours***, and ***Days***.
+* **When both decimate by distance and time are selected, preserve points if** - This specifies whether both distance and time requements must be met or only one or the other requirements are met.
 
 ## <a name="geodesic-measure"></a> ![Geodesic Measure Tool](images/measure.png) Geodesic Measure Tool
 

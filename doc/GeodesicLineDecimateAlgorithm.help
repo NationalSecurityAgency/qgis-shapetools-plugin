@@ -1,0 +1,7 @@
+Reduce the number of vertices within a line vector. For each line, the geodesic distance is calculated between vertices and if the distance is less than the specified minimum distance then the vertex is deleted. This repeats until the distance threshold is exceeded. The only exception to this rule is if "Preserve final vertex" is selected in which case the final vertex is always saved.
+
+* Input Layer - Select an existing line layer.
+* Output Layer - Specifies the output layer that will be created in QGIS.
+* Preserve final vertex - If checked then the final vertex will not be discarded. If the distance between the previous saved vertex and the final vertex is less than the minimum distance then the next to the last saved vertex will be deleted or if there are only two vertices left, than the distance between the first and final vertex may be less than the minimum distance.
+* Decimation minimum distance beween vertices - Sprecifies the minimum distance between vertices. Distances less than this are targeted for deletion.
+* Distance units - Specifies the units of measure for the "Decimation minimum distance betwee vertices."
