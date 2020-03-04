@@ -91,21 +91,21 @@ class Settings():
         '''Load the user selected settings. The settings are retained even when
         the user quits QGIS.'''
         qset = QSettings()
-        self.geomXName = qset.value('ShapeTools/GeomXName', 'geom_x')
-        self.geomYName = qset.value('ShapeTools/GeomYName', 'geom_y')
+        self.geomXName = qset.value('/ShapeTools/GeomXName', 'geom_x')
+        self.geomYName = qset.value('/ShapeTools/GeomYName', 'geom_y')
         self.maxSegLength = float(qset.value('/ShapeTools/MaxSegLength', 20.0))  # In km
         self.maxSegments = int(qset.value('/ShapeTools/MaxSegments', 1000))
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
-        self.measureSignificantDigits = int(qset.value('ShapeTools/MeasureSignificantDigits', 2))
-        color = qset.value('ShapeTools/RubberBandColor', '#dea743')
+        self.measureSignificantDigits = int(qset.value('/ShapeTools/MeasureSignificantDigits', 2))
+        color = qset.value('/ShapeTools/RubberBandColor', '#dea743')
         self.rubberBandColor = QColor(color)
-        value = int(qset.value('ShapeTools/RubberBandOpacity', 192))
+        value = int(qset.value('/ShapeTools/RubberBandOpacity', 192))
         self.rubberBandColor.setAlpha(value)
-        color = qset.value('ShapeTools/MeasureLineColor', '#000000')
+        color = qset.value('/ShapeTools/MeasureLineColor', '#000000')
         self.measureLineColor = QColor(color)
-        color = qset.value('ShapeTools/MeasureTextColor', '#000000')
+        color = qset.value('/ShapeTools/MeasureTextColor', '#000000')
         self.measureTextColor = QColor(color)
-        acronym = qset.value('ShapeTools/Ellipsoid', 'WGS84')
+        acronym = qset.value('/ShapeTools/Ellipsoid', 'WGS84')
         self.setEllipsoid(acronym)
 
     def getGeomNames(self, names=[]):
