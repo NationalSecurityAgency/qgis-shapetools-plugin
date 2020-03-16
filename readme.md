@@ -170,7 +170,7 @@ This simplifies the geometry of a line layer by removing vertices who's distance
 
 <div style="text-align:center"><img src="doc/geodesiclinedecimate.jpg" alt="Geodesic line decimate"></div>
 
-The following shows the before and after results o frunning this funciton on a line layer.
+The following shows the before and after results of running this funciton on a line layer.
 
 <div style="text-align:center"><img src="doc/geodesicdecimation.jpg" alt="Geodesic decimation"></div>
 
