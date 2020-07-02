@@ -2,7 +2,7 @@
 
 ***Shape Tools*** is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. 
 
-* ![Create shapes](images/shapes.png) **Create shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
+* ![Create shapes](images/shapes.png) **Create shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.png) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic line break](images/idlbreak.png) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic densifier](images/geodesicDensifier.png) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
@@ -43,7 +43,7 @@ They can also be accessed from the *Vector->Shape Tools->Create Shapes* menu.
 
 <div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create Shapes"></div>
 
-Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
+Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
 
 The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:
 
@@ -103,6 +103,10 @@ Create an N-leafed epicycloid. The distance from the center to the outer edge is
 ### Heart
 
 Create a mathematical heart which fits within the circle defined by its radius.
+
+### Radial lines
+
+Create N-radial lines equally spaced around the point starting from the inner radius and exteding out to the outer radius.
 
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.png) XY to Line
 This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.

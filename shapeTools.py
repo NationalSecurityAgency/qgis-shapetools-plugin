@@ -87,6 +87,9 @@ class ShapeTools(object):
         icon = QIcon(self.plugin_dir + '/images/polygon.png')
         self.createPolygonAction = menu.addAction(icon, tr('Create polygon'), self.createPolygon)
         self.createPolygonAction.setObjectName('stCreatePolygon')
+        icon = QIcon(self.plugin_dir + '/images/radialLines.png')
+        self.createPolygonAction = menu.addAction(icon, tr('Create radial lines'), self.createRadialLines)
+        self.createPolygonAction.setObjectName('stCreateRadialLines')
         icon = QIcon(self.plugin_dir + '/images/star.png')
         self.createStarAction = menu.addAction(icon, tr('Create star'), self.createStar)
         self.createStarAction.setObjectName('stCreateStar')
@@ -364,6 +367,9 @@ class ShapeTools(object):
 
     def createPolygon(sefl):
         processing.execAlgorithmDialog('shapetools:createpolygon', {})
+
+    def createRadialLines(sefl):
+        processing.execAlgorithmDialog('shapetools:createradiallines', {})
 
     def createStar(sefl):
         processing.execAlgorithmDialog('shapetools:createstar', {})

@@ -21,6 +21,7 @@ from .createHypocycloid import CreateHypocycloidAlgorithm
 from .createEpicycloid import CreateEpicycloidAlgorithm
 from .createPolyfoil import CreatePolyfoilAlgorithm
 from .createHeart import CreateHeartAlgorithm
+from .createRadialLines import CreateRadialLinesAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -48,6 +49,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateHypocycloidAlgorithm())
         self.addAlgorithm(CreatePolyfoilAlgorithm())
         self.addAlgorithm(CreateHeartAlgorithm())
+        self.addAlgorithm(CreateRadialLinesAlgorithm())
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
