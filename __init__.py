@@ -1,4 +1,3 @@
-from qgis.core import Qgis
 # geographiclib was added to QGIS around QGIS 3.12
 try:
     import geographiclib
