@@ -19,7 +19,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
-from .utils import tr, conversionToMeters, DISTANCE_LABELS
+from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LABELS
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
@@ -199,6 +199,7 @@ class CreatePolygonAlgorithm(QgsProcessingAlgorithm):
                     g = geod.Direct(pt.y(), pt.x(), a, d, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
 
+                makeIdlCrossingsPositive(pts)
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if srcCRS != epsg4326:
                     for x, ptout in enumerate(pts):

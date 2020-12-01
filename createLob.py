@@ -20,7 +20,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import epsg4326, geod, settings
-from .utils import tr, conversionToMeters, DISTANCE_LABELS
+from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LABELS
 
 class CreateLobAlgorithm(QgsProcessingAlgorithm):
     """
@@ -165,6 +165,7 @@ class CreateLobAlgorithm(QgsProcessingAlgorithm):
                     g = gline.Position(s, Geodesic.LATITUDE | Geodesic.LONGITUDE | Geodesic.LONG_UNROLL)
                     pts.append(QgsPointXY(g['lon2'], g['lat2']))
 
+                makeIdlCrossingsPositive(pts)
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if srcCRS != epsg4326:
                     for x, ptout in enumerate(pts):

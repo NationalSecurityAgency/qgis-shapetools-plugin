@@ -20,7 +20,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
-from .utils import tr, conversionToMeters, DISTANCE_LABELS
+from .utils import tr, conversionToMeters, DISTANCE_LABELS, makeIdlCrossingsPositive
 # import traceback
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
@@ -60,6 +60,7 @@ def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
 
     # Append the starting point to close the shape
     pts.append(pts[0])
+    makeIdlCrossingsPositive(pts)
     return(pts)
 
 

@@ -19,7 +19,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
-from .utils import tr, conversionToMeters, DISTANCE_LABELS
+from .utils import tr, conversionToMeters, DISTANCE_LABELS, makeIdlCrossingsPositive, hasIdlCrossing
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
@@ -196,6 +196,11 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 if inner_radius != 0:
                     pts_in.append(pts_in[0])
                 pts_out.append(pts_out[0])
+                crosses_idl = hasIdlCrossing(pts_out)
+                if crosses_idl:
+                    if inner_radius != 0:
+                        makeIdlCrossingsPositive(pts_in, True)
+                    makeIdlCrossingsPositive(pts_out, True)
 
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if src_crs != epsg4326:

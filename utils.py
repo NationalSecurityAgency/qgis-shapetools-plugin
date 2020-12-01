@@ -30,6 +30,29 @@ def conversionToMeters(units):
         measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceNauticalMiles, QgsUnitTypes.DistanceMeters)
     return measureFactor
 
+def hasIdlCrossing(pts):
+    ptlen = len(pts)
+    if(ptlen == 0):
+        return(False)
+    x_last = pts[0].x()
+    for i in range(1, ptlen):
+        x = pts[i].x()
+        if (x_last < 0 and x >= 0):
+            if (x - x_last) > 180:
+                return(True)
+        elif (x_last >= 0 and x < 0):
+            if(x_last - x) > 180:
+                return(True)
+    return( False )
+
+def makeIdlCrossingsPositive(pts, force=False):
+    if force or hasIdlCrossing(pts):
+        ptlen = len(pts)
+        for i in range(ptlen):
+            x = pts[i].x()
+            if x < 0:
+                pts[i].setX(x + 360)
+
 def normalizeLongitude(pts):
     ptlen = len(pts)
     for i in range(ptlen):
