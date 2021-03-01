@@ -317,7 +317,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         return 'xy2line'
 
     def icon(self):
-        return QIcon(os.path.dirname(__file__) + '/images/xyline.png')
+        return QIcon(os.path.dirname(__file__) + '/images/xyline.svg')
 
     def displayName(self):
         return tr('XY to line')

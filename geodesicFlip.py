@@ -105,7 +105,7 @@ class GeodesicFlipAlgorithm(QgsProcessingAlgorithm):
         return 'geodesicflip'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'images/flip.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/flip.svg'))
 
     def displayName(self):
         return tr('Geodesic flip and rotate')

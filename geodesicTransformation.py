@@ -150,7 +150,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingAlgorithm):
         return 'geodesictransformations'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'images/transformShape.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/transformShape.svg'))
 
     def displayName(self):
         return tr('Geodesic transformations')

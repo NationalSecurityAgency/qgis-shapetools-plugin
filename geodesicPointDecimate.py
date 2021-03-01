@@ -329,7 +329,7 @@ class GeodesicPointDecimateAlgorithm(QgsProcessingAlgorithm):
         return 'geodesicpointdecimate'
 
     def icon(self):
-        return QIcon(os.path.dirname(__file__) + '/images/geodesicPointDecimate.png')
+        return QIcon(os.path.dirname(__file__) + '/images/geodesicPointDecimate.svg')
 
     def displayName(self):
         return tr('Geodesic point decimate')

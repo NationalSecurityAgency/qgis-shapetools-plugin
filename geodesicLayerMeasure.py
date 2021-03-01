@@ -215,7 +215,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
         return 'measurelayer'
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'images/measureLine.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/measureLine.svg'))
 
     def displayName(self):
         return tr('Geodesic measurement layer')

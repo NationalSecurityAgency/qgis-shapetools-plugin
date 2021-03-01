@@ -107,7 +107,7 @@ class ShapeTools(object):
         self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
 
         # Initialize the XY to Line menu item
-        icon = QIcon(self.plugin_dir + '/images/xyline.png')
+        icon = QIcon(self.plugin_dir + '/images/xyline.svg')
         self.xyLineAction = QAction(icon, tr('XY to line'), self.iface.mainWindow())
         self.xyLineAction.setObjectName('stXYtoLine')
         self.xyLineAction.triggered.connect(self.xyLineTool)
@@ -115,7 +115,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.xyLineAction)
 
         # Initialize the Geodesic Densifier menu item
-        icon = QIcon(self.plugin_dir + '/images/geodesicDensifier.png')
+        icon = QIcon(self.plugin_dir + '/images/geodesicDensifier.svg')
         self.geodesicDensifyAction = QAction(icon, tr('Geodesic shape densifier'), self.iface.mainWindow())
         self.geodesicDensifyAction.setObjectName('stGeodesicDensifier')
         self.geodesicDensifyAction.triggered.connect(self.geodesicDensifyTool)
@@ -124,14 +124,14 @@ class ShapeTools(object):
         
         # Initialize the Geodesic decimation menu items
         menu = QMenu()
-        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.png')
+        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.svg')
         self.lineDecimateAction = menu.addAction(icon, tr('Geodesic line decimate'), self.lineDecimateTool)
         self.lineDecimateAction.setObjectName('stGeodesicLineDecimate')
-        icon = QIcon(self.plugin_dir + '/images/geodesicPointDecimate.png')
+        icon = QIcon(self.plugin_dir + '/images/geodesicPointDecimate.svg')
         self.pointDecimateAction = menu.addAction(icon, tr('Geodesic point decimate'), self.pointDecimateTool)
         self.pointDecimateAction.setObjectName('stGeodesicPointDecimate')
         # Add the decimation tools to the menu
-        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.png')
+        icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.svg')
         self.simplifyGeomAction = QAction(icon, tr('Geodesic geometry simplification'), self.iface.mainWindow())
         self.simplifyGeomAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.simplifyGeomAction)
@@ -144,7 +144,7 @@ class ShapeTools(object):
         self.simplifyToolbar = self.toolbar.addWidget(self.simplifyButton)
 
         # Initialize the Geodesic line break menu item
-        icon = QIcon(self.plugin_dir + '/images/idlbreak.png')
+        icon = QIcon(self.plugin_dir + '/images/idlbreak.svg')
         self.geodesicLineBreakAction = QAction(icon, tr('Geodesic line break at -180,180'), self.iface.mainWindow())
         self.geodesicLineBreakAction.setObjectName('stGeodesicLineBreak')
         self.geodesicLineBreakAction.triggered.connect(self.geodesicLineBreakTool)
@@ -153,7 +153,7 @@ class ShapeTools(object):
 
         # Initialize Geodesic Measure Tool
         self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
-        icon = QIcon(self.plugin_dir + '/images/measure.png')
+        icon = QIcon(self.plugin_dir + '/images/measure.svg')
         self.measureAction = QAction(icon, tr('Geodesic measure tool'), self.iface.mainWindow())
         self.measureAction.setObjectName('stGeodesicMeasureTool')
         self.measureAction.triggered.connect(self.measureTool)
@@ -162,7 +162,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.measureAction)
 
         # Initialize Geodesic Measurement layer
-        icon = QIcon(self.plugin_dir + '/images/measureLine.png')
+        icon = QIcon(self.plugin_dir + '/images/measureLine.svg')
         self.measureLayerAction = QAction(icon, tr('Geodesic measurement layer'), self.iface.mainWindow())
         self.measureLayerAction.setObjectName('stGeodesicLineBreak')
         self.measureLayerAction.triggered.connect(self.measureLayerTool)
@@ -171,31 +171,31 @@ class ShapeTools(object):
 
         menu = QMenu()
         # Initialize Geodesic transformation tool
-        icon = QIcon(self.plugin_dir + '/images/transformShape.png')
+        icon = QIcon(self.plugin_dir + '/images/transformShape.svg')
         self.transformationsAction = menu.addAction(icon, tr('Geodesic transformations'), self.transformTool)
         self.transformationsAction.setObjectName('stGeodesicTransformations')
 
-        icon = QIcon(self.plugin_dir + '/images/flip.png')
+        icon = QIcon(self.plugin_dir + '/images/flip.svg')
         self.flipRotateAction = menu.addAction(icon, tr('Geodesic flip and rotate'), self.flipRotateTool)
         self.flipRotateAction.setObjectName('stGeodesicFlipRotate')
 
-        icon = QIcon(self.plugin_dir + '/images/flipHorizontal.png')
+        icon = QIcon(self.plugin_dir + '/images/flipHorizontal.svg')
         self.flipHorizontalAction = menu.addAction(icon, tr('Flip horizontal'), self.flipHorizontalTool)
         self.flipHorizontalAction.setObjectName('stGeodesicFlipHorizontal')
         self.flipHorizontalAction.setEnabled(False)
-        icon = QIcon(self.plugin_dir + '/images/flipVertical.png')
+        icon = QIcon(self.plugin_dir + '/images/flipVertical.svg')
         self.flipVerticalAction = menu.addAction(icon, tr('Flip vertical'), self.flipVerticalTool)
         self.flipVerticalAction.setObjectName('stGeodesicFlipVertical')
         self.flipVerticalAction.setEnabled(False)
-        icon = QIcon(self.plugin_dir + '/images/rotate180.png')
+        icon = QIcon(self.plugin_dir + '/images/rotate180.svg')
         self.rotate180Action = menu.addAction(icon, tr('Rotate 180\xb0'), self.rotate180Tool)
         self.rotate180Action.setObjectName('stGeodesicRotate180')
         self.rotate180Action.setEnabled(False)
-        icon = QIcon(self.plugin_dir + '/images/rotatecw.png')
+        icon = QIcon(self.plugin_dir + '/images/rotatecw.svg')
         self.rotate90CWAction = menu.addAction(icon, tr('Rotate 90\xb0 CW'), self.rotate90CWTool)
         self.rotate90CWAction.setObjectName('stGeodesicRotate90CW')
         self.rotate90CWAction.setEnabled(False)
-        icon = QIcon(self.plugin_dir + '/images/rotateccw.png')
+        icon = QIcon(self.plugin_dir + '/images/rotateccw.svg')
         self.rotate90CCWAction = menu.addAction(icon, tr('Rotate 90\xb0 CCW'), self.rotate90CCWTool)
         self.rotate90CCWAction.setObjectName('stGeodesicRotate90CCW')
         self.rotate90CCWAction.setEnabled(False)
@@ -211,7 +211,7 @@ class ShapeTools(object):
         self.tranformToolbar = self.toolbar.addWidget(self.transformationButton)
 
         # Initialize the Azimuth Distance Digitize function
-        icon = QIcon(self.plugin_dir + '/images/dazdigitize.png')
+        icon = QIcon(self.plugin_dir + '/images/dazdigitize.svg')
         self.digitizeAction = QAction(icon, tr('Azimuth distance digitizer'), self.iface.mainWindow())
         self.digitizeAction.setObjectName('stAzDistanceDigitizer')
         self.digitizeAction.triggered.connect(self.setShowAzDigitizerTool)
@@ -221,7 +221,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.digitizeAction)
 
         # Initialize the multi point azimuth Digitize function
-        icon = QIcon(self.plugin_dir + '/images/linedigitize.png')
+        icon = QIcon(self.plugin_dir + '/images/linedigitize.svg')
         self.lineDigitizeAction = QAction(icon, tr('Azimuth distance sequence digitizer'), self.iface.mainWindow())
         self.lineDigitizeAction.setObjectName('stLineDigitizer')
         self.lineDigitizeAction.triggered.connect(self.setShowLineDigitizeTool)
@@ -231,14 +231,14 @@ class ShapeTools(object):
         self.toolbar.addAction(self.lineDigitizeAction)
 
         # Settings
-        icon = QIcon(self.plugin_dir + '/images/settings.png')
+        icon = QIcon(':/images/themes/default/mActionOptions.svg')
         self.settingsAction = QAction(icon, tr('Settings'), self.iface.mainWindow())
         self.settingsAction.setObjectName('shapeToolsSettings')
         self.settingsAction.triggered.connect(self.settings)
         self.iface.addPluginToVectorMenu('Shape Tools', self.settingsAction)
 
         # Help
-        icon = QIcon(self.plugin_dir + '/images/help.png')
+        icon = QIcon(self.plugin_dir + '/images/help.svg')
         self.helpAction = QAction(icon, tr('Shape Tools help'), self.iface.mainWindow())
         self.helpAction.setObjectName('shapeToolsHelp')
         self.helpAction.triggered.connect(self.help)

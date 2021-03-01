@@ -167,7 +167,7 @@ class GeodesicLineDecimateAlgorithm(QgsProcessingAlgorithm):
         return 'geodesiclinedecimate'
 
     def icon(self):
-        return QIcon(os.path.dirname(__file__) + '/images/geodesicLineDecimate.png')
+        return QIcon(os.path.dirname(__file__) + '/images/geodesicLineDecimate.svg')
 
     def displayName(self):
         return tr('Geodesic line decimate')

@@ -99,7 +99,7 @@ class IdlBreakLineAlgorithm(QgsProcessingAlgorithm):
         return 'linebreak'
 
     def icon(self):
-        return QIcon(os.path.dirname(__file__) + '/images/idlbreak.png')
+        return QIcon(os.path.dirname(__file__) + '/images/idlbreak.svg')
 
     def displayName(self):
         return tr('Geodesic line break at -180,180')

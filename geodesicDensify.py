@@ -97,7 +97,7 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
         return 'geodesicdensifier'
 
     def icon(self):
-        return QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.png')
+        return QIcon(os.path.dirname(__file__) + '/images/geodesicDensifier.svg')
 
     def displayName(self):
         return tr('Geodesic densifier')
