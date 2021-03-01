@@ -97,6 +97,7 @@ class Settings():
         self.maxSegments = int(qset.value('/ShapeTools/MaxSegments', 1000))
         self.mtAzMode = int(qset.value('/ShapeTools/MtAzMode', 0))
         self.measureSignificantDigits = int(qset.value('/ShapeTools/MeasureSignificantDigits', 2))
+        self.saveToLayerSignificantDigits = int(qset.value('/ShapeTools/SaveToLayerSignificantDigits', 2))
         color = qset.value('/ShapeTools/RubberBandColor', '#dea743')
         self.rubberBandColor = QColor(color)
         value = int(qset.value('/ShapeTools/RubberBandOpacity', 192))
@@ -216,6 +217,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/MeasureLineColor', settings.measureLineColor.name())
         qset.setValue('/ShapeTools/MeasureTextColor', settings.measureTextColor.name())
         qset.setValue('/ShapeTools/MeasureSignificantDigits', self.significantDigitsSpinBox.value())
+        qset.setValue('/ShapeTools/SaveToLayerSignificantDigits', self.saveToLayerSignificantDigitsSpinBox.value())
         settings.readSettings()
         self.close()
 
@@ -229,6 +231,7 @@ class SettingsWidget(QDialog, FORM_CLASS):
         self.maxSegmentsSpinBox.setValue(settings.maxSegments)
         self.segLengthSpinBox.setValue(settings.maxSegLength)
         self.significantDigitsSpinBox.setValue(settings.measureSignificantDigits)
+        self.saveToLayerSignificantDigitsSpinBox.setValue(settings.saveToLayerSignificantDigits)
         self.mtAzComboBox.setCurrentIndex(settings.mtAzMode)
         self.rubberBandColorButton.setColor(settings.rubberBandColor)
         self.measureLineColorButton.setColor(settings.measureLineColor)

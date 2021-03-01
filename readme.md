@@ -219,7 +219,7 @@ The number of significant decimal digits of the value copied onto the clipboard 
 
 <div style="text-align:center"><img src="doc/geodesicmeasure.jpg" alt="Geodesic Measure Tool"></div>
 
-The **Save to Layer** button will create a **Measurement** layer that contains the distance and by default the distance label will be displayed.
+The **Save to Layer** button will create a **Measurement** layer that contains the distance and by default the distance label will be displayed. The number of significant digits used for the label can be configured in ***Settings***.
 
 <div style="text-align:center"><img src="doc/geodesicmeasure2.jpg" alt="Geodesic Measure Tool"></div>
 
@@ -310,6 +310,7 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
     * **Measurement layer color** - Vector line color when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
     * **Measurement layer text** - Color of the text when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
     * **Copy to clipboard significant digits** - This is the number of significant decimal digits that are copied onto the clipboard when the user is using the ***Geodesic measure tool*** and presses on one of the copy to clipboard keys.
+    * **Save to layer significant digits** - This is the number of significant decimal digits that are used as the label when the user selects ***Save to Layer*** from the ***Geodesic measure tool***.
 * **Ellipsoid Used for Measurements** - Selects the ellipsoid used for calculating the geodesic distances within Shape Tools. By default this should normally be *WGS 84*
     * **Ellipsoid group** - Choose the default *WGS 84* setting or enable *System Ellipsoids* or *Historical Ellipsoids*.
     * **System Ellipsoids** - This is enabled if **Ellipsoid group** is set to *System Ellipsoids*.
