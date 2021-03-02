@@ -17,7 +17,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
-from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LABELS
+from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LABELS, hasIdlCrossing
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
@@ -207,7 +207,10 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
             to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
-
+        else:
+            geom_to_4326 = None
+            to_sink_crs = None
+        
         feature_count = source.featureCount()
         total = 100.0 / feature_count if feature_count else 0
 
@@ -222,7 +225,7 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 pt_orig_x = pt.x()
                 pt_orig_y = pt.y()
                 # make sure the coordinates are in EPSG:4326
-                if src_crs != epsg4326:
+                if geom_to_4326:
                     pt = geom_to_4326.transform(pt.x(), pt.y())
                 if start_angle_col:
                     sangle = float(feature[start_angle_col])
@@ -247,45 +250,81 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
 
                 sangle = sangle % 360
                 eangle = eangle % 360
-                if sangle == eangle:  # This is not valid
-                    continue
-
-                if sangle > eangle:
-                    # We are crossing the 0 boundary so lets just subtract
-                    # 360 from it.
-                    sangle -= 360.0
-                sanglesave = sangle
-
-                while sangle < eangle:  # Draw the outer arc
-                    g = geod.Direct(pt.y(), pt.x(), sangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    sangle += pt_spacing  # add this number of degrees to the angle
-
-                g = geod.Direct(pt.y(), pt.x(), eangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                if inner_dist == 0:  # This will just be a pie wedge
-                    pts.append(pt)
-                else:
-                    sangle = sanglesave
-                    while eangle > sangle:  # Draw the inner arc
-                        g = geod.Direct(pt.y(), pt.x(), eangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                if sangle == eangle:  # Create a donut instead
+                    feedback.pushInfo('Creating donut')
+                    angle = 0
+                    pts_in = []
+                    while angle < 360:
+                        if inner_dist != 0:
+                            g = geod.Direct(pt.y(), pt.x(), angle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                            pts_in.append(QgsPointXY(g['lon2'], g['lat2']))
+                        g = geod.Direct(pt.y(), pt.x(), angle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                         pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                        eangle -= pt_spacing  # subtract this number of degrees to the angle
-                    g = geod.Direct(pt.y(), pt.x(), sangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
+                        angle += pt_spacing
+                    if inner_dist != 0:
+                        pts_in.append(pts_in[0])
+                    pts.append(pts[0]) # Outer point ring
+                    crosses_idl = hasIdlCrossing(pts)
+                    if crosses_idl:
+                        if inner_dist != 0:
+                            makeIdlCrossingsPositive(pts_in, True)
+                        makeIdlCrossingsPositive(pts, True)
+                    # If the Output crs is not 4326 transform the points to the proper crs
+                    if to_sink_crs:
+                        if inner_dist != 0:
+                            for x, pt_out in enumerate(pts_in):
+                                pts_in[x] = to_sink_crs.transform(pt_out)
+                        for x, pt_out in enumerate(pts):
+                            pts[x] = to_sink_crs.transform(pt_out)
 
-                pts.append(pts[0])
-                makeIdlCrossingsPositive(pts)
-                # If the Output crs is not 4326 transform the points to the proper crs
-                if src_crs != epsg4326:
-                    for x, pt_out in enumerate(pts):
-                        pts[x] = to_sink_crs.transform(pt_out)
-
-                f = QgsFeature()
-                if shape_type == 0:
-                    f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                    f = QgsFeature()
+                    if shape_type == 0:
+                        if inner_dist == 0:
+                            f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                        else:
+                            f.setGeometry(QgsGeometry.fromPolygonXY([pts, pts_in]))
+                    else:
+                        if inner_dist == 0:
+                            f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts]))
+                        else:
+                            f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts, pts_in]))
                 else:
-                    f.setGeometry(QgsGeometry.fromPolylineXY(pts))
+                    if sangle > eangle:
+                        # We are crossing the 0 boundary so lets just subtract
+                        # 360 from it.
+                        sangle -= 360.0
+                    sanglesave = sangle
+
+                    while sangle < eangle:  # Draw the outer arc
+                        g = geod.Direct(pt.y(), pt.x(), sangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        pts.append(QgsPointXY(g['lon2'], g['lat2']))
+                        sangle += pt_spacing  # add this number of degrees to the angle
+
+                    g = geod.Direct(pt.y(), pt.x(), eangle, outer_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
+                    if inner_dist == 0:  # This will just be a pie wedge
+                        pts.append(pt)
+                    else:
+                        sangle = sanglesave
+                        while eangle > sangle:  # Draw the inner arc
+                            g = geod.Direct(pt.y(), pt.x(), eangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                            pts.append(QgsPointXY(g['lon2'], g['lat2']))
+                            eangle -= pt_spacing  # subtract this number of degrees to the angle
+                        g = geod.Direct(pt.y(), pt.x(), sangle, inner_dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                        pts.append(QgsPointXY(g['lon2'], g['lat2']))
+
+                    pts.append(pts[0])
+                    makeIdlCrossingsPositive(pts)
+                    # If the Output crs is not 4326 transform the points to the proper crs
+                    if to_sink_crs:
+                        for x, pt_out in enumerate(pts):
+                            pts[x] = to_sink_crs.transform(pt_out)
+
+                    f = QgsFeature()
+                    if shape_type == 0:
+                        f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+                    else:
+                        f.setGeometry(QgsGeometry.fromPolylineXY(pts))
                 attr = feature.attributes()
                 if export_geom:
                     attr.append(pt_orig_x)

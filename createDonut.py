@@ -157,6 +157,9 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
         if src_crs != epsg4326:
             geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
             to_sink_crs = QgsCoordinateTransform(epsg4326, src_crs, QgsProject.instance())
+        else:
+            geom_to_4326 = None
+            to_sink_crs = None
 
         feature_count = source.featureCount()
         total = 100.0 / feature_count if feature_count else 0
@@ -173,7 +176,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 pt_orig_x = pt.x()
                 pt_orig_y = pt.y()
                 # make sure the coordinates are in EPSG:4326
-                if src_crs != epsg4326:
+                if geom_to_4326:
                     pt = geom_to_4326.transform(pt.x(), pt.y())
                 lat = pt.y()
                 lon = pt.x()
@@ -203,7 +206,7 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                     makeIdlCrossingsPositive(pts_out, True)
 
                 # If the Output crs is not 4326 transform the points to the proper crs
-                if src_crs != epsg4326:
+                if to_sink_crs:
                     if inner_radius != 0:
                         for x, pt_out in enumerate(pts_in):
                             pts_in[x] = to_sink_crs.transform(pt_out)
