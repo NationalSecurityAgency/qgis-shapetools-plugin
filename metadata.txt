@@ -2,7 +2,7 @@
 name=Shape Tools
 qgisMinimumVersion=3.4
 description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, radial line, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
-version=3.3.15
+version=3.3.16
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
@@ -26,6 +26,7 @@ experimental=False
 deprecated=False
 hasProcessingProvider=yes
 changelog=
+    3.3.16 - Arc wedge now creates a donut if a full 360 degrees are specified.
     3.3.15 - Replace PNG icons with SVG icons and resize other PNG icons.
     3.3.14 - Added geodesic measure tool save to layer significant digits.
     3.3.13 - Force shape creation to 0-360 degree range when crossing the -180/180 boundary
@@ -50,14 +51,3 @@ changelog=
     3.1.2 - Bug fix
     3.1.1 - Added arc wedge shape and now support more ellipsoids for measurements.
     3.1.0 - Added geodesic line break, and added some shape creation to processing.
-    3.0.10 - Bug fix
-    3.0.9 - Added break lines at date line for XY to Line.
-    3.0.8 - Added pie azimuth mode to allow center azimuth and width. Bug fixes.
-    3.0.7 - 'XY to line' tool moved to processing.
-    3.0.6 - Geodesic measure tool color now selectable, Geodesic densifier moved to processing
-    3.0.5 - Made number of points in pie wedge arc selectable & measure tool bearing coordinate range selectable
-    3.0.4 - Added CRS selection for the output layer of the "Create Shapes" tool.
-    3.0.3 - Expanded geodesic densifier geometry support
-    3.0.2 - Added save to layer for measure tool
-    3.0.1 - New azimuth, distance digitize tool
-    3.0.0 - First QIGS 3.0 release
