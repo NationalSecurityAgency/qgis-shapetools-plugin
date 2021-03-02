@@ -39,18 +39,18 @@ code {
 <h1>QGIS Shape Tools Plugin</h1>
 <p><strong><em>Shape Tools</em></strong> is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. </p>
 <ul>
-<li><img alt="Create shapes" src="images/shapes.png" /> <strong>Create shapes</strong> processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
-<li><img alt="XY to Line" src="images/xyline.png" /> <strong>XY to Line</strong> uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.</li>
-<li><img alt="Geodesic line break" src="images/idlbreak.png" /> <strong>Geodesic line break at -180,180</strong> breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.</li>
-<li><img alt="Geodesic densifier" src="images/geodesicDensifier.png" /> <strong>Geodesic densifier</strong> densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.</li>
-<li><img alt="Geodesic line decimate" src="images/geodesicLineDecimate.png" /> <strong>Geodesic line decimate</strong> removes vertices in a line that who's geodesic distance is less than a certain value.</li>
-<li><img alt="Geodesic point decimate" src="images/geodesicPointDecimate.png" /> <strong>Geodesic point decimate</strong> removes points in a point layer who's geodesic distance is less than a certain value or who's time difference between points is less than a certain value.</li>
-<li><img alt="Geodesic measure tool" src="images/measure.png" /> <strong>Geodesic measure tool</strong> provides geodesic line measuring, similar to that implemented in Google Earth.</li>
-<li><img alt="Geodesic measurement layer" src="images/measureLine.png" /> <strong>Geodesic measurement layer</strong> converts a polygon or line layer a new layer with all geometries measured and labeled.</li>
-<li><img alt="Geodesic transfomations tool" src="images/transformShape.png" /> <strong>Geodesic transformations</strong> can geodesically scale, rotate, and translate points, lines and polygons. Each vector feature retains their relative dimensions no matter what the projection is.</li>
-<li><img alt="Geodesic flip and rotate" src="images/flip.png" /> <strong>Geodesic flip &amp; rotate tools</strong> provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.</li>
-<li><img alt="Azimuth, distance digitizer" src="images/dazdigitize.png" /> <strong>Azimuth, distance digitizer</strong> creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.</li>
-<li><img alt="Azimuth distance sequence digitizer" src="images/linedigitize.png" /> <strong>Azimuth distance sequence digitizer</strong> digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.</li>
+<li><img src="images/shapes.png" width="24"> <strong>Create shapes</strong> processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
+<li><img alt="XY to Line" src="images/xyline.svg" /> <strong>XY to Line</strong> uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.</li>
+<li><img alt="Geodesic line break" src="images/idlbreak.svg" /> <strong>Geodesic line break at -180,180</strong> breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.</li>
+<li><img alt="Geodesic densifier" src="images/geodesicDensifier.svg" /> <strong>Geodesic densifier</strong> densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.</li>
+<li><img alt="Geodesic line decimate" src="images/geodesicLineDecimate.svg" /> <strong>Geodesic line decimate</strong> removes vertices in a line that who's geodesic distance is less than a certain value.</li>
+<li><img alt="Geodesic point decimate" src="images/geodesicPointDecimate.svg" /> <strong>Geodesic point decimate</strong> removes points in a point layer who's geodesic distance is less than a certain value or who's time difference between points is less than a certain value.</li>
+<li><img alt="Geodesic measure tool" src="images/measure.svg" /> <strong>Geodesic measure tool</strong> provides geodesic line measuring, similar to that implemented in Google Earth.</li>
+<li><img alt="Geodesic measurement layer" src="images/measureLine.svg" /> <strong>Geodesic measurement layer</strong> converts a polygon or line layer a new layer with all geometries measured and labeled.</li>
+<li><img alt="Geodesic transfomations tool" src="images/transformShape.svg" /> <strong>Geodesic transformations</strong> can geodesically scale, rotate, and translate points, lines and polygons. Each vector feature retains their relative dimensions no matter what the projection is.</li>
+<li><img alt="Geodesic flip and rotate" src="images/flip.svg" /> <strong>Geodesic flip &amp; rotate tools</strong> provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.</li>
+<li><img alt="Azimuth, distance digitizer" src="images/dazdigitize.svg" /> <strong>Azimuth, distance digitizer</strong> creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.</li>
+<li><img alt="Azimuth distance sequence digitizer" src="images/linedigitize.svg" /> <strong>Azimuth distance sequence digitizer</strong> digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.</li>
 </ul>
 <h2>Contents</h2>
 <ul>
@@ -68,7 +68,7 @@ code {
 <li><a href="#azimuth-distance-sequence">Azimuth Distance Sequence Digitizer</a></li>
 <li><a href="#settings">Settings</a></li>
 </ul>
-<h2><a name="create-shapes"></a> <img alt="Create Shapes" src="images/shapes.png" /> Create Shapes</h2>
+<h2><a name="create-shapes"></a> <img src="images/shapes.png" width="24"> Create Shapes</h2>
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
 <p>All of these shapes can be accessed from the ShapeTools processing algorithms.</p>
@@ -93,7 +93,7 @@ code {
 <h3>Line of Bearing</h3>
 <p><strong>Bearing</strong> is the angle measured in degrees, in a clockwise direction from the north line. A <strong>line of bearing</strong> is the line drawn from a starting point in the direction of the <strong>bearing</strong> or azimuth for the selected distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. </p>
 <h3>Pie Wedge</h3>
-<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer data fields or from the <strong>Default</strong> parameters. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes.</p>
+<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer data fields or from the <strong>Default</strong> parameters. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is efectively 360 degrees, the a donut is created.</p>
 <h3>Donut</h3>
 <p>Create a donut shape. The inner and outer radius is specified either as default values or from the attribute table. If the inner radius is 0 then a solid circle is drawn. <strong>Number of drawing segments</strong> defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.</p>
 <h3>Arc wedge</h3>
@@ -114,7 +114,7 @@ code {
 <p>Create a mathematical heart which fits within the circle defined by its radius.</p>
 <h3>Radial lines</h3>
 <p>Create N-radial lines equally spaced around the point starting from the inner radius and exteding out to the outer radius.</p>
-<h2><a name="xy-to-line"></a> <img alt="XY to Line" src="images/xyline.png" /> XY to Line</h2>
+<h2><a name="xy-to-line"></a> <img alt="XY to Line" src="images/xyline.svg" /> XY to Line</h2>
 <p>This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.</p>
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
 
@@ -132,14 +132,14 @@ code {
 <p>This function can also be accessed from the <strong>Processing Toolbox</strong>.</p>
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
-<h2><a name="geodesic-line-break"></a> <img alt="Geodesic Line Break at -180,180" src="images/idlbreak.png" /> Geodesic Line Break at -180,180</h2>
+<h2><a name="geodesic-line-break"></a> <img alt="Geodesic Line Break at -180,180" src="images/idlbreak.svg" /> Geodesic Line Break at -180,180</h2>
 <p>If you have ever created a geospatial masterpiece that has crossings across the International Date Line at a longitude of -180&deg;/180&deg; and it turned out like the image on the left, you are not alone.</p>
 <div style="text-align:center"><img src="doc/breaklines.jpg" alt="Break lines"></div>
 
 <p><strong>Geodesic line break</strong> will break lines at the -180&deg;/180&deg; boundary along a geodesic path which is the shortest distance along the earth's surface between two points. The algorithm is very simple with just an input and output layer. The resulting output is shown in the above right side image. Depending on your data you may find it useful to also run the <strong>Geodesic Densifier</strong> on the data prior to this routine.</p>
 <div style="text-align:center"><img src="doc/geodesiclinebreak.jpg" alt="Geodesic Line Break"></div>
 
-<h2><a name="geodesic-densifier"></a> <img alt="Geodesic Densifier" src="images/geodesicDensifier.png" /> Geodesic Densifier</h2>
+<h2><a name="geodesic-densifier"></a> <img alt="Geodesic Densifier" src="images/geodesicDensifier.svg" /> Geodesic Densifier</h2>
 <p>Densify a line or polygon vector layer by adding geodesic points in between individual line segments when its length is too great. This gives it a nice smooth curved appearance. For line vectors a geodesic line can be drawn between just the beginning and ending points.</p>
 <div style="text-align:center"><img src="doc/geodesicshape.jpg" alt="Geodesic Densifier"></div>
 
@@ -155,7 +155,7 @@ code {
 <p>This function can also be accessed from the <strong>Processing Toolbox</strong>.</p>
 <div style="text-align:center"><img src="doc/processing.jpg" alt="Processing Toolbox"></div>
 
-<h2><a name="geodesic-line-decimate"></a> <img alt="Geodesic Line Decimate" src="images/geodesicLineDecimate.png" /> Geodesic Line Decimate</h2>
+<h2><a name="geodesic-line-decimate"></a> <img alt="Geodesic Line Decimate" src="images/geodesicLineDecimate.svg" /> Geodesic Line Decimate</h2>
 <p>This simplifies the geometry of a line layer by removing vertices who's distance to the previous vertex is less than the specified value. For each line, the geodesic distance is calculated between vertices and if the distance is less than the specified minimum distance then the vertex is deleted. This repeats until the distance threshold is exceeded. The only exception to this rule is if <strong><em>Preserve final vertex</em></strong> is selected in which case the final vertex is always saved.</p>
 <div style="text-align:center"><img src="doc/geodesiclinedecimate.jpg" alt="Geodesic line decimate"></div>
 
@@ -170,7 +170,7 @@ code {
 <li><strong>Decimation minimum distance beween vertices</strong> - Sprecifies the minimum distance between vertices. Distances less than this are deleted.</li>
 <li><strong>Distance units</strong> - Specifies the units of measure for the "Decimation minimum distance betwee vertices."</li>
 </ul>
-<h2><a name="geodesic-point-decimate"></a> <img alt="Geodesic Point Decimate" src="images/geodesicPointDecimate.png" /> Geodesic Point Decimate</h2>
+<h2><a name="geodesic-point-decimate"></a> <img alt="Geodesic Point Decimate" src="images/geodesicPointDecimate.svg" /> Geodesic Point Decimate</h2>
 <p>This reduces the number of points within a point vector layer by using geodesic distances mesurements between points and/or the time interval between points. This assumes that the points are ordered or that there is a property field that specifies the order of the points. Poiint can also be grouped together based on an attributed in the table in which case points from each grouping are processed separately.</p>
 <p><strong>Parameters</strong></p>
 <ul>
@@ -191,7 +191,7 @@ code {
 </li>
 <li><strong>When both decimate by distance and time are selected, preserve points if</strong> - This specifies whether both distance and time requements must be met or only one or the other requirements are met.</li>
 </ul>
-<h2><a name="geodesic-measure"></a> <img alt="Geodesic Measure Tool" src="images/measure.png" /> Geodesic Measure Tool</h2>
+<h2><a name="geodesic-measure"></a> <img alt="Geodesic Measure Tool" src="images/measure.svg" /> Geodesic Measure Tool</h2>
 <p>This provides the ability to measure distances using geodesic (shortest path) algorithms. The results returned are similar to those used by Google Earth and makes for a nice baseline of distances. It also includes the heading from the first point to the second and a heading from the second point to the first. The units are in degrees. The units of distance can be kilometers, meters, centimeters, miles, yards, feet, inches, and nautical miles. Simply click on the <strong><em>Geodesic Measure Tool</em></strong> icon and start clicking on the map. Notice that the ellipsoid used to calculate measurements is listed in the lower left-hand corner. By default this is set to <strong><em>WGS 84</em></strong>, but it can be changed in the <strong><em>Settings</em></strong> menu. If snapping is enabled, then the <strong><em>Geodesic Measure Tool</em></strong> will snap to vector layer vertices and features when the mouse hovers over them.</p>
 <p>While using the geodesic measure tool the user can quickly copy values of the last heading to, heading from, distance, and total distance onto the clipboard by typing one of the following keys:</p>
 <ul>
@@ -212,7 +212,7 @@ code {
 <p>By clicking on the <strong><em>Add measurement point</em></strong> icon <img alt="Add measurement point" src="images/manualpoint.png" />, a new dialog windows is displayed were precise measurement points can be added. The coordinates can be in WGS 84 (EPSG:4326), the project CRS, or some other custom projection. In the drop down menus specify the projection and the coordinate order in which the coordinates are entered.</p>
 <div style="text-align:center"><img src="doc/geodesicmeasure4.jpg" alt="Add measurement point"></div>
 
-<h2><a name="geodesic-measure-layer"></a> <img alt="Geodesic Measurement Layer" src="images/linedigitize.png" /> Geodesic Measurement Layer</h2>
+<h2><a name="geodesic-measure-layer"></a> <img alt="Geodesic Measurement Layer" src="images/linedigitize.svg" /> Geodesic Measurement Layer</h2>
 <p>This take either a polygon or line layer and for each of the geometries calculates the geodesic distances of each feature. The user can choose whether each line segment is measured and output as a line measurement or whether the entire line/polygon geometry is measured. It outputs a new line layer of lines that contain attributes with all the measurements. If measuring individual line segments the attributes are a label, distance, units of measure, azimuth/bearing to the next point, and the total distance of the geometry. If measuring the entire geometry then the attributes are a label, distance, and units of measure. The input is either a line or polygon layer. Select whether you want to measure the entire line or polygon or each line segment within the line or polygon. <strong>Distance units</strong> can be kilometers, meters, centimeters, miles, yards, feet, inches, or nautical miles. <strong>Use automatic styling</strong> styles the QGIS layer with the label string in the attribute table and with the text and line colors found in <strong>Settings</strong>.</p>
 <div style="text-align:center"><img src="doc/measurement-layer.jpg" alt="Geodesic Measurement Layer"></div>
 
@@ -222,7 +222,7 @@ code {
 <p>Here is what the attributes table looks like.</p>
 <div style="text-align:center"><img src="doc/measurement-attributes.jpg" alt="Measurement Attributes"></div>
 
-<h2><a name="geodesic-transformations"></a> <img alt="Geodesic Transformations" src="images/transformShape.png" /> Geodesic Transformations Tool</h2>
+<h2><a name="geodesic-transformations"></a> <img alt="Geodesic Transformations" src="images/transformShape.svg" /> Geodesic Transformations Tool</h2>
 <p>This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection. </p>
 <div style="text-align:center"><img src="doc/geodesictransform.jpg" alt="Geodesic Transformations"></div>
 
@@ -236,7 +236,7 @@ code {
 <li><strong>Translation distance units</strong> - Units of distance the shape will be move.</li>
 <li><strong>Output layer</strong> - The output layer that will be created in QGIS.</li>
 </ul>
-<h2><a name="geodesic-flip"></a> <img alt="Geodesic Flip and Rotate Tools" src="images/flip.png" /> Geodesic Flip and Rotate Tools</h2>
+<h2><a name="geodesic-flip"></a> <img alt="Geodesic Flip and Rotate Tools" src="images/flip.svg" /> Geodesic Flip and Rotate Tools</h2>
 <p>This is a collection of geodesic tools that transform vector features including the ability to flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees. The first is a processing toolbox algorithm that allows the selection of one of these five transforms.</p>
 <div style="text-align:center"><img src="doc/fliptool.jpg" alt="Geodesic Flip and Rotate"></div>
 
@@ -247,13 +247,13 @@ code {
 </ul>
 <p>The following geodesic tools work on an editable line or polygon vector layer. If a feature is selected, these functions only operate on that feature; otherwise, it operates on all features in the layer.</p>
 <ul>
-<li><img alt="Flip horizontal" src="images/flipHorizontal.png" /> <strong>Flip horizontal</strong> flips a vector feature horizontally about its centroid.</li>
-<li><img alt="Flip vertical" src="images/flipVertical.png" /> <strong>Flip vertical</strong> flips a vector feature vertically about its centroid.</li>
-<li><img alt="Rotate 180" src="images/rotate180.png" /> <strong>Rotate 180&deg; </strong> rotates a vector feature by 180 degrees.</li>
-<li><img alt="Rotate 90 CW" src="images/rotatecw.png" /> <strong>Rotate 90&deg; CW</strong> rotates a vector feature by 90 degrees clockwise.</li>
-<li><img alt="Rotate 90 CCW" src="images/rotateccw.png" /> <strong>Rotate 90&deg; CCW</strong> rotates a vector feature by 90 degrees counter-clockwise.</li>
+<li><img alt="Flip horizontal" src="images/flipHorizontal.svg" /> <strong>Flip horizontal</strong> flips a vector feature horizontally about its centroid.</li>
+<li><img alt="Flip vertical" src="images/flipVertical.svg" /> <strong>Flip vertical</strong> flips a vector feature vertically about its centroid.</li>
+<li><img alt="Rotate 180" src="images/rotate180.svg" /> <strong>Rotate 180&deg; </strong> rotates a vector feature by 180 degrees.</li>
+<li><img alt="Rotate 90 CW" src="images/rotatecw.svg" /> <strong>Rotate 90&deg; CW</strong> rotates a vector feature by 90 degrees clockwise.</li>
+<li><img alt="Rotate 90 CCW" src="images/rotateccw.svg" /> <strong>Rotate 90&deg; CCW</strong> rotates a vector feature by 90 degrees counter-clockwise.</li>
 </ul>
-<h2><a name="azimuth-distance"></a> <img alt="Azimuth, Distance Digitizer" src="images/dazdigitize.png" /> Azimuth, Distance Digitizer</h2>
+<h2><a name="azimuth-distance"></a> <img alt="Azimuth, Distance Digitizer" src="images/dazdigitize.svg" /> Azimuth, Distance Digitizer</h2>
 <p>This tool works on point and line vector layers and is enabled when they are selected and in edit mode. In either case the following dialog box is displayed when the tool is enabled and a point on the map is clicked on. If snapping is enabled (<em>Project-&gt;Snapping Options...</em>), then when the cursor hovers close to an existing point or vertex, a bounding box around the point will be displayed. Clicking near the vertex will snap its location to be used by the <strong><em>Azimuth, Distance Digitizer</em></strong> as its starting point.</p>
 <div style="text-align:center"><img src="doc/azimuth-distance.jpg" alt="Azimuth, Distance Tool"></div>
 
@@ -262,7 +262,7 @@ code {
 <li><strong>Point Vector Layer</strong> - If an editable point vector layer is selected and the map is click on, the tool will create a point in the azimuth direction and at the specified distance. The point clicked on can be also included in the output layer.</li>
 <li><strong>Line Vector Layer</strong> - If an editable line vector layer is selected and the map is click on, the tool will create a geodesic line from the clicked point along the azimuth and distance path.</li>
 </ul>
-<h2><a name="azimuth-distance-sequence"></a> <img alt="Azimuth Distance Sequence Digitizer" src="images/dazdigitize.png" /> Azimuth Distance Sequence Digitizer</h2>
+<h2><a name="azimuth-distance-sequence"></a> <img alt="Azimuth Distance Sequence Digitizer" src="images/dazdigitize.svg" /> Azimuth Distance Sequence Digitizer</h2>
 <div style="text-align:center"><img src="doc/az-sequence.jpg" alt="Azimuth, Distance Sequence Digitizer"></div>
 
 <p>This is similar to the <strong>Azimuth, Distance Digitizer</strong>, but it provides the ability to click on the map as a starting point and then give a series of bearings and distances in the order of 'bearing 1, distance 1, bearing 2, distance 2, ... bearing N, distance N' and it will create a path. This is useful in some survey work. If older surveying used magnetic north, it can be compensated for by the <strong>Bearing / declination adjustment</strong>. Magnetic declination changes over time, but the <a href="https://www.ngdc.noaa.gov/geomag-web/#declination">NOAA Magnetic Field Calculator</a> provides an easy interface to estimate the magnetic north declination at a certain latitude, longitude and time, all the way back to 1590. West declination will be a negative number and east declination is a positive number. If a polygon layer is selected then the resulting shape automatically closes the polygon such that the beginning and ending points are the same. If a line layer is selected then you have the option of automatically adding a line segment from the last point in the sequence to the first point. If a point layer is selected, then only the nodes will be added to the layer. If snapping is enabled (<em>Project-&gt;Snapping Options...</em>), then when the cursor hovers close to an existing point or vertex, a bounding box around the point will be displayed. Clicking near the vertex will snap its location to be used by the <strong><em>Azimuth, Distance Sequence Digitizer</em></strong> as its starting point.</p>
