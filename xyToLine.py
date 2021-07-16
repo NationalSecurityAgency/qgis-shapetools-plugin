@@ -125,7 +125,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterBoolean(
                 self.PrmShowStartPoint,
                 tr('Show starting point'),
-                True,
+                False,
                 optional=True)
         )
         self.addParameter(
@@ -170,6 +170,18 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         showEnd = self.parameterAsBool(parameters, self.PrmShowEndPoint, context)
         dateLine = self.parameterAsBool(parameters, self.PrmDateLineBreak, context)
 
+        if startUseGeom and endUseGeom:
+            msg = tr('The layer geometry cannot be used for both the starting and ending points.')
+            raise QgsProcessingException(msg)
+
+        if (startUseGeom or endUseGeom) and (source.wkbType() != QgsWkbTypes.Point):
+            msg = tr('In order to use the layer geometry for the start or ending points, the input layer must be of type Point')
+            raise QgsProcessingException(msg)
+
+        if (not startUseGeom and (not startXcol or not startYcol)) or (not endUseGeom and (not endXcol or not endYcol)):
+            msg = tr('Please select valid starting and ending point columns')
+            raise QgsProcessingException(msg)
+
         if dateLine and lineType <= 1:
             isMultiPart = True
         else:
@@ -183,28 +195,19 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
             (lineSink, lineDest_id) = self.parameterAsSink(
                 parameters, self.PrmOutputLineLayer, context, source.fields(),
                 QgsWkbTypes.LineString, sinkCrs)
-        (ptSink, ptDest_id) = self.parameterAsSink(
-            parameters, self.PrmOutputPointLayer, context, source.fields(),
-            QgsWkbTypes.Point, sinkCrs)
 
-        if not ptSink:
+        skip_pt = True if self.PrmOutputPointLayer not in parameters or parameters[self.PrmOutputPointLayer] is None else False
+        if (showStart or showEnd) and not skip_pt:
+            (ptSink, ptDest_id) = self.parameterAsSink(
+                parameters, self.PrmOutputPointLayer, context, source.fields(),
+                QgsWkbTypes.Point, sinkCrs)
+        else:
             if showStart or showEnd:
                 feedback.pushInfo(tr('Output point layer was set to [skip output]. No point layer will be generated.'))
-            showStart = False
-            showEnd = False
-        if (startUseGeom or endUseGeom) and (source.wkbType() != QgsWkbTypes.Point):
-            msg = tr('In order to use the layer geometry for the start or ending points, the input layer must be of type Point')
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
-
-        if (not startUseGeom and (not startXcol or not startYcol)) or (not endUseGeom and (not endXcol or not endYcol)):
-            msg = tr('Please select valid starting and ending point columns')
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
-        if source.wkbType() != QgsWkbTypes.Point and (startUseGeom or endUseGeom):
-            msg = tr("In order to select the input layer's geometry as a beginning or ending point it must be a Point vector layer.")
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
+                showStart = False
+                showEnd = False
+            else:
+                feedback.pushInfo(tr('No beginning or ending points were selected so a point layer will not be generated.'))
 
         # Set up CRS transformations
         geomCrs = source.sourceCrs()
@@ -220,6 +223,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
         numBad = 0
         maxseglen = settings.maxSegLength * 1000.0
         maxSegments = settings.maxSegments
+        beginning_ending_same = False
 
         iterator = source.getFeatures()
         for cnt, feature in enumerate(iterator):
@@ -245,6 +249,7 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 pts = [ptStart]
                 if ptStart == ptEnd:  # We cannot have a line that begins and ends at the same point
                     numBad += 1
+                    beginning_ending_same = True
                     continue
 
                 if lineType == 0:  # Geodesic
@@ -309,9 +314,16 @@ class XYToLineAlgorithm(QgsProcessingAlgorithm):
                 feedback.setProgress(int(cnt * total))
 
         if numBad > 0:
+            if beginning_ending_same:
+                feedback.pushInfo(tr("One of more features had the same beginning and ending coordinate and are invalid."))
             feedback.pushInfo(tr("{} out of {} features from the input layer were invalid and were ignored.".format(numBad, featureCount)))
 
-        return {self.PrmOutputLineLayer: lineDest_id, self.PrmOutputPointLayer: ptDest_id}
+        r = {}
+        r[self.PrmOutputLineLayer] = lineDest_id
+        if showStart or showEnd:
+            r[self.PrmOutputPointLayer] = ptDest_id
+
+        return (r)
 
     def name(self):
         return 'xy2line'
