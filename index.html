@@ -223,11 +223,11 @@ code {
 <div style="text-align:center"><img src="doc/measurement-attributes.jpg" alt="Measurement Attributes"></div>
 
 <h2><a name="geodesic-transformations"></a> <img alt="Geodesic Transformations" src="images/transformShape.svg" /> Geodesic Transformations Tool</h2>
-<p>This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection. </p>
+<p>This tool provides the ability to geodesically transform a shape. It supports scaling, rotation and translation. Each of these can use data defined override expressions. The relative size and geometry of each shape will be retained regardless of the projection. </p>
 <div style="text-align:center"><img src="doc/geodesictransform.jpg" alt="Geodesic Transformations"></div>
 
 <ul>
-<li><strong>Input vector layer</strong> - Select an existing point, line, or polygon vector layer.</li>
+<li><strong>Input layer</strong> - Select an existing point, line, or polygon vector layer.</li>
 <li><strong>Selected features only</strong> - Checking this box will cause the algorithm to only transform the selected features.</li>
 <li><strong>Rotation angle about the centroid</strong> - Rotate the feature about its centroid. A positive angle rotates in a clockwise direction.</li>
 <li><strong>Scale factor about the centroid</strong> - Scale the shape about its centroid. A scale factor of 1 retains its same size.</li>
@@ -236,6 +236,10 @@ code {
 <li><strong>Translation distance units</strong> - Units of distance the shape will be move.</li>
 <li><strong>Output layer</strong> - The output layer that will be created in QGIS.</li>
 </ul>
+<p>To the right of each parameter is the data defined override button <img alt="" src="doc/datadefined.jpg" /> where the default value is overridden with a value from one of the attributes or an expression. This leads to some powerful and creative applications.</p>
+<div style="text-align:center"><img src="doc/geodesictransformexample.jpg" alt="Geodesic Transformation Example"></div>
+
+<p>This was created by clicking on the <strong><em>Rotation angle about the centroid</em></strong> data defined override button, clicking on <strong>Edit</strong> and using the expression <code><span style="font-family:'Courier New'"><b>randf( -10, 10)</b></span></code> and for <strong><em>Scale factor about the centroid</em></strong> using the expression <code><span style="font-family:'Courier New'"><b>randf(0.65, 0.85)</b></style></code>. For each polygin in the input layer it rotates them using a random value between -10 and 10 degrees and scales them by a factor betweeen 0.65 and 0.85.</p>
 <h2><a name="geodesic-flip"></a> <img alt="Geodesic Flip and Rotate Tools" src="images/flip.svg" /> Geodesic Flip and Rotate Tools</h2>
 <p>This is a collection of geodesic tools that transform vector features including the ability to flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees. The first is a processing toolbox algorithm that allows the selection of one of these five transforms.</p>
 <div style="text-align:center"><img src="doc/fliptool.jpg" alt="Geodesic Flip and Rotate"></div>

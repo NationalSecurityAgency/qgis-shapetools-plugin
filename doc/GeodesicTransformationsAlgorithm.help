@@ -1,11 +1,9 @@
-Geodesically transform a shape. It supports scaling, rotation and translation. The size and geometry of each shape will be retained regardless of the projection.
+Geodesically transform a shape. It supports scaling, rotation and translation. Each of these properties can come from individual data defined override expressions, making this a very powerful algorithm. The ralative size and geometry of each shape will be retained regardless of the projection.
 
-* Input vector layer - Select an existing point, line, or polygon vector layer.
+* Input layer - Select an existing point, line, or polygon vector layer.
 * Selected features only - Checking this box will cause the algorithm to only transform the selected features.
 * Rotation angle about the centroid - Rotate the feature about its centroid. A positive angle rotates in a clockwise direction.
 * Scale factor about the centroid - Scale the shape about its centroid. A scale factor of 1 retains its same size.
 * Translation distance - Distance the shape will be moved along a geodesic path.
 * Translation azimuth - Azimuth or direction the shape will be moved along a geodesic path.
 * Translation distance units - Units of distance the shape will be move.
-* Output layer - The output layer that will be created in QGIS.
-
