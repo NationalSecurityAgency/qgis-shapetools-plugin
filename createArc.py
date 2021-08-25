@@ -2,10 +2,11 @@ import os
 from geographiclib.geodesic import Geodesic
 
 from qgis.core import (QgsPointXY, QgsFeature, QgsGeometry, QgsField,
-                       QgsProject, QgsWkbTypes, QgsCoordinateTransform)
+                       QgsProject, QgsWkbTypes, QgsCoordinateTransform, QgsPropertyDefinition)
 
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
+                       QgsProcessingParameters,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterEnum,
@@ -31,10 +32,6 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
     PrmAzimuthMode = 'AzimuthMode'
-    PrmAzimuth1Field = 'Azimuth1Field'
-    PrmAzimuth2Field = 'Azimuth2Field'
-    PrmInnerRadiusField = 'InnerRadiusField'
-    PrmOuterRadiusField = 'OuterRadiusField'
     PrmDefaultAzimuth1 = 'DefaultAzimuth1'
     PrmDefaultAzimuth2 = 'DefaultAzimuth2'
     PrmInnerRadius = 'InnerRadius'
@@ -62,46 +59,68 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterEnum(
                 self.PrmAzimuthMode,
                 tr('Azimuth mode'),
-                options=[tr('Use beginning and ending azimuths'), tr('Use center azimuth and width')],
+                options=[tr('Use beginning and ending azimuths'), tr('Use center azimuth and azimuth width')],
                 defaultValue=1,
                 optional=False)
         )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmAzimuth1Field,
-                tr('Starting azimuth field / Center azimuth field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmAzimuth2Field,
-                tr('Ending azimuth field / Azimuth width field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmOuterRadiusField,
-                tr('Outer radius field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmInnerRadiusField,
-                tr('Inner radius field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
+        param = QgsProcessingParameterNumber(
+            self.PrmDefaultAzimuth1,
+            tr('Beginning azimuth / Center azimuth'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmDefaultAzimuth1,
+            tr('Ending azimuth / Center azimuth'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+        
+        param = QgsProcessingParameterNumber(
+            self.PrmDefaultAzimuth2,
+            tr('Ending azimuth / Azimuth width'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=30.0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmDefaultAzimuth2,
+            tr('Ending azimuth / Azimuth width'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.PrmOuterRadius,
+            tr('Outer radius'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=40.0,
+            minValue=0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmOuterRadius,
+            tr('Outer radius'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.PrmInnerRadius,
+            tr('Inner radius'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=20.0,
+            minValue=0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmInnerRadius,
+            tr('Inner radius'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -109,40 +128,6 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 options=DISTANCE_LABELS,
                 defaultValue=0,
                 optional=False)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultAzimuth1,
-                tr('Default starting azimuth / Default center azimuth'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultAzimuth2,
-                tr('Default ending azimuth / Default azimuth width'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=30.0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmOuterRadius,
-                tr('Default outer radius'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=40.0,
-                minValue=0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmInnerRadius,
-                tr('Default inner radius'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=20.0,
-                minValue=0,
-                optional=True)
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -170,22 +155,30 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
         azimuth_mode = self.parameterAsInt(parameters, self.PrmAzimuthMode, context)
-        start_angle_col = self.parameterAsString(parameters, self.PrmAzimuth1Field, context)
-        end_angle_col = self.parameterAsString(parameters, self.PrmAzimuth2Field, context)
-        inner_radius_col = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
-        outer_radius_col = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
         start_angle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth1, context)
+        start_angle_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmDefaultAzimuth1)
+        if start_angle_dyn:
+            start_angle_property = parameters[ self.PrmDefaultAzimuth1 ]
         end_angle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth2, context)
-        inner_radius = self.parameterAsDouble(parameters, self.PrmInnerRadius, context)
+        end_angle_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmDefaultAzimuth2)
+        if end_angle_dyn:
+            end_angle_property = parameters[ self.PrmDefaultAzimuth2 ]
         outer_radius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
+        outer_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmOuterRadius)
+        if outer_radius_dyn:
+            outer_radius_property = parameters[ self.PrmOuterRadius ]
+        inner_radius = self.parameterAsDouble(parameters, self.PrmInnerRadius, context)
+        inner_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmInnerRadius)
+        if inner_radius_dyn:
+            inner_radius_property = parameters[ self.PrmInnerRadius ]
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
 
         measure_factor = conversionToMeters(units)
 
-        inner_radius *= measure_factor
-        outer_radius *= measure_factor
+        inner_radius_converted = inner_radius * measure_factor
+        outer_radius_converted = outer_radius * measure_factor
 
         pt_spacing = 360.0 / segments
         src_crs = source.sourceCrs()
@@ -227,26 +220,26 @@ class CreateArcAlgorithm(QgsProcessingAlgorithm):
                 # make sure the coordinates are in EPSG:4326
                 if geom_to_4326:
                     pt = geom_to_4326.transform(pt.x(), pt.y())
-                if start_angle_col:
-                    sangle = float(feature[start_angle_col])
+                if start_angle_dyn:
+                    sangle,_ = start_angle_property.valueAsDouble(context.expressionContext(), start_angle)
                 else:
                     sangle = start_angle
-                if end_angle_col:
-                    eangle = float(feature[end_angle_col])
+                if end_angle_dyn:
+                    eangle,_ = end_angle_property.valueAsDouble(context.expressionContext(), end_angle)
                 else:
                     eangle = end_angle
                 if azimuth_mode == 1:
                     width = abs(eangle) / 2.0
                     eangle = sangle + width
                     sangle -= width
-                if outer_radius_col:
-                    outer_dist = float(feature[outer_radius_col]) * measure_factor
+                if outer_radius_dyn:
+                    outer_dist = outer_radius_property.valueAsDouble(context.expressionContext(), outer_radius)[0] * measure_factor
                 else:
-                    outer_dist = outer_radius
-                if inner_radius_col:
-                    inner_dist = float(feature[inner_radius_col]) * measure_factor
+                    outer_dist = outer_radius_converted
+                if inner_radius_dyn:
+                    inner_dist = inner_radius_property.valueAsDouble(context.expressionContext(), inner_radius)[0] * measure_factor
                 else:
-                    inner_dist = inner_radius
+                    inner_dist = inner_radius_converted
 
                 sangle = sangle % 360
                 eangle = eangle % 360
