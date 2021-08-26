@@ -8,15 +8,14 @@ from qgis.core import (
     QgsProcessingFeatureBasedAlgorithm,
     QgsProcessingParameters,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink)
+    QgsProcessingParameterEnum)
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QUrl
 
 from .settings import epsg4326, geod
 from .utils import tr, conversionToMeters, DISTANCE_LABELS
+
 
 class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     """
@@ -66,7 +65,7 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
 
     def inputLayerTypes(self):
         return [QgsProcessing.TypeVectorAnyGeometry]
-        
+
     def outputWkbType(self, input_wkb_type):
         return input_wkb_type
 
@@ -78,13 +77,13 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             defaultValue=0,
             optional=True)
         param.setIsDynamic(True)
-        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmTransformRotation,
             tr('Rotation angle about the centroid'),
-            QgsPropertyDefinition.Double ))
+            QgsPropertyDefinition.Double))
         param.setDynamicLayerParameterName('INPUT')
         self.addParameter(param)
-        
+
         param = QgsProcessingParameterNumber(
             self.PrmTransformScale,
             tr('Scale factor about the centroid'),
@@ -92,10 +91,10 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             defaultValue=1,
             optional=True)
         param.setIsDynamic(True)
-        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmTransformScale,
             tr('Scale factor about the centroid'),
-            QgsPropertyDefinition.Double ))
+            QgsPropertyDefinition.Double))
         param.setDynamicLayerParameterName('INPUT')
         self.addParameter(param)
 
@@ -106,10 +105,10 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             defaultValue=0,
             optional=True)
         param.setIsDynamic(True)
-        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmTransformDistance,
             tr('Translation distance'),
-            QgsPropertyDefinition.Double ))
+            QgsPropertyDefinition.Double))
         param.setDynamicLayerParameterName('INPUT')
         self.addParameter(param)
 
@@ -120,10 +119,10 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             defaultValue=0,
             optional=True)
         param.setIsDynamic(True)
-        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmTransformAzimuth,
             tr('Translation azimuth'),
-            QgsPropertyDefinition.Double ))
+            QgsPropertyDefinition.Double))
         param.setDynamicLayerParameterName('INPUT')
         self.addParameter(param)
 
@@ -140,22 +139,22 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.angle = self.parameterAsDouble(parameters, self.PrmTransformRotation, context)
         self.angle_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmTransformRotation)
         if self.angle_dyn:
-            self.angle_property = parameters[ self.PrmTransformRotation ]
+            self.angle_property = parameters[self.PrmTransformRotation]
 
         self.scale = self.parameterAsDouble(parameters, self.PrmTransformScale, context)
         self.scale_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmTransformScale)
         if self.scale_dyn:
-            self.scale_property = parameters[ self.PrmTransformScale ]
+            self.scale_property = parameters[self.PrmTransformScale]
 
         distance = self.parameterAsDouble(parameters, self.PrmTransformDistance, context)
         self.distance_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmTransformDistance)
         if self.distance_dyn:
-            self.distance_property = parameters[ self.PrmTransformDistance ]
+            self.distance_property = parameters[self.PrmTransformDistance]
 
         self.azimuth = self.parameterAsDouble(parameters, self.PrmTransformAzimuth, context)
         self.azimuth_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmTransformAzimuth)
         if self.azimuth_dyn:
-            self.azimuth_property = parameters[ self.PrmTransformAzimuth ]
+            self.azimuth_property = parameters[self.PrmTransformAzimuth]
 
         units = self.parameterAsInt(parameters, self.PrmTransformUnits, context)
 
@@ -171,22 +170,22 @@ class GeodesicTransformationsAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     def processFeature(self, feature, context, feedback):
         # Check each parameter to see if it is useing data defined expressions
         if self.angle_dyn:
-            angle,_ = self.angle_property.valueAsDouble(context.expressionContext(), self.angle)
+            angle, _ = self.angle_property.valueAsDouble(context.expressionContext(), self.angle)
         else:
             angle = self.angle
 
         if self.scale_dyn:
-            scale,_ = self.scale_property.valueAsDouble(context.expressionContext(), self.scale)
+            scale, _ = self.scale_property.valueAsDouble(context.expressionContext(), self.scale)
         else:
             scale = self.scale
 
         if self.azimuth_dyn:
-            azimuth,_ = self.azimuth_property.valueAsDouble(context.expressionContext(), self.azimuth)
+            azimuth, _ = self.azimuth_property.valueAsDouble(context.expressionContext(), self.azimuth)
         else:
             azimuth = self.azimuth
 
         if self.distance_dyn:
-            distance,_ = self.distance_property.valueAsDouble(context.expressionContext(), self.distance)
+            distance, _ = self.distance_property.valueAsDouble(context.expressionContext(), self.distance)
             distance = distance * self.to_meters
         else:
             distance = self.distance
