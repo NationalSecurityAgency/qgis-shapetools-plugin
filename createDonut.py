@@ -3,10 +3,11 @@ from geographiclib.geodesic import Geodesic
 
 from qgis.core import (
     QgsPointXY, QgsFeature, QgsGeometry, QgsField,
-    QgsProject, QgsWkbTypes, QgsCoordinateTransform)
+    QgsProject, QgsWkbTypes, QgsCoordinateTransform, QgsPropertyDefinition)
 
 from qgis.core import (
     QgsProcessing,
+    QgsProcessingParameters,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
@@ -32,10 +33,8 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
     PrmInputLayer = 'InputLayer'
     PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
-    PrmOuterRadiusField = 'OuterRadiusField'
-    PrmInnerRadiusField = 'InnerRadiusField'
-    PrmDefaultOuterRadius = 'DefaultOuterRadius'
-    PrmDefaultInnerRadius = 'DefaultInnerRadius'
+    PrmOuterRadius = 'OuterRadius'
+    PrmInnerRadius = 'InnerRadius'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmDrawingSegments = 'DrawingSegments'
     PrmExportInputGeometry = 'ExportInputGeometry'
@@ -55,42 +54,36 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
                 optional=False)
         )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmOuterRadiusField,
-                tr('Outer radius field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmInnerRadiusField,
-                tr('Inner radius field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultOuterRadius,
-                tr('Default outer radius'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=20.0,
-                minValue=0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultInnerRadius,
-                tr('Default inner radius'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=10.0,
-                minValue=0,
-                optional=True)
-        )
+        param = QgsProcessingParameterNumber(
+            self.PrmOuterRadius,
+            tr('Outer radius'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=20.0,
+            minValue=0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmOuterRadius,
+            tr('Outer radius'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.PrmInnerRadius,
+            tr('Inner radius'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=10.0,
+            minValue=0,
+            optional=True)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition( QgsPropertyDefinition(
+            self.PrmInnerRadius,
+            tr('Inner radius'),
+            QgsPropertyDefinition.Double ))
+        param.setDynamicLayerParameterName(self.PrmInputLayer)
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -124,18 +117,22 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
-        outer_col = self.parameterAsString(parameters, self.PrmOuterRadiusField, context)
-        inner_col = self.parameterAsString(parameters, self.PrmInnerRadiusField, context)
-        def_outer_radius = self.parameterAsDouble(parameters, self.PrmDefaultOuterRadius, context)
-        def_inner_radius = self.parameterAsDouble(parameters, self.PrmDefaultInnerRadius, context)
+        outer_radius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
+        outer_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmOuterRadius)
+        if outer_radius_dyn:
+            outer_radius_property = parameters[ self.PrmOuterRadius ]
+        inner_radius = self.parameterAsDouble(parameters, self.PrmInnerRadius, context)
+        inner_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmInnerRadius)
+        if inner_radius_dyn:
+            inner_radius_property = parameters[ self.PrmInnerRadius ]
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
 
         measure_factor = conversionToMeters(units)
 
-        def_inner_radius *= measure_factor
-        def_outer_radius *= measure_factor
+        inner_radius_converted = inner_radius * measure_factor
+        outer_radius_converted = outer_radius * measure_factor
 
         pt_spacing = 360.0 / segments
         src_crs = source.sourceCrs()
@@ -180,34 +177,34 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
                     pt = geom_to_4326.transform(pt.x(), pt.y())
                 lat = pt.y()
                 lon = pt.x()
-                if inner_col:
-                    inner_radius = float(feature[inner_col]) * measure_factor
+                if inner_radius_dyn:
+                    inner_rad = inner_radius_property.valueAsDouble(context.expressionContext(), inner_radius)[0] * measure_factor
                 else:
-                    inner_radius = def_inner_radius
-                if outer_col:
-                    outer_radius = float(feature[outer_col]) * measure_factor
+                    inner_rad = inner_radius_converted
+                if outer_radius_dyn:
+                    outer_rad = outer_radius_property.valueAsDouble(context.expressionContext(), outer_radius)[0] * measure_factor
                 else:
-                    outer_radius = def_outer_radius
+                    outer_rad = outer_radius_converted
                 angle = 0
                 while angle < 360:
-                    if inner_radius != 0:
-                        g = geod.Direct(lat, lon, angle, inner_radius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    if inner_rad != 0:
+                        g = geod.Direct(lat, lon, angle, inner_rad, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                         pts_in.append(QgsPointXY(g['lon2'], g['lat2']))
-                    g = geod.Direct(lat, lon, angle, outer_radius, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+                    g = geod.Direct(lat, lon, angle, outer_rad, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                     pts_out.append(QgsPointXY(g['lon2'], g['lat2']))
                     angle += pt_spacing
-                if inner_radius != 0:
+                if inner_rad != 0:
                     pts_in.append(pts_in[0])
                 pts_out.append(pts_out[0])
                 crosses_idl = hasIdlCrossing(pts_out)
                 if crosses_idl:
-                    if inner_radius != 0:
+                    if inner_rad != 0:
                         makeIdlCrossingsPositive(pts_in, True)
                     makeIdlCrossingsPositive(pts_out, True)
 
                 # If the Output crs is not 4326 transform the points to the proper crs
                 if to_sink_crs:
-                    if inner_radius != 0:
+                    if inner_rad != 0:
                         for x, pt_out in enumerate(pts_in):
                             pts_in[x] = to_sink_crs.transform(pt_out)
                     for x, pt_out in enumerate(pts_out):
@@ -215,12 +212,12 @@ class CreateDonutAlgorithm(QgsProcessingAlgorithm):
 
                 f = QgsFeature()
                 if shape_type == 0:
-                    if inner_radius == 0:
+                    if inner_rad == 0:
                         f.setGeometry(QgsGeometry.fromPolygonXY([pts_out]))
                     else:
                         f.setGeometry(QgsGeometry.fromPolygonXY([pts_out, pts_in]))
                 else:
-                    if inner_radius == 0:
+                    if inner_rad == 0:
                         f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts_out]))
                     else:
                         f.setGeometry(QgsGeometry.fromMultiPolylineXY([pts_out, pts_in]))
