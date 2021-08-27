@@ -77,7 +77,7 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             tr('Azimuth/bearing'),
             QgsProcessingParameterNumber.Double,
             defaultValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmAzimuth,
@@ -92,7 +92,7 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue=1000.0,
             minValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmDistance,

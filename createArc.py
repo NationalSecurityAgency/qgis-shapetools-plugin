@@ -99,7 +99,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             tr('Beginning azimuth / Center azimuth'),
             QgsProcessingParameterNumber.Double,
             defaultValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmDefaultAzimuth1,
@@ -113,7 +113,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             tr('Ending azimuth / Azimuth width'),
             QgsProcessingParameterNumber.Double,
             defaultValue=30.0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmDefaultAzimuth2,
@@ -128,7 +128,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue=40.0,
             minValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmOuterRadius,
@@ -143,7 +143,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue=20.0,
             minValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmInnerRadius,

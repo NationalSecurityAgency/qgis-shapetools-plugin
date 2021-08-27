@@ -91,7 +91,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue=20.0,
             minValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmOuterRadius,
@@ -106,7 +106,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue=10.0,
             minValue=0,
-            optional=True)
+            optional=False)
         param.setIsDynamic(True)
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmInnerRadius,
