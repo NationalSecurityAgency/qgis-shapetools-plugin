@@ -23,6 +23,7 @@ from .utils import tr, conversionToMeters, DISTANCE_LABELS, makeIdlCrossingsPosi
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
+
 def geodesicEllipse(geod, lat, lon, sma, smi, orient, segments):
     segments = int(math.ceil(segments / 2))
     if smi < 0.0001:
@@ -276,4 +277,3 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             feedback.pushInfo(s)'''
             return []
         return [feature]
-

@@ -2,18 +2,16 @@ import os
 from geographiclib.geodesic import Geodesic
 
 from qgis.core import (
-    QgsField, QgsPointXY, QgsFeature, QgsGeometry,
+    QgsField, QgsPointXY, QgsGeometry, QgsPropertyDefinition,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform)
 
 from qgis.core import (
     QgsProcessing,
-    QgsProcessingAlgorithm,
+    QgsProcessingFeatureBasedAlgorithm,
+    QgsProcessingParameters,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterFeatureSink)
+    QgsProcessingParameterEnum)
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant, QUrl
@@ -23,32 +21,67 @@ from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LA
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
-class CreatePieAlgorithm(QgsProcessingAlgorithm):
+
+class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     """
     Algorithm to create a donut shape.
     """
 
-    PrmInputLayer = 'InputLayer'
-    PrmOutputLayer = 'OutputLayer'
     PrmShapeType = 'ShapeType'
     PrmAzimuthMode = 'AzimuthMode'
     PrmAzimuth1Field = 'Azimuth1Field'
     PrmAzimuth2Field = 'Azimuth2Field'
     PrmRadiusField = 'RadiusField'
-    PrmDefaultAzimuth1 = 'DefaultAzimuth1'
-    PrmDefaultAzimuth2 = 'DefaultAzimuth2'
-    PrmDefaultRadius = 'DefaultRadius'
+    PrmAzimuth1 = 'Azimuth1'
+    PrmAzimuth2 = 'Azimuth2'
+    PrmRadius = 'Radius'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmDrawingSegments = 'DrawingSegments'
     PrmExportInputGeometry = 'ExportInputGeometry'
 
-    def initAlgorithm(self, config):
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.PrmInputLayer,
-                tr('Input point layer'),
-                [QgsProcessing.TypeVectorPoint])
-        )
+    def createInstance(self):
+        return CreatePieAlgorithm()
+
+    def name(self):
+        return 'createpie'
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'images/pie.png'))
+
+    def displayName(self):
+        return tr('Create pie wedge')
+
+    def group(self):
+        return tr('Geodesic vector creation')
+
+    def groupId(self):
+        return 'vectorcreation'
+
+    def outputName(self):
+        return tr('Output layer')
+
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
+
+    def inputLayerTypes(self):
+        return [QgsProcessing.TypeVectorPoint]
+
+    def outputWkbType(self, input_wkb_type):
+        if self.shape_type == 0:
+            return (QgsWkbTypes.Polygon)
+        return (QgsWkbTypes.LineString)
+
+    def outputFields(self, input_fields):
+        if self.export_geom:
+            name_x, name_y = settings.getGeomNames(input_fields.names())
+            input_fields.append(QgsField(name_x, QVariant.Double))
+            input_fields.append(QgsField(name_y, QVariant.Double))
+        return(input_fields)
+
+    def initParameters(self, config=None):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmShapeType,
@@ -61,37 +94,54 @@ class CreatePieAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterEnum(
                 self.PrmAzimuthMode,
                 tr('Azimuth mode'),
-                options=[tr('Use beginning and ending azimuths'), tr('Use center azimuth and width')],
+                options=[tr('Use beginning and ending azimuths'), tr('Use center azimuth and azimuth width')],
                 defaultValue=1,
                 optional=False)
         )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmAzimuth1Field,
-                tr('Starting azimuth field / Center azimuth field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmAzimuth2Field,
-                tr('Ending azimuth field / Azimuth width field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.PrmRadiusField,
-                tr('Radius field'),
-                parentLayerParameterName=self.PrmInputLayer,
-                type=QgsProcessingParameterField.Any,
-                optional=True
-            )
-        )
+
+        param = QgsProcessingParameterNumber(
+            self.PrmAzimuth1,
+            tr('Beginning azimuth / Center azimuth'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=0,
+            optional=False)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
+            self.PrmAzimuth1,
+            tr('Beginning azimuth / Center azimuth'),
+            QgsPropertyDefinition.Double))
+        param.setDynamicLayerParameterName('INPUT')
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.PrmAzimuth2,
+            tr('Ending azimuth / Azimuth width'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=30.0,
+            optional=False)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
+            self.PrmAzimuth2,
+            tr('Ending azimuth / Azimuth width'),
+            QgsPropertyDefinition.Double))
+        param.setDynamicLayerParameterName('INPUT')
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.PrmRadius,
+            tr('Radius'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue=20.0,
+            minValue=0,
+            optional=False)
+        param.setIsDynamic(True)
+        param.setDynamicPropertyDefinition(QgsPropertyDefinition(
+            self.PrmRadius,
+            tr('Radius'),
+            QgsPropertyDefinition.Double))
+        param.setDynamicLayerParameterName('INPUT')
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmUnitsOfMeasure,
@@ -99,31 +149,6 @@ class CreatePieAlgorithm(QgsProcessingAlgorithm):
                 options=DISTANCE_LABELS,
                 defaultValue=0,
                 optional=False)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultAzimuth1,
-                tr('Default starting azimuth / Default center azimuth'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultAzimuth2,
-                tr('Default ending azimuth / Default azimuth width'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=30.0,
-                optional=True)
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PrmDefaultRadius,
-                tr('Default radius'),
-                QgsProcessingParameterNumber.Double,
-                defaultValue=20.0,
-                minValue=0,
-                optional=True)
         )
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -141,149 +166,100 @@ class CreatePieAlgorithm(QgsProcessingAlgorithm):
                 False,
                 optional=True)
         )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.PrmOutputLayer,
-                tr('Output layer'))
-        )
 
-    def processAlgorithm(self, parameters, context, feedback):
-        source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
-        shapetype = self.parameterAsInt(parameters, self.PrmShapeType, context)
-        azimuthmode = self.parameterAsInt(parameters, self.PrmAzimuthMode, context)
-        startanglecol = self.parameterAsString(parameters, self.PrmAzimuth1Field, context)
-        endanglecol = self.parameterAsString(parameters, self.PrmAzimuth2Field, context)
-        radiusCol = self.parameterAsString(parameters, self.PrmRadiusField, context)
-        startangle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth1, context)
-        endangle = self.parameterAsDouble(parameters, self.PrmDefaultAzimuth2, context)
-        radius = self.parameterAsDouble(parameters, self.PrmDefaultRadius, context)
+    def prepareAlgorithm(self, parameters, context, feedback):
+        self.shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
+        self.azimuthmode = self.parameterAsInt(parameters, self.PrmAzimuthMode, context)
+        self.start_angle = self.parameterAsDouble(parameters, self.PrmAzimuth1, context)
+        self.start_angle_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmAzimuth1)
+        if self.start_angle_dyn:
+            self.start_angle_property = parameters[self.PrmAzimuth1]
+        self.end_angle = self.parameterAsDouble(parameters, self.PrmAzimuth2, context)
+        self.end_angle_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmAzimuth2)
+        if self.end_angle_dyn:
+            self.end_angle_property = parameters[self.PrmAzimuth2]
+        self.radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
+        self.radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmRadius)
+        if self.radius_dyn:
+            self.radius_property = parameters[self.PrmRadius]
         segments = self.parameterAsInt(parameters, self.PrmDrawingSegments, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
-        export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
+        self.export_geom = self.parameterAsBool(parameters, self.PrmExportInputGeometry, context)
 
-        measureFactor = conversionToMeters(units)
+        self.measureFactor = conversionToMeters(units)
 
-        radius *= measureFactor
+        self.radius_converted = self.radius * self.measureFactor
 
-        ptSpacing = 360.0 / segments
+        self.ptSpacing = 360.0 / segments
+        source = self.parameterAsSource(parameters, 'INPUT', context)
         srcCRS = source.sourceCrs()
-        fields = source.fields()
-        if export_geom:
-            names = fields.names()
-            name_x, name_y = settings.getGeomNames(names)
-            fields.append(QgsField(name_x, QVariant.Double))
-            fields.append(QgsField(name_y, QVariant.Double))
-        if shapetype == 0:
-            (sink, dest_id) = self.parameterAsSink(
-                parameters, self.PrmOutputLayer, context, fields,
-                QgsWkbTypes.Polygon, srcCRS)
-        else:
-            (sink, dest_id) = self.parameterAsSink(
-                parameters, self.PrmOutputLayer, context, fields,
-                QgsWkbTypes.LineString, srcCRS)
 
         if srcCRS != epsg4326:
-            geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
-            toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
+            self.geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
+            self.toSinkCrs = QgsCoordinateTransform(epsg4326, srcCRS, QgsProject.instance())
+        else:
+            self.geomTo4326 = None
+            self.toSinkCrs = None
+        return True
 
-        featureCount = source.featureCount()
-        total = 100.0 / featureCount if featureCount else 0
+    def processFeature(self, feature, context, feedback):
+        try:
+            pts = []
+            pt = feature.geometry().asPoint()
+            pt_orig_x = pt.x()
+            pt_orig_y = pt.y()
+            # make sure the coordinates are in EPSG:4326
+            if self.geomTo4326:
+                pt = self.geomTo4326.transform(pt.x(), pt.y())
+            pts.append(pt)
+            if self.start_angle_dyn:
+                sangle, _ = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+            else:
+                sangle = self.start_angle
+            if self.end_angle_dyn:
+                eangle, _ = self.end_angle_property.valueAsDouble(context.expressionContext(), self.end_angle)
+            else:
+                eangle = self.end_angle
+            if self.azimuthmode == 1:
+                width = abs(eangle) / 2.0
+                eangle = sangle + width
+                sangle -= width
+            if self.radius_dyn:
+                dist = self.radius_property.valueAsDouble(context.expressionContext(), self.radius)[0] * self.measureFactor
+            else:
+                dist = self.radius_converted
 
-        numbad = 0
-        iterator = source.getFeatures()
-        for cnt, feature in enumerate(iterator):
-            if feedback.isCanceled():
-                break
-            try:
-                pts = []
-                pt = feature.geometry().asPoint()
-                pt_orig_x = pt.x()
-                pt_orig_y = pt.y()
-                # make sure the coordinates are in EPSG:4326
-                if srcCRS != epsg4326:
-                    pt = geomTo4326.transform(pt.x(), pt.y())
-                pts.append(pt)
-                if startanglecol:
-                    sangle = float(feature[startanglecol])
-                else:
-                    sangle = startangle
-                if endanglecol:
-                    eangle = float(feature[endanglecol])
-                else:
-                    eangle = endangle
-                if azimuthmode == 1:
-                    width = abs(eangle) / 2.0
-                    eangle = sangle + width
-                    sangle -= width
-                if radiusCol:
-                    dist = float(feature[radiusCol]) * measureFactor
-                else:
-                    dist = radius
+            sangle = sangle % 360
+            eangle = eangle % 360
 
-                sangle = sangle % 360
-                eangle = eangle % 360
-
-                if sangle > eangle:
-                    # We are crossing the 0 boundry so lets just subtract
-                    # 360 from it.
-                    sangle -= 360.0
-                while sangle < eangle:
-                    g = geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                    sangle += ptSpacing  # add this number of degrees to the angle
-
-                g = geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+            if sangle > eangle:
+                # We are crossing the 0 boundry so lets just subtract
+                # 360 from it.
+                sangle -= 360.0
+            while sangle < eangle:
+                g = geod.Direct(pt.y(), pt.x(), sangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
                 pts.append(QgsPointXY(g['lon2'], g['lat2']))
-                pts.append(pt)
+                sangle += self.ptSpacing  # add this number of degrees to the angle
 
-                makeIdlCrossingsPositive(pts)
-                # If the Output crs is not 4326 transform the points to the proper crs
-                if srcCRS != epsg4326:
-                    for x, ptout in enumerate(pts):
-                        pts[x] = toSinkCrs.transform(ptout)
+            g = geod.Direct(pt.y(), pt.x(), eangle, dist, Geodesic.LATITUDE | Geodesic.LONGITUDE)
+            pts.append(QgsPointXY(g['lon2'], g['lat2']))
+            pts.append(pt)
 
-                f = QgsFeature()
-                if shapetype == 0:
-                    f.setGeometry(QgsGeometry.fromPolygonXY([pts]))
-                else:
-                    f.setGeometry(QgsGeometry.fromPolylineXY(pts))
+            makeIdlCrossingsPositive(pts)
+            # If the Output crs is not 4326 transform the points to the proper crs
+            if self.toSinkCrs:
+                for x, ptout in enumerate(pts):
+                    pts[x] = self.toSinkCrs.transform(ptout)
+
+            if self.shape_type == 0:
+                feature.setGeometry(QgsGeometry.fromPolygonXY([pts]))
+            else:
+                feature.setGeometry(QgsGeometry.fromPolylineXY(pts))
+            if self.export_geom:
                 attr = feature.attributes()
-                if export_geom:
-                    attr.append(pt_orig_x)
-                    attr.append(pt_orig_y)
-                f.setAttributes(attr)
-                sink.addFeature(f)
-            except Exception:
-                numbad += 1
-
-            if cnt % 100 == 0:
-                feedback.setProgress(int(cnt * total))
-
-        if numbad > 0:
-            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(numbad, featureCount)))
-
-        return {self.PrmOutputLayer: dest_id}
-
-    def name(self):
-        return 'createpie'
-
-    def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'images/pie.png'))
-
-    def displayName(self):
-        return tr('Create pie wedge')
-
-    def group(self):
-        return tr('Geodesic vector creation')
-
-    def groupId(self):
-        return 'vectorcreation'
-
-    def helpUrl(self):
-        file = os.path.dirname(__file__) + '/index.html'
-        if not os.path.exists(file):
-            return ''
-        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
-
-    def createInstance(self):
-        return CreatePieAlgorithm()
+                attr.append(pt_orig_x)
+                attr.append(pt_orig_y)
+                feature.setAttributes(attr)
+        except Exception:
+            return []
+        return [feature]
