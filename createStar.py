@@ -24,7 +24,7 @@ SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
 class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     """
-    Algorithm to create a donut shape.
+    Algorithm to create a star shape.
     """
 
     PrmShapeType = 'ShapeType'
@@ -97,7 +97,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         param.setDynamicPropertyDefinition(QgsPropertyDefinition(
             self.PrmStarPoints,
             tr('Number of points on the star'),
-            QgsPropertyDefinition.Double))
+            QgsPropertyDefinition.Integer))
         param.setDynamicLayerParameterName('INPUT')
         self.addParameter(param)
 
@@ -221,7 +221,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             else:
                 sangle = self.start_angle
             if self.numPoints_dyn:
-                spoints = self.numPoints_property.valueAsDouble(context.expressionContext(), self.numPoints)[0]
+                spoints = self.numPoints_property.valueAsInt(context.expressionContext(), self.numPoints)[0]
                 if spoints < 3:
                     return []
                 shalf = (360.0 / spoints) / 2.0

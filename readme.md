@@ -47,7 +47,7 @@ Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons
 
 The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:
 
-* **Input point layer** - Select the desired points layer.
+* **Input layer** - Select the desired point vector layer.
 * **Output layer** - Select either ***[Create temporary layer]***, ***Save to file...***, ***Save to GeoPackage...***, or ***Save to PostGIS Table...***.
 * **Shape Type** - Specify whether the shape should be drawn as a polygon or as a line.
 * **Add input geometry fields to output table** - If checked, the input point geometry will be added to fields in the output shape table. By default these fields are named ***geom_x*** and ***geom_y***, but can be changed in **Settings**.
@@ -56,9 +56,14 @@ The following are details for creating each shape. All of the shapes are created
 
 <div style="text-align:center"><img src="doc/ellipse.jpg" alt="Ellipse"></div>
 
-Select a point vector layer and an output layer or use the default temporary output layer. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation the axis is measured in degrees in a clockwise direction from the north line. The units of measure for semi-major, and semi-minor lengths are defined by ***Radius units***.
+Select a point vector layer and an output layer or use the default temporary output layer. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation of axis is measured in degrees in a clockwise direction from the north line. The units of measure for semi-major, and semi-minor lengths are defined by ***Radius units***.
 
-If a field in the layer represents the semi-major axis, semi-minor axis, or orientation of axis, then the field can be selected and the data from the layer will be used, otherwise the default values will be used.
+To the right of the semi-major axis, semi-minor axis, and orientation of axis entries are data defined override buttons ![](doc/datadefined.jpg). These fields allow the values to be derived from the contents in the attribute table as shown here.
+
+<div style="text-align:center"><img src="doc/create.jpg" alt="Date defined"></div>
+
+Alternatively, the user can click on the ***Edit...*** button and use any expression they want.
+
 
 ### Line of Bearing
 
