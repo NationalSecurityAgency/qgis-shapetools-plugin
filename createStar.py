@@ -176,6 +176,9 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         if self.start_angle_dyn:
             self.start_angle_property = parameters[self.PrmStartingAngle]
         self.numPoints = self.parameterAsInt(parameters, self.PrmStarPoints, context)
+        if self.numPoints < 3:
+            feedback.reportError('There must be at least 3 points for a star')
+            return False
         self.numPoints_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmStarPoints)
         if self.numPoints_dyn:
             self.numPoints_property = parameters[self.PrmStarPoints]
@@ -189,6 +192,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
 
         source = self.parameterAsSource(parameters, 'INPUT', context)
         srcCRS = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if srcCRS != epsg4326:
             self.geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
@@ -196,6 +200,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geomTo4326 = None
             self.toSinkCrs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -209,20 +214,32 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 pt = self.geomTo4326.transform(pt.x(), pt.y())
 
             if self.outer_radius_dyn:
-                oradius = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)[0] * self.measureFactor
+                oradius, e = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)
+                if not e or oradius < 0:
+                    self.num_bad += 1
+                    return []
+                oradius *= self.measureFactor
             else:
                 oradius = self.outer_radius_converted
             if self.inner_radius_dyn:
-                iradius = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)[0] * self.measureFactor
+                iradius, e = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)
+                if not e or iradius < 0:
+                    self.num_bad += 1
+                    return []
+                iradius *= self.measureFactor
             else:
                 iradius = self.inner_radius_converted
             if self.start_angle_dyn:
-                sangle = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)[0]
+                sangle, e = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 sangle = self.start_angle
             if self.numPoints_dyn:
-                spoints = self.numPoints_property.valueAsInt(context.expressionContext(), self.numPoints)[0]
-                if spoints < 3:
+                spoints, e = self.numPoints_property.valueAsInt(context.expressionContext(), self.numPoints)
+                if not e or spoints < 3:
+                    self.num_bad += 1
                     return []
                 shalf = (360.0 / spoints) / 2.0
             else:
@@ -256,5 +273,11 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         except Exception:
             '''s = traceback.format_exc()
             feedback.pushInfo(s)'''
+            self.num_bad += 1
             return []
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
