@@ -179,6 +179,9 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         if self.end_angle_dyn:
             self.end_angle_property = parameters[self.PrmAzimuth2]
         self.radius = self.parameterAsDouble(parameters, self.PrmRadius, context)
+        if self.radius <= 0:
+            feedback.reportError('Radius parameter must be greater than 0')
+            return False
         self.radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmRadius)
         if self.radius_dyn:
             self.radius_property = parameters[self.PrmRadius]
@@ -193,6 +196,7 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.ptSpacing = 360.0 / segments
         source = self.parameterAsSource(parameters, 'INPUT', context)
         srcCRS = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if srcCRS != epsg4326:
             self.geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
@@ -200,6 +204,7 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geomTo4326 = None
             self.toSinkCrs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -213,11 +218,17 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 pt = self.geomTo4326.transform(pt.x(), pt.y())
             pts.append(pt)
             if self.start_angle_dyn:
-                sangle, _ = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+                sangle, e = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 sangle = self.start_angle
             if self.end_angle_dyn:
-                eangle, _ = self.end_angle_property.valueAsDouble(context.expressionContext(), self.end_angle)
+                eangle, e = self.end_angle_property.valueAsDouble(context.expressionContext(), self.end_angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 eangle = self.end_angle
             if self.azimuthmode == 1:
@@ -225,7 +236,11 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 eangle = sangle + width
                 sangle -= width
             if self.radius_dyn:
-                dist = self.radius_property.valueAsDouble(context.expressionContext(), self.radius)[0] * self.measureFactor
+                dist, e = self.radius_property.valueAsDouble(context.expressionContext(), self.radius)
+                if not e or dist <= 0:
+                    self.num_bad += 1
+                    return []
+                dist *= self.measureFactor
             else:
                 dist = self.radius_converted
 
@@ -261,5 +276,11 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
+            self.num_bad += 1
             return []
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
