@@ -137,6 +137,7 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
 
         source = self.parameterAsSource(parameters, 'INPUT', context)
         srcCRS = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if srcCRS != epsg4326:
             self.geomTo4326 = QgsCoordinateTransform(srcCRS, epsg4326, QgsProject.instance())
@@ -144,16 +145,24 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geomTo4326 = None
             self.toSinkCrs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
         try:
             if self.azimuth_dyn:
-                bearing = self.azimuth_property.valueAsDouble(context.expressionContext(), self.azimuth)[0]
+                bearing, e = self.azimuth_property.valueAsDouble(context.expressionContext(), self.azimuth)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 bearing = self.azimuth
             if self.dist_dyn:
-                distance = self.dist_property.valueAsDouble(context.expressionContext(), self.dist)[0] * self.measureFactor
+                distance, e = self.dist_property.valueAsDouble(context.expressionContext(), self.dist)
+                if not e:
+                    self.num_bad += 1
+                    return []
+                distance *= self.measureFactor
             else:
                 distance = self.dist_converted
             pt = feature.geometry().asPoint()
@@ -186,6 +195,12 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
+            self.num_bad += 1
             return []
 
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
