@@ -208,6 +208,9 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.semi_minor_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmSemiMinorAxis)
         if self.semi_minor_dyn:
             self.semi_minor_property = parameters[self.PrmSemiMinorAxis]
+        if self.semi_major <= 0 or self.semi_minor <= 0:
+            feedback.reportError('Semi Major and Mindor parameters must be greater than 0')
+            return False
         self.orientation = self.parameterAsDouble(parameters, self.PrmOrientation, context)
         self.orientation_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmOrientation)
         if self.orientation_dyn:
@@ -223,6 +226,7 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
 
         source = self.parameterAsSource(parameters, 'INPUT', context)
         src_crs = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if src_crs != epsg4326:
             self.geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
@@ -230,6 +234,7 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geom_to_4326 = None
             self.to_sink_crs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -244,11 +249,19 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             lat = pt.y()
             lon = pt.x()
             if self.semi_major_dyn:
-                sma = self.semi_major_property.valueAsDouble(context.expressionContext(), self.semi_major)[0] * self.measure_factor
+                sma, e = self.semi_major_property.valueAsDouble(context.expressionContext(), self.semi_major)
+                sma *= self.measure_factor
+                if not e or sma <= 0:
+                    self.num_bad += 1
+                    return []
             else:
                 sma = self.semi_major_converted
             if self.semi_minor_dyn:
-                smi = self.semi_minor_property.valueAsDouble(context.expressionContext(), self.semi_minor)[0] * self.measure_factor
+                smi, e = self.semi_minor_property.valueAsDouble(context.expressionContext(), self.semi_minor)
+                smi *= self.measure_factor
+                if not e or smi <= 0:
+                    self.num_bad += 1
+                    return []
             else:
                 smi = self.semi_minor_converted
             if self.orientation_dyn:
@@ -275,5 +288,11 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         except Exception:
             '''s = traceback.format_exc()
             feedback.pushInfo(s)'''
+            self.num_bad += 1
             return []
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
