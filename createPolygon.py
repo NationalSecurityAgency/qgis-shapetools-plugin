@@ -21,6 +21,7 @@ from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LA
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
+
 class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     """
     Algorithm to create a polygon shape.
@@ -155,6 +156,9 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         if self.angle_dyn:
             self.angle_property = parameters[self.PrmStartingAngle]
         self.dist = self.parameterAsDouble(parameters, self.PrmRadius, context)
+        if self.dist <= 0:
+            feedback.reportError('Radius parameter must be greater than 0')
+            return False
         self.dist_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmRadius)
         if self.dist_dyn:
             self.dist_property = parameters[self.PrmRadius]
@@ -166,6 +170,7 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.dist_converted = self.dist * self.measureFactor
 
         source = self.parameterAsSource(parameters, 'INPUT', context)
+        self.total_features = source.featureCount()
         srcCRS = source.sourceCrs()
 
         if srcCRS != epsg4326:
@@ -174,6 +179,7 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geomTo4326 = None
             self.toSinkCrs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -184,15 +190,25 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             if self.geomTo4326:
                 pt = self.geomTo4326.transform(pt.x(), pt.y())
             if self.sides_dyn:
-                s = self.sides_property.valueAsInt(context.expressionContext(), self.sides)[0]
+                s, e = self.sides_property.valueAsInt(context.expressionContext(), self.sides)
+                if not e or s <= 2:
+                    self.num_bad += 1
+                    return []
             else:
                 s = self.sides
             if self.angle_dyn:
-                startangle = self.angle_property.valueAsDouble(context.expressionContext(), self.angle)[0]
+                startangle, e = self.angle_property.valueAsDouble(context.expressionContext(), self.angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 startangle = self.angle
             if self.dist_dyn:
-                d = self.dist_property.valueAsDouble(context.expressionContext(), self.dist)[0] * self.measureFactor
+                d, e = self.dist_property.valueAsDouble(context.expressionContext(), self.dist)
+                d = d * self.measureFactor
+                if not e or d <= 0:
+                    self.num_bad += 1
+                    return []
             else:
                 d = self.dist_converted
             pts = []
@@ -219,5 +235,11 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
+            self.num_bad += 1
             return []
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
