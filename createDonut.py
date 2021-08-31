@@ -143,6 +143,9 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     def prepareAlgorithm(self, parameters, context, feedback):
         self.shape_type = self.parameterAsInt(parameters, self.PrmShapeType, context)
         self.outer_radius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
+        if self.outer_radius <= 0:
+            feedback.reportError('Outer radius parameter must be greater than 0')
+            return False
         self.outer_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmOuterRadius)
         if self.outer_radius_dyn:
             self.outer_radius_property = parameters[self.PrmOuterRadius]
@@ -162,6 +165,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.pt_spacing = 360.0 / segments
         source = self.parameterAsSource(parameters, 'INPUT', context)
         src_crs = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if src_crs != epsg4326:
             self.geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
@@ -169,6 +173,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geom_to_4326 = None
             self.to_sink_crs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -184,11 +189,19 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             lat = pt.y()
             lon = pt.x()
             if self.inner_radius_dyn:
-                inner_rad = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)[0] * self.measure_factor
+                inner_rad, e = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)
+                if not e:
+                    self.num_bad += 1
+                    return []
+                inner_rad *= self.measure_factor
             else:
                 inner_rad = self.inner_radius_converted
             if self.outer_radius_dyn:
-                outer_rad = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)[0] * self.measure_factor
+                outer_rad, e = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)
+                outer_rad *= self.measure_factor
+                if not e or outer_rad <= 0:
+                    self.num_bad += 1
+                    return []
             else:
                 outer_rad = self.outer_radius_converted
             angle = 0
@@ -232,5 +245,11 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
+            self.num_bad += 1
             return []
         return [feature]
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}

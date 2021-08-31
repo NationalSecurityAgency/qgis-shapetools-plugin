@@ -189,6 +189,9 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         if self.end_angle_dyn:
             self.end_angle_property = parameters[self.PrmAzimuth2]
         self.outer_radius = self.parameterAsDouble(parameters, self.PrmOuterRadius, context)
+        if self.outer_radius <= 0:
+            feedback.reportError('Outer radius parameter must be greater than 0')
+            return False
         self.outer_radius_dyn = QgsProcessingParameters.isDynamic(parameters, self.PrmOuterRadius)
         if self.outer_radius_dyn:
             self.outer_radius_property = parameters[self.PrmOuterRadius]
@@ -208,6 +211,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         self.pt_spacing = 360.0 / segments
         source = self.parameterAsSource(parameters, 'INPUT', context)
         src_crs = source.sourceCrs()
+        self.total_features = source.featureCount()
 
         if src_crs != epsg4326:
             self.geom_to_4326 = QgsCoordinateTransform(src_crs, epsg4326, QgsProject.instance())
@@ -215,6 +219,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         else:
             self.geom_to_4326 = None
             self.to_sink_crs = None
+        self.num_bad = 0
         return True
 
     def processFeature(self, feature, context, feedback):
@@ -227,11 +232,17 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             if self.geom_to_4326:
                 pt = self.geom_to_4326.transform(pt.x(), pt.y())
             if self.start_angle_dyn:
-                sangle, _ = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+                sangle, e = self.start_angle_property.valueAsDouble(context.expressionContext(), self.start_angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 sangle = self.start_angle
             if self.end_angle_dyn:
-                eangle, _ = self.end_angle_property.valueAsDouble(context.expressionContext(), self.end_angle)
+                eangle, e = self.end_angle_property.valueAsDouble(context.expressionContext(), self.end_angle)
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 eangle = self.end_angle
             if self.azimuth_mode == 1:
@@ -239,11 +250,19 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 eangle = sangle + width
                 sangle -= width
             if self.outer_radius_dyn:
-                outer_dist = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)[0] * self.measure_factor
+                outer_dist, e = self.outer_radius_property.valueAsDouble(context.expressionContext(), self.outer_radius)
+                if not e or outer_dist <= 0:
+                    self.num_bad += 1
+                    return []
+                outer_dist *= self.measure_factor
             else:
                 outer_dist = self.outer_radius_converted
             if self.inner_radius_dyn:
-                inner_dist = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)[0] * self.measure_factor
+                inner_dist, e = self.inner_radius_property.valueAsDouble(context.expressionContext(), self.inner_radius)
+                inner_dist *= self.measure_factor
+                if not e:
+                    self.num_bad += 1
+                    return []
             else:
                 inner_dist = self.inner_radius_converted
 
@@ -329,4 +348,10 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 feature.setAttributes(attr)
             return [feature]
         except Exception:
+            self.num_bad += 1
             return []
+
+    def postProcessAlgorithm(self, context, feedback):
+        if self.num_bad:
+            feedback.pushInfo(tr("{} out of {} features had invalid parameters and were ignored.".format(self.num_bad, self.total_features)))
+        return {}
