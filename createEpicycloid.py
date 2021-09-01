@@ -19,7 +19,6 @@ from qgis.PyQt.QtCore import QVariant, QUrl
 
 from .settings import settings, epsg4326, geod
 from .utils import tr, conversionToMeters, makeIdlCrossingsPositive, DISTANCE_LABELS
-import traceback
 
 SHAPE_TYPE = [tr("Polygon"), tr("Line")]
 
@@ -260,8 +259,6 @@ class CreateEpicycloidAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
-            s = traceback.format_exc()
-            feedback.pushInfo(s)
             self.num_bad += 1
             return []
         return [feature]
