@@ -13,6 +13,7 @@ import os.path
 import webbrowser
 from .provider import ShapeToolsProvider
 from .geodesicFlip import flipLayer
+from .stFunctions import InitShapeToolsFunctions, UnloadShapeToolsFunctions
 
 def tr(string):
     return QCoreApplication.translate('@default', string)
@@ -250,6 +251,8 @@ class ShapeTools(object):
 
         # Add the processing provider
         QgsApplication.processingRegistry().addProvider(self.provider)
+        
+        InitShapeToolsFunctions()
 
     def unsetTool(self, tool):
         try:
@@ -298,6 +301,7 @@ class ShapeTools(object):
         del self.toolbar
 
         QgsApplication.processingRegistry().removeProvider(self.provider)
+        UnloadShapeToolsFunctions()
 
     def toolButtonTriggered(self, action):
         self.transformationButton.setDefaultAction(action)
