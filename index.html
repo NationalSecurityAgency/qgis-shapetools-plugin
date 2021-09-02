@@ -80,7 +80,7 @@ code {
 <p>Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
 <p>The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:</p>
 <ul>
-<li><strong>Input point layer</strong> - Select the desired points layer.</li>
+<li><strong>Input layer</strong> - Select the desired point vector layer.</li>
 <li><strong>Output layer</strong> - Select either <strong><em>[Create temporary layer]</em></strong>, <strong><em>Save to file...</em></strong>, <strong><em>Save to GeoPackage...</em></strong>, or <strong><em>Save to PostGIS Table...</em></strong>.</li>
 <li><strong>Shape Type</strong> - Specify whether the shape should be drawn as a polygon or as a line.</li>
 <li><strong>Add input geometry fields to output table</strong> - If checked, the input point geometry will be added to fields in the output shape table. By default these fields are named <strong><em>geom_x</em></strong> and <strong><em>geom_y</em></strong>, but can be changed in <strong>Settings</strong>.</li>
@@ -88,14 +88,17 @@ code {
 <h3>Ellipse</h3>
 <div style="text-align:center"><img src="doc/ellipse.jpg" alt="Ellipse"></div>
 
-<p>Select a point vector layer and an output layer or use the default temporary output layer. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation the axis is measured in degrees in a clockwise direction from the north line. The units of measure for semi-major, and semi-minor lengths are defined by <strong><em>Radius units</em></strong>.</p>
-<p>If a field in the layer represents the semi-major axis, semi-minor axis, or orientation of axis, then the field can be selected and the data from the layer will be used, otherwise the default values will be used.</p>
+<p>Select a point vector layer and an output layer or use the default temporary output layer. Then select the specific ellipse parameters. The semi-major axis of the ellipse runs along the orientation axis. The orientation of axis is measured in degrees in a clockwise direction from the north line. The units of measure for semi-major, and semi-minor lengths are defined by <strong><em>Radius units</em></strong>.</p>
+<p>To the right of the semi-major axis, semi-minor axis, and orientation of axis entries are data defined override buttons <img alt="" src="doc/datadefined.jpg" />. These fields allow the values to be derived from the contents in the attribute table as shown here.</p>
+<div style="text-align:center"><img src="doc/create.jpg" alt="Date defined"></div>
+
+<p>Alternatively, the user can click on the <strong><em>Edit...</em></strong> button and use any valid expression.</p>
 <h3>Line of Bearing</h3>
 <p><strong>Bearing</strong> is the angle measured in degrees, in a clockwise direction from the north line. A <strong>line of bearing</strong> is the line drawn from a starting point in the direction of the <strong>bearing</strong> or azimuth for the selected distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. </p>
 <h3>Pie Wedge</h3>
-<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer data fields or from the <strong>Default</strong> parameters. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is efectively 360 degrees, the a donut is created.</p>
+<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.</p>
 <h3>Donut</h3>
-<p>Create a donut shape. The inner and outer radius is specified either as default values or from the attribute table. If the inner radius is 0 then a solid circle is drawn. <strong>Number of drawing segments</strong> defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.</p>
+<p>Create a donut shape. The inner and outer radius are specified from the default values, from the attribute table, or expression. If the inner radius is 0 then a solid circle is drawn. <strong>Number of drawing segments</strong> defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.</p>
 <h3>Arc wedge</h3>
 <p>In essence this takes a wedge of a donut shape. The parameters are similar to <strong>Pie wedge</strong> and <strong>Donut</strong>.</p>
 <h3>Polygon</h3>
@@ -113,7 +116,7 @@ code {
 <h3>Heart</h3>
 <p>Create a mathematical heart which fits within the circle defined by its radius.</p>
 <h3>Radial lines</h3>
-<p>Create N-radial lines equally spaced around the point starting from the inner radius and exteding out to the outer radius.</p>
+<p>Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.</p>
 <h2><a name="xy-to-line"></a> <img alt="XY to Line" src="images/xyline.svg" /> XY to Line</h2>
 <p>This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.</p>
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>

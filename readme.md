@@ -62,7 +62,7 @@ To the right of the semi-major axis, semi-minor axis, and orientation of axis en
 
 <div style="text-align:center"><img src="doc/create.jpg" alt="Date defined"></div>
 
-Alternatively, the user can click on the ***Edit...*** button and use any expression they want.
+Alternatively, the user can click on the ***Edit...*** button and use any valid expression.
 
 
 ### Line of Bearing
@@ -71,11 +71,11 @@ Alternatively, the user can click on the ***Edit...*** button and use any expres
 
 ### Pie Wedge
 
-If **Azimuth mode** it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer data fields or from the **Default** parameters. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is efectively 360 degrees, the a donut is created.
+If **Azimuth mode** it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.
 
 ### Donut
 
-Create a donut shape. The inner and outer radius is specified either as default values or from the attribute table. If the inner radius is 0 then a solid circle is drawn. **Number of drawing segments** defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.
+Create a donut shape. The inner and outer radius are specified from the default values, from the attribute table, or expression. If the inner radius is 0 then a solid circle is drawn. **Number of drawing segments** defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.
 
 ### Arc wedge
 
@@ -111,7 +111,7 @@ Create a mathematical heart which fits within the circle defined by its radius.
 
 ### Radial lines
 
-Create N-radial lines equally spaced around the point starting from the inner radius and exteding out to the outer radius.
+Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.
 
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.svg) XY to Line
 This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
