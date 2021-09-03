@@ -77,6 +77,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return(input_fields)
 
     def initParameters(self, config=None):
+        self.shape_type = 0
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmShapeType,
