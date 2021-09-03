@@ -20,14 +20,70 @@ def transform_geom(geom, crs):
     return(geom)
 
 def InitShapeToolsFunctions():
+    QgsExpression.registerFunction(st_from_meters)
     QgsExpression.registerFunction(st_to_meters)
     QgsExpression.registerFunction(st_geodesic_distance)
     QgsExpression.registerFunction(st_geodesic_bearing)
 
 def UnloadShapeToolsFunctions():
+    QgsExpression.unregisterFunction('st_from_meters')
     QgsExpression.unregisterFunction('st_to_meters')
     QgsExpression.unregisterFunction('st_geodesic_distance')
     QgsExpression.unregisterFunction('st_geodesic_bearing')
+
+@qgsfunction(args=2, group=group_name)
+def st_from_meters(values, feature, parent):
+    """
+    Convert a length in meters to another unit.
+
+    <h4>Syntax</h4>
+    <p><b>st_from_meters</b>( <i>length</i>, <i>units</i> )</p>
+
+    <h4>Arguments</h4>
+    <ul>
+    <li><i>length</i> &rarr; the length in meters to be converted.</li>
+    <li><i>units</i> &rarr; conversion unit</li>
+    <ul>
+    <li><i>'cm<'/i> &rarr; centimeters</li>
+    <li><i>'m'</i> &rarr; meters</li>
+    <li><i>'km'</i> &rarr; kilometers</li>
+    <li><i>'in'</i> &rarr; inches</li>
+    <li><i>'ft'</i> &rarr; feet</li>
+    <li><i>'yard'</i> &rarr; yards</li>
+    <li><i>'mi'</i> &rarr; miles</li>
+    <li><i>'nm'</i> &rarr; nautical miles</li>
+    </ul></ul>
+
+    <h4>Example usage</h4>
+    <ul>
+      <li><b>st_from_meters</b>(1000, 'km') &rarr; returns 1</li>
+    </ul>
+    """
+    try:
+        len = float(values[0])
+        unit = values[1]
+        if unit == 'cm':
+            return (len * 100)
+        elif unit == 'm':
+            return (len)
+        elif unit == 'km':
+            return(len * 0.001)
+        elif unit == 'in':
+            return (len * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet) * 12.0)
+        elif unit == 'ft':
+            return(len * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet))
+        elif unit == 'yard':
+            return(len * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceYards))
+        elif unit == 'mi':
+            return(len * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles))
+        elif unit == 'nm':
+            return(len * QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles))
+        else:
+            parent.setEvalErrorString("Error: invalid unit")
+        return
+    except Exception:
+        parent.setEvalErrorString("Error: invalid inputs")
+        return
 
 @qgsfunction(args=2, group=group_name)
 def st_to_meters(values, feature, parent):
@@ -93,15 +149,13 @@ def st_geodesic_distance(values, feature, parent):
     <p><b>st_geodesic_distance</b>( <i>geom_1, geom_2[, crs='EPSG:4326']</i> )</p>
 
     <h4>Arguments</h4>
-    <p><i>y1</i> &rarr; the y or latitude coordinate for the first point.</p>
-    <p><i>x1</i> &rarr; the x or longitude coordinate for the first point.</p>
-    <p><i>y2</i> &rarr; the y or latitude coordinate for the second point.</p>
-    <p><i>x2</i> &rarr; the x or longitude coordinate for the second point.</p>
+    <p><i>y1</i> &rarr; the y or latitude coordinate for the first point.<br />
+    <i>x1</i> &rarr; the x or longitude coordinate for the first point.<br />
+    <i>y2</i> &rarr; the y or latitude coordinate for the second point.<br />
+    <i>x2</i> &rarr; the x or longitude coordinate for the second point.</p>
+    <p><i>geom1</i> &rarr; the first point geometry.<br />
+    <i>geom2</i> &rarr; the second point geometry.</p>
     <p><i>crs</i> &rarr; optional coordinate reference system of the y, x coordinates. Default value is 'EPSG:4326' if not specified.</p>
-    <p>&nbsp</p>
-    <p><i>geom1</i> &rarr; the first point geometry.</p>
-    <p><i>geom2</i> &rarr; the second point geometry.</p>
-
 
     <h4>Example usage</h4>
     <ul>
@@ -159,22 +213,20 @@ def st_geodesic_bearing(values, feature, parent):
     <p><b>st_geodesic_bearing</b>( <i>geom_1, geom_2[, crs='EPSG:4326']</i> )</p>
 
     <h4>Arguments</h4>
-    <p><i>y1</i> &rarr; the y or latitude coordinate for the first point.</p>
-    <p><i>x1</i> &rarr; the x or longitude coordinate for the first point.</p>
-    <p><i>y2</i> &rarr; the y or latitude coordinate for the second point.</p>
-    <p><i>x2</i> &rarr; the x or longitude coordinate for the second point.</p>
+    <p><i>y1</i> &rarr; the y or latitude coordinate for the first point.<br />
+    <i>x1</i> &rarr; the x or longitude coordinate for the first point.<br />
+    <i>y2</i> &rarr; the y or latitude coordinate for the second point.<br />
+    <i>x2</i> &rarr; the x or longitude coordinate for the second point.</p>
+    <p><i>geom1</i> &rarr; the first point geometry.<br />
+    <i>geom2</i> &rarr; the second point geometry.</p>
     <p><i>crs</i> &rarr; optional coordinate reference system of the y, x coordinates. Default value is 'EPSG:4326' if not specified.</p>
-    <p>&nbsp</p>
-    <p><i>geom1</i> &rarr; the first point geometry.</p>
-    <p><i>geom2</i> &rarr; the second point geometry.</p>
-
 
     <h4>Example usage</h4>
     <ul>
       <li><b>st_geodesic_bearing</b>(40.0124, -105.2713, 39.7407, -104.9880) &rarr; 141.131805</li>
-      <li><b>st_geodesic_bearing</b>(4867744, -11718747, 4828332, -11687210, 'EPSG:3857') &rarr; 141.131900</li>
+      <li><b>st_geodesic_bearing</b>(4867744, -11718747, 4828332, -11687210, 'EPSG:3857') &rarr; 141.1319</li>
       <li><b>st_geodesic_bearing</b>(<b>make_point</b>(-105.2713, 40.0124), <b>make_point</b>(-104.9880, 39.7407)) &rarr; 141.131805</li>
-      <li><b>st_geodesic_bearing</b>(<b>make_point</b>(-11718747, 4867744), <b>make_point</b>(-11687210, 4828332), 'EPSG:3857') &rarr; 141.131900</li>
+      <li><b>st_geodesic_bearing</b>(<b>make_point</b>(-11718747, 4867744), <b>make_point</b>(-11687210, 4828332), 'EPSG:3857') &rarr; 141.1319</li>
     </ul>
     """
     num_args = len(values)
