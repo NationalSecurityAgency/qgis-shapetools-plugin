@@ -379,7 +379,7 @@ def st_geodesic_transform(values, feature, parent):
             geom.moveVertex(new_vertex.x(), new_vertex.y(), vcnt)
         return(geom)
     except Exception:
-        s = traceback.format_exc()
-        parent.setEvalErrorString(s)
-        # parent.setEvalErrorString("Error: invalid input")
+        '''s = traceback.format_exc()
+        parent.setEvalErrorString(s)'''
+        parent.setEvalErrorString("Error: invalid input")
         return
