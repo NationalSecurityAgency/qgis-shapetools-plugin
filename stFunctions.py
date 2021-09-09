@@ -149,7 +149,7 @@ def st_geodesic_distance(values, feature, parent):
 
     <h4>Syntax</h4>
     <p><b>st_geodesic_distance</b>( <i>y1, x1, y2, x2[, crs='EPSG:4326']</i> )</p>
-    <p><b>st_geodesic_distance</b>( <i>geom_1, geom_2[, crs='EPSG:4326']</i> )</p>
+    <p><b>st_geodesic_distance</b>( <i>geom1, geom2[, crs='EPSG:4326']</i> )</p>
 
     <h4>Arguments</h4>
     <p><i>y1</i> &rarr; the y or latitude coordinate for the first point.<br />
@@ -284,6 +284,7 @@ def st_geodesic_transform(values, feature, parent):
     <li><i>distance</i> &rarr; the translation distance. Default is 0.</li>
     <li><i>azimuth</i> &rarr; the translation azimuth in degrees. Default is 0.</li>
     <li><i>unit</i> &rarr; translation distance units</li>
+    <li><i>crs</i> &rarr; optional coordinate reference system of the input geometry. Default value is 'EPSG:4326' if not specified.</li>
     <ul>
     <li><i>'cm'</i> &rarr; centimeters</li>
     <li><i>'m'</i> &rarr; meters</li>

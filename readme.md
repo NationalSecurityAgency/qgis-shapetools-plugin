@@ -1,6 +1,6 @@
 # QGIS Shape Tools Plugin
 
-***Shape Tools*** is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. 
+***Shape Tools*** is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, in the field calculator, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. 
 
 * <img src="images/shapes.png" width="24"> **Create shapes** processes a point vector layer to create ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.svg) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.
@@ -14,6 +14,7 @@
 * ![Geodesic flip and rotate](images/flip.svg) **Geodesic flip & rotate tools** provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.
 * ![Azimuth, distance digitizer](images/dazdigitize.svg) **Azimuth, distance digitizer** creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.
 * ![Azimuth distance sequence digitizer](images/linedigitize.svg) **Azimuth distance sequence digitizer** digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.
+* **Field Calculator Expression Functions** provides 5 expressions: st_from_meters(), st_to_meters(), st_geodesic_bearing(), st_geodesic_distance(), and st_geodesic_transform().
 
 ## Contents
 
@@ -29,6 +30,7 @@
 * [Geodesic Flip and Rotate Tools](#geodesic-flip)
 * [Azimuth, Distance Digitizer](#azimuth-distance)
 * [Azimuth Distance Sequence Digitizer](#azimuth-distance-sequence)
+* [Field Calculator Expression Functions](#expressions)
 * [Settings](#settings)
 
 ## <a name="create-shapes"></a> <img src="images/shapes.png" width="24"> Create Shapes
@@ -304,6 +306,102 @@ Azimuth is in degrees and distance is in the selected *Distance units of measure
 <div style="text-align:center"><img src="doc/az-sequence.jpg" alt="Azimuth, Distance Sequence Digitizer"></div>
 
 This is similar to the **Azimuth, Distance Digitizer**, but it provides the ability to click on the map as a starting point and then give a series of bearings and distances in the order of 'bearing 1, distance 1, bearing 2, distance 2, ... bearing N, distance N' and it will create a path. This is useful in some survey work. If older surveying used magnetic north, it can be compensated for by the **Bearing / declination adjustment**. Magnetic declination changes over time, but the [NOAA Magnetic Field Calculator](https://www.ngdc.noaa.gov/geomag-web/#declination) provides an easy interface to estimate the magnetic north declination at a certain latitude, longitude and time, all the way back to 1590. West declination will be a negative number and east declination is a positive number. If a polygon layer is selected then the resulting shape automatically closes the polygon such that the beginning and ending points are the same. If a line layer is selected then you have the option of automatically adding a line segment from the last point in the sequence to the first point. If a point layer is selected, then only the nodes will be added to the layer. If snapping is enabled (*Project->Snapping Options...*), then when the cursor hovers close to an existing point or vertex, a bounding box around the point will be displayed. Clicking near the vertex will snap its location to be used by the ***Azimuth, Distance Sequence Digitizer*** as its starting point.
+
+## <a name="expressions"></a>Expression Functions
+
+**Shape Tools** includes the following field calculator functions:
+
+<b>st_from_meters()</b> converts a distance measurement from meters into the specified measurement unit.
+
+* Syntax
+    * <b>st_from_meters</b>(<i>length</i>, <i>units</i>)
+        * <i>length</i> &rarr; the length in meters to be converted.
+        * <i>units</i> &rarr; conversion unit
+            * 'cm' &rarr; centimeters
+            * 'm' &rarr; meters
+            * 'km' &rarr; kilometers
+            * 'in' &rarr; inches
+            * 'ft' &rarr; feet
+            * 'yard' &rarr; yards
+            * 'mi' &rarr; miles
+            * 'nm' &rarr; nautical miles
+* Example
+    * <b>st_from_meters</b>(1000, 'km') &rarr; returns 1.0
+
+<b>st_to_meters()</b> converts a distance measurement into meters.
+
+* Syntax
+    * <b>st_to_meters</b>(<i>length</i>, <i>units</i>)
+        * <i>length</i> &rarr; the length to be converted into meters.
+        * <i>units</i> &rarr; conversion unit
+            * 'cm' &rarr; centimeters
+            * 'm' &rarr; meters
+            * 'km' &rarr; kilometers
+            * 'in' &rarr; inches
+            * 'ft' &rarr; feet
+            * 'yard' &rarr; yards
+            * 'mi' &rarr; miles
+            * 'nm' &rarr; nautical miles
+* Example
+    * <b>st_to_meters</b>(1, 'km') &rarr; returns 1000.0.
+
+<b>st_geodesic_distance()</b> returns the geodesic distance in meters between two y, x (latitude, longitude) coordinates or two geometry points.
+
+* Syntax
+    * <b>st_geodesic_distance</b>(<i>y1, x1, y2, x2[, crs='EPSG:4326']</i>)
+    * <b>st_geodesic_distance</b>(<i>geom1, geom2[, crs='EPSG:4326']</i>)
+    * <i>y1</i> &rarr; the y or latitude coordinate for the first point.
+    * <i>x1</i> &rarr; the x or longitude coordinate for the first point.
+    * <i>y2</i> &rarr; the y or latitude coordinate for the second point.
+    * <i>x2</i> &rarr; the x or longitude coordinate for the second point.
+    * <i>geom1</i> &rarr; the first point geometry.
+    * <i>geom2</i> &rarr; the second point geometry.
+    * <i>crs</i> &rarr; optional coordinate reference system of the y, x coordinates or geom1 and geom2. Default value is 'EPSG:4326' if not specified.
+* Examples
+    * <b>st_geodesic_distance</b>(40.0124, -105.2713, 39.7407, -104.9880) &rarr; 38696.715933
+    * <b>st_geodesic_distance</b>(4867744, -11718747, 4828332, -11687210, 'EPSG:3857') &rarr; 38697.029390
+    * <b>st_geodesic_distance</b>(<b>make_point</b>(-105.2713, 40.0124), <b>make_point</b>(-104.9880, 39.7407)) &rarr; 38696.715933
+    * <b>st_geodesic_distance</b>(<b>make_point</b>(-11718747, 4867744), <b>make_point</b>(-11687210, 4828332), 'EPSG:3857') &rarr; 38697.029390
+
+<b>st_geodesic_bearing()</b> returns the geodesic azimuth or bearing starting from the first y, x (latitude, longitude) coordinate in the direction of the second coordinate.
+
+* Syntax
+    * <b>st_geodesic_bearing</b>(<i>y1, x1, y2, x2[, crs='EPSG:4326']</i>)
+    * <b>st_geodesic_bearing</b>(<i>geom1, geom2[, crs='EPSG:4326']</i>)
+    * <i>y1</i> &rarr; the y or latitude coordinate for the first point.
+    * <i>x1</i> &rarr; the x or longitude coordinate for the first point.
+    * <i>y2</i> &rarr; the y or latitude coordinate for the second point.
+    * <i>x2</i> &rarr; the x or longitude coordinate for the second point.
+    * <i>geom1</i> &rarr; the first point geometry.
+    * <i>geom2</i> &rarr; the second point geometry.
+    * <i>crs</i> &rarr; optional coordinate reference system of the y, x coordinates or geom1 and geom2. Default value is 'EPSG:4326' if not specified.
+* Examples
+    * <b>st_geodesic_bearing</b>(40.0124, -105.2713, 39.7407, -104.9880) &rarr; 141.131805
+    * <b>st_geodesic_bearing</b>(4867744, -11718747, 4828332, -11687210, 'EPSG:3857') &rarr; 141.1319
+    * <b>st_geodesic_bearing</b>(<b>make_point</b>(-105.2713, 40.0124), <b>make_point</b>(-104.9880, 39.7407)) &rarr; 141.131805
+    * <b>st_geodesic_bearing</b>(<b>make_point</b>(<b>make_point</b>(-11718747, 4867744), <b>make_point</b>(-11687210, 4828332), 'EPSG:3857') &rarr; 141.1319
+
+<b>st_geodesic_transform</b> geodesically transfrom a shape (point, line, polygon) using rotation, translation, and scaling.
+
+* Syntax
+    * <b>st_geodesic_transform</b>( <i>geom [, scale=1, rotate=0, distance=0, azimuth=0, unit='m', crs='EPSG:4326'</i>)
+    * <i>geom</i> &rarr; input geometry (point, line, polygon).
+    * <i>scale</i> &rarr; the scale factor. Default is 1.0.
+    * <i>rotate</i> &rarr; the rotation angle in degrees. Default is 0 degrees.
+    * <i>distance</i> &rarr; the translation distance. Default is 0.
+    * <i>azimuth</i> &rarr; the translation azimuth in degrees. Default is 0.
+    * <i>unit</i> &rarr; translation distance units.
+        * 'cm' &rarr; centimeters
+        * 'm' &rarr; meters
+        * 'km' &rarr; kilometers
+        * 'in' &rarr; inches
+        * 'ft' &rarr; feet
+        * 'yard' &rarr; yards
+        * 'mi' &rarr; miles
+        * 'nm' &rarr; nautical miles
+    * <i>crs</i> &rarr; optional coordinate reference system of the input geometry. Default value is 'EPSG:4326' if not specified.
+* Example
+    * <b>geom_to_wkt</b> ( <b>st_geodesic_transform</b>(make_line(make_point(2,4),make_point(3,5)), 1.0, 45, 1000, 90, 'km')) &rarr; returns 'LineString (10.80438811 4.44561039, 12.21595371 4.44309579)'
 
 ## <a name="settings"></a>Settings
 
