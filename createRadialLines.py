@@ -73,6 +73,7 @@ class CreateRadialLinesAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return(input_fields)
 
     def initParameters(self, config=None):
+        self.export_geom = False
         param = QgsProcessingParameterNumber(
             self.PrmNumberOfLines,
             tr('Number of radial lines'),

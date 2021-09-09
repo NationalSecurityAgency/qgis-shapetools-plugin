@@ -80,6 +80,7 @@ class CreateEpicycloidAlgorithm(QgsProcessingFeatureBasedAlgorithm):
 
     def initParameters(self, config=None):
         self.shape_type = 0
+        self.export_geom = False
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PrmShapeType,

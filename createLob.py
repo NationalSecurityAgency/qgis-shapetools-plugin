@@ -72,6 +72,7 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return(input_fields)
 
     def initParameters(self, config=None):
+        self.export_geom = False
         param = QgsProcessingParameterNumber(
             self.PrmAzimuth,
             tr('Azimuth/bearing'),
