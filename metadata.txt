@@ -2,7 +2,7 @@
 name=Shape Tools
 qgisMinimumVersion=3.4
 description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, radial line, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
-version=3.3.19
+version=3.4.0
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
@@ -16,9 +16,10 @@ about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is i
     "Geodesic Transformation Tool" can scale, rotate and translate any shape.
     "Geodesic flip & rotate tools" provide geodesic flip and rotation vector feature transformations.
     "Azimuth, Distance Digitizer" digitizes points based on a clicked point, an azimuth and distance or creates a geodesic line from a clicked point to an azimuth and distance.
+    "Field Calculator Functions" provides geodesic functions in the field calculator.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
-tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,decimate,decimation,simplify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate
+tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,decimate,decimation,simplify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate,expression,field calculator
 homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 category=Vector
 icon=icon.png
@@ -26,6 +27,7 @@ experimental=False
 deprecated=False
 hasProcessingProvider=yes
 changelog=
+    3.4.0 - Added field calculator functions.
     3.3.19 - Rewrote geodesic creation algorithms to include data defined overrides.
     3.3.18 - Added data defined overrides to the geodesic transformations algorithm.
     3.3.17 - Addressed issues #37 and #38.
@@ -41,16 +43,3 @@ changelog=
     3.3.7 - Added exact coordinate entry in measurement tool.
     3.3.6 - Added Chinese language support
     3.3.5 - Added the ability to quickly copy geodesic measurement values onto the clipboard.
-    3.3.4 - Moved all shapes to processing only and added the option to include input point geometry into the output table of the created shapes.
-    3.3.3 - Added inches and centimeters for units of measure in all the respective tools.
-    3.3.2 - Bug fix.
-    3.3.1 - Added geodesic flip & rotation tools
-    3.3.0 - Added geodesic transformation tool
-    3.2.4 - Changed ellipse algorithm to be geodesic and made other minor improvements
-    3.2.3 - Added max segment length in densifier processing dialog
-    3.2.2 - Fix in geodesic densifier for badly formed lines and polygons
-    3.2.1 - Added historical ellipsoids
-    3.2.0 - Added multi-azimuth/distance digitizer & geodesic measurement layer
-    3.1.2 - Bug fix
-    3.1.1 - Added arc wedge shape and now support more ellipsoids for measurements.
-    3.1.0 - Added geodesic line break, and added some shape creation to processing.
