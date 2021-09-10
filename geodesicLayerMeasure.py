@@ -35,6 +35,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
     PrmMeasureTotalLength = 'MeasureTotalLength'
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmAutomaticStyline = 'AutomaticStyline'
+    PrmRetainAttributes = 'RetainAttributes'
 
     def initAlgorithm(self, config):
         self.addParameter(
@@ -48,6 +49,13 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                 self.PrmMeasureTotalLength,
                 tr('Measure total length rather than each line segment'),
                 True,
+                optional=True)
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmRetainAttributes,
+                tr('Retain the original source feature attributes'),
+                False,
                 optional=True)
         )
         self.addParameter(
@@ -74,6 +82,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.PrmInputLayer, context)
         measureTotal = self.parameterAsBool(parameters, self.PrmMeasureTotalLength, context)
+        retain_attributes = self.parameterAsBool(parameters, self.PrmRetainAttributes, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
         autoStyle = self.parameterAsBool(parameters, self.PrmAutomaticStyline, context)
 
@@ -86,6 +95,14 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
         if not measureTotal:
             f.append(QgsField("heading_to", QVariant.Double))
             f.append(QgsField("total_distance", QVariant.Double))
+        if retain_attributes:
+            fields = source.fields()
+            for fld in fields:
+                if not f.append(fld):
+                    name = '_'+fld.name()
+                    fld.setName(name)
+                    f.append(fld)
+            
 
         (sink, dest_id) = self.parameterAsSink(
             parameters, self.PrmOutputLayer, context, f, QgsWkbTypes.LineString, srcCRS)
@@ -143,7 +160,10 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
 
                         distance = self.unitDistance(units, distance) # Distance converted to the selected unit of measure
                         attr = ["{:.2f} {}".format(distance, unitsAbbr[units]), distance, unitsAbbr[units] ]
-                        f.setAttributes(attr)
+                        if retain_attributes:
+                            f.setAttributes(attr + feature.attributes())
+                        else:
+                            f.setAttributes(attr)
                         sink.addFeature(f)
                 else:
                     for pts in seg:
@@ -183,7 +203,10 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                             pt1 = pt2
                             distance = self.unitDistance(units, l['s12'])
                             attr = ["{:.2f} {}".format(distance, unitsAbbr[units]), distance, unitsAbbr[units], l['azi1'],totalDistance ]
-                            f.setAttributes(attr)
+                            if retain_attributes:
+                                f.setAttributes(attr + feature.attributes())
+                            else:
+                                f.setAttributes(attr)
                             sink.addFeature(f)
 
             if cnt % 100 == 0:
