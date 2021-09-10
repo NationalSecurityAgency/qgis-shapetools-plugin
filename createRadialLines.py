@@ -72,6 +72,9 @@ class CreateRadialLinesAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             input_fields.append(QgsField(name_y, QVariant.Double))
         return(input_fields)
 
+    def  supportInPlaceEdit(self, layer):
+        return False
+
     def initParameters(self, config=None):
         self.export_geom = False
         param = QgsProcessingParameterNumber(

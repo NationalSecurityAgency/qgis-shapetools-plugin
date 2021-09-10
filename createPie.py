@@ -81,6 +81,9 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             input_fields.append(QgsField(name_y, QVariant.Double))
         return(input_fields)
 
+    def  supportInPlaceEdit(self, layer):
+        return False
+
     def initParameters(self, config=None):
         self.shape_type = 0
         self.export_geom = False

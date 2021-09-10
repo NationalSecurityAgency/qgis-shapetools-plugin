@@ -69,6 +69,9 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             return (QgsWkbTypes.Polygon)
         return (QgsWkbTypes.LineString)
 
+    def  supportInPlaceEdit(self, layer):
+        return False
+
     def outputFields(self, input_fields):
         if self.export_geom:
             name_x, name_y = settings.getGeomNames(input_fields.names())
