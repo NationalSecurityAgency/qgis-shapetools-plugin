@@ -54,7 +54,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.PrmRetainAttributes,
-                tr('Retain the original source feature attributes'),
+                tr("Retain the original feature's attributes"),
                 False,
                 optional=True)
         )
