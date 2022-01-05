@@ -54,51 +54,66 @@ class ShapeTools(object):
 
         # Initialize the create shape menu items
         menu = QMenu()
+        menu.setObjectName('stCreateShapes')
         # Initialize Create Arc Wedge tool
         icon = QIcon(self.plugin_dir + '/images/arc.png')
         self.createArcAction = menu.addAction(icon, tr('Create arc wedge'), self.createArc)
         self.createArcAction.setObjectName('stCreateArcWedge')
+
         icon = QIcon(self.plugin_dir + '/images/donut.png')
         self.createDonutAction = menu.addAction(icon, tr('Create donut'), self.createDonut)
         self.createDonutAction.setObjectName('stCreateDonut')
+
         icon = QIcon(self.plugin_dir + '/images/ellipse.png')
         self.createEllipseAction = menu.addAction(icon, tr('Create ellipse'), self.createEllipse)
         self.createEllipseAction.setObjectName('stCreateEllipse')
+
         icon = QIcon(self.plugin_dir + '/images/rose.png')
         self.createEllipseRoseAction = menu.addAction(icon, tr('Create ellipse rose'), self.createEllipseRose)
         self.createEllipseRoseAction.setObjectName('stCreateEllipseRose')
+
         icon = QIcon(self.plugin_dir + '/images/epicycloid.png')
         self.createEpicycloidAction = menu.addAction(icon, tr('Create epicycloid'), self.createEpicycloid)
         self.createEpicycloidAction.setObjectName('stCreateEpicycloid')
+
         icon = QIcon(self.plugin_dir + '/images/heart.png')
         self.createHeartAction = menu.addAction(icon, tr('Create heart'), self.createHeart)
         self.createHeartAction.setObjectName('stCreateHeart')
+
         icon = QIcon(self.plugin_dir + '/images/hypocycloid.png')
         self.createHypocycloidAction = menu.addAction(icon, tr('Create hypocycloid'), self.createHypocycloid)
         self.createHypocycloidAction.setObjectName('stCreateHypocycloid')
+
         icon = QIcon(self.plugin_dir + '/images/line.png')
         self.createLOBAction = menu.addAction(icon, tr('Create line of bearing'), self.createLOB)
         self.createLOBAction.setObjectName('stCreateLineOfBearing')
+
         icon = QIcon(self.plugin_dir + '/images/pie.png')
         self.createPieAction = menu.addAction(icon, tr('Create pie wedge'), self.createPie)
         self.createPieAction.setObjectName('stCreatePie')
+
         icon = QIcon(self.plugin_dir + '/images/polyfoil.png')
         self.createPolyfoilAction = menu.addAction(icon, tr('Create polyfoil'), self.createPolyfoil)
         self.createPolyfoilAction.setObjectName('stCreatePolyfoil')
+
         icon = QIcon(self.plugin_dir + '/images/polygon.png')
         self.createPolygonAction = menu.addAction(icon, tr('Create polygon'), self.createPolygon)
         self.createPolygonAction.setObjectName('stCreatePolygon')
+
         icon = QIcon(self.plugin_dir + '/images/radialLines.png')
         self.createPolygonAction = menu.addAction(icon, tr('Create radial lines'), self.createRadialLines)
         self.createPolygonAction.setObjectName('stCreateRadialLines')
+
         icon = QIcon(self.plugin_dir + '/images/star.png')
         self.createStarAction = menu.addAction(icon, tr('Create star'), self.createStar)
         self.createStarAction.setObjectName('stCreateStar')
+
         # Add the shape creation tools to the menu
         icon = QIcon(self.plugin_dir + '/images/shapes.png')
         self.createShapesAction = QAction(icon, tr('Create shapes'), self.iface.mainWindow())
         self.createShapesAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.createShapesAction)
+
         # Add the shape creation tools to the toolbar
         self.createShapeButton = QToolButton()
         self.createShapeButton.setMenu(menu)
@@ -106,6 +121,7 @@ class ShapeTools(object):
         self.createShapeButton.setPopupMode(QToolButton.MenuButtonPopup)
         self.createShapeButton.triggered.connect(self.createShapeTriggered)
         self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
+        self.createShapeToolbar.setObjectName('stCreateShape')
 
         # Initialize the XY to Line menu item
         icon = QIcon(self.plugin_dir + '/images/xyline.svg')
@@ -125,6 +141,7 @@ class ShapeTools(object):
         
         # Initialize the Geodesic decimation menu items
         menu = QMenu()
+        menu.setObjectName('stGeodesicDecimations')
         icon = QIcon(self.plugin_dir + '/images/geodesicLineDecimate.svg')
         self.lineDecimateAction = menu.addAction(icon, tr('Geodesic line decimate'), self.lineDecimateTool)
         self.lineDecimateAction.setObjectName('stGeodesicLineDecimate')
@@ -143,6 +160,7 @@ class ShapeTools(object):
         self.simplifyButton.setPopupMode(QToolButton.MenuButtonPopup)
         self.simplifyButton.triggered.connect(self.simplifyTriggered)
         self.simplifyToolbar = self.toolbar.addWidget(self.simplifyButton)
+        self.simplifyToolbar.setObjectName('stGeodesicSimplify')
 
         # Initialize the Geodesic line break menu item
         icon = QIcon(self.plugin_dir + '/images/idlbreak.svg')
@@ -171,6 +189,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.measureLayerAction)
 
         menu = QMenu()
+        menu.setObjectName('stGeodesicTransformationsMenu')
         # Initialize Geodesic transformation tool
         icon = QIcon(self.plugin_dir + '/images/transformShape.svg')
         self.transformationsAction = menu.addAction(icon, tr('Geodesic transformations'), self.transformTool)
@@ -210,6 +229,7 @@ class ShapeTools(object):
         self.transformationButton.setPopupMode(QToolButton.MenuButtonPopup)
         self.transformationButton.triggered.connect(self.toolButtonTriggered)
         self.tranformToolbar = self.toolbar.addWidget(self.transformationButton)
+        self.tranformToolbar.setObjectName('stGeodesicTransformation')
 
         # Initialize the Azimuth Distance Digitize function
         icon = QIcon(self.plugin_dir + '/images/dazdigitize.svg')
