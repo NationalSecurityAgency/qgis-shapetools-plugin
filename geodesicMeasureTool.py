@@ -21,11 +21,11 @@ unitsAbbr = ['km', 'm', 'cm', 'mi', 'yd', 'ft', 'in', 'nm']
 
 class GeodesicMeasureTool(QgsMapTool):
 
-    def __init__(self, iface, parent):
+    def __init__(self, shapetools, iface, parent):
         QgsMapTool.__init__(self, iface.mapCanvas())
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.measureDialog = GeodesicMeasureDialog(iface, parent)
+        self.measureDialog = GeodesicMeasureDialog(shapetools, iface, parent)
         self.vertex = None
 
     def activate(self):
@@ -111,9 +111,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/geodesicMeasureDialog.ui'))
 
 class GeodesicMeasureDialog(QDialog, FORM_CLASS):
-    def __init__(self, iface, parent):
+    def __init__(self, shapetools, iface, parent):
         super(GeodesicMeasureDialog, self).__init__(parent)
         self.setupUi(self)
+        self.shapetools = shapetools
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.pointDigitizerDialog = AddMeasurePointWidget(self, iface, parent)
@@ -121,6 +122,8 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
 
         self.manualEntryButton.setIcon(QIcon(os.path.dirname(__file__) + "/images/manualpoint.png"))
         self.manualEntryButton.clicked.connect(self.showManualEntryDialog)
+        self.settingsButton.setIcon(QIcon(':/images/themes/default/mActionOptions.svg'))
+        self.settingsButton.clicked.connect(self.showSettings)
 
         self.restoreGeometry(qset.value("ShapeTools/MeasureDialogGeometry", QByteArray(), type=QByteArray))
         self.closeButton.clicked.connect(self.closeDialog)
@@ -129,6 +132,8 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.saveToLayerButton.setEnabled(False)
 
         self.unitsComboBox.addItems(DISTANCE_LABELS)
+        saved_default_unit = int(qset.value('/ShapeTools/DefaultMeasureUnit', 0))
+        self.unitsComboBox.setCurrentIndex(saved_default_unit)
 
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setSortingEnabled(False)
@@ -155,6 +160,9 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
 
     def showManualEntryDialog(self):
         self.pointDigitizerDialog.show()
+
+    def showSettings(self):
+        self.shapetools.settings()
 
     def ready(self):
         return self.activeMeasuring
@@ -227,7 +235,10 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             return
 
     def unitsChanged(self):
-        label = "Distance [{}]".format(DISTANCE_LABELS[self.unitsComboBox.currentIndex()])
+        qset = QSettings()
+        selected_unit = self.unitsComboBox.currentIndex()
+        qset.setValue('/ShapeTools/DefaultMeasureUnit', selected_unit)
+        label = "Distance [{}]".format(DISTANCE_LABELS[selected_unit])
         item = QTableWidgetItem(label)
         self.tableWidget.setHorizontalHeaderItem(2, item)
         ptcnt = len(self.capturedPoints)

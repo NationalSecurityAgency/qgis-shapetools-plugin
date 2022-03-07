@@ -50,6 +50,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QToolButton" name="settingsButton">
+       <property name="toolTip">
+        <string>Show configuration settings</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

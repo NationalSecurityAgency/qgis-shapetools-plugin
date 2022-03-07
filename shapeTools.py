@@ -171,7 +171,7 @@ class ShapeTools(object):
         self.toolbar.addAction(self.geodesicLineBreakAction)
 
         # Initialize Geodesic Measure Tool
-        self.geodesicMeasureTool = GeodesicMeasureTool(self.iface, self.iface.mainWindow())
+        self.geodesicMeasureTool = GeodesicMeasureTool(self, self.iface, self.iface.mainWindow())
         icon = QIcon(self.plugin_dir + '/images/measure.svg')
         self.measureAction = QAction(icon, tr('Geodesic measure tool'), self.iface.mainWindow())
         self.measureAction.setObjectName('stGeodesicMeasureTool')
