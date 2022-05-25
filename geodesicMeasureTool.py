@@ -63,13 +63,14 @@ class GeodesicMeasureTool(QgsMapTool):
             return
         pt = self.snappoint(event.originalPixelPoint())
         button = event.button()
+        if button == 2:
+            self.measureDialog.endRubberband()
+            return
         canvasCRS = self.canvas.mapSettings().destinationCrs()
         if canvasCRS != epsg4326:
             transform = QgsCoordinateTransform(canvasCRS, epsg4326, QgsProject.instance())
             pt = transform.transform(pt.x(), pt.y())
         self.measureDialog.addPoint(pt, button)
-        if button == 2:
-            self.measureDialog.stop()
 
     def canvasMoveEvent(self, event):
         '''Capture the coordinate as the user moves the mouse over
@@ -184,6 +185,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
     def newDialog(self):
         self.clear()
         self.initGeodLabel()
+        self.shapetools.measureTool()
 
     def initGeodLabel(self):
         label = tr('Ellipsoid: ') + settings.ellipseDescription
@@ -289,7 +291,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             if self.lastMotionPt is not None:
                 self.lastMotionPt = None
                 self.tempRb.reset(QgsWkbTypes.LineGeometry)
-                self.tableWidget.setRowCount(self.tableWidget.rowCount() - 1)
+                self.tableWidget.setRowCount(index - 1)
         self.stop()
         self.currentDistance = 0
         self.formatTotal()

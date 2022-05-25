@@ -28,8 +28,6 @@ class ShapeTools(object):
         self.azDigitizerTool = None
         self.lineDigitizerTool = None
         self.previousLayer = None
-        self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
-        self.toolbar.setObjectName('ShapeToolsToolbar')
         self.provider = ShapeToolsProvider()
         # Initialize the plugin path directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -51,6 +49,11 @@ class ShapeTools(object):
     def initGui(self):
         self.azDigitizerTool = AzDigitizerTool(self.iface)
         self.lineDigitizerTool = LineDigitizerTool(self.iface)
+
+        # Initialie the Shape Tools toolbar
+        self.toolbar = self.iface.addToolBar('Shape Tools Toolbar')
+        self.toolbar.setObjectName('ShapeToolsToolbar')
+        self.toolbar.setToolTip('Shape Tools Toolbar')
 
         # Initialize the create shape menu items
         menu = QMenu()
