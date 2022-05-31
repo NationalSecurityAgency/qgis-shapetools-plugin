@@ -109,6 +109,15 @@ class Settings():
         acronym = qset.value('/ShapeTools/Ellipsoid', 'WGS84')
         self.setEllipsoid(acronym)
 
+    def getUniqueAttributeName(self, newname, names=[]):
+        index = 1
+        names = set(names)
+        name = newname
+        while name in names:
+            name = '{}{}'.format(newname, index)
+            index += 1
+        return (name)
+
     def getGeomNames(self, names=[]):
         index = 1
         name_x = self.geomXName

@@ -91,6 +91,10 @@ class ShapeTools(object):
         self.createLOBAction = menu.addAction(icon, tr('Create line of bearing'), self.createLOB)
         self.createLOBAction.setObjectName('stCreateLineOfBearing')
 
+        icon = QIcon(self.plugin_dir + '/images/ptline.png')
+        self.createPointLOBAction = menu.addAction(icon, tr('Create points along a bearing'), self.createPointLOB)
+        self.createPointLOBAction.setObjectName('stCreatePointLineOfBearing')
+
         icon = QIcon(self.plugin_dir + '/images/pie.png')
         self.createPieAction = menu.addAction(icon, tr('Create pie wedge'), self.createPie)
         self.createPieAction.setObjectName('stCreatePie')
@@ -362,43 +366,46 @@ class ShapeTools(object):
         self.measureAction.setChecked(True)
         self.canvas.setMapTool(self.geodesicMeasureTool)
 
-    def createArc(sefl):
+    def createArc(self):
         processing.execAlgorithmDialog('shapetools:createarc', {})
 
-    def createDonut(sefl):
+    def createDonut(self):
         processing.execAlgorithmDialog('shapetools:createdonut', {})
 
-    def createEllipse(sefl):
+    def createEllipse(self):
         processing.execAlgorithmDialog('shapetools:createellipse', {})
 
-    def createEllipseRose(sefl):
+    def createEllipseRose(self):
         processing.execAlgorithmDialog('shapetools:createrose', {})
 
-    def createEpicycloid(sefl):
+    def createEpicycloid(self):
         processing.execAlgorithmDialog('shapetools:createepicycloid', {})
 
-    def createHeart(sefl):
+    def createHeart(self):
         processing.execAlgorithmDialog('shapetools:createheart', {})
 
-    def createHypocycloid(sefl):
+    def createHypocycloid(self):
         processing.execAlgorithmDialog('shapetools:createhypocycloid', {})
 
-    def createLOB(sefl):
+    def createLOB(self):
         processing.execAlgorithmDialog('shapetools:createlob', {})
 
-    def createPie(sefl):
+    def createPointLOB(self):
+        processing.execAlgorithmDialog('shapetools:createpointsalonglob', {})
+
+    def createPie(self):
         processing.execAlgorithmDialog('shapetools:createpie', {})
 
-    def createPolyfoil(sefl):
+    def createPolyfoil(self):
         processing.execAlgorithmDialog('shapetools:createpolyfoil', {})
 
-    def createPolygon(sefl):
+    def createPolygon(self):
         processing.execAlgorithmDialog('shapetools:createpolygon', {})
 
-    def createRadialLines(sefl):
+    def createRadialLines(self):
         processing.execAlgorithmDialog('shapetools:createradiallines', {})
 
-    def createStar(sefl):
+    def createStar(self):
         processing.execAlgorithmDialog('shapetools:createstar', {})
 
     def measureLayerTool(self):

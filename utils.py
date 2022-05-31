@@ -30,6 +30,25 @@ def conversionToMeters(units):
         measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceNauticalMiles, QgsUnitTypes.DistanceMeters)
     return measureFactor
 
+def conversionFromMeters(units):
+    if units == 0:  # Kilometers
+        measureFactor = 0.001
+    elif units == 1:  # Meters
+        measureFactor = 1.0
+    elif units == 2:  # Centimeters
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceCentimeters)
+    elif units == 3:  # Miles
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceMiles)
+    elif units == 4:  # Yards
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceYards)
+    elif units == 5:  # Feet
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet)
+    elif units == 6:  # Inches
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceFeet) * 12.0
+    elif units == 7:  # Nautical Miles
+        measureFactor = QgsUnitTypes.fromUnitToUnitFactor(QgsUnitTypes.DistanceMeters, QgsUnitTypes.DistanceNauticalMiles)
+    return measureFactor
+
 def hasIdlCrossing(pts):
     ptlen = len(pts)
     if(ptlen == 0):

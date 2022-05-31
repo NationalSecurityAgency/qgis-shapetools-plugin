@@ -22,6 +22,7 @@ from .createEpicycloid import CreateEpicycloidAlgorithm
 from .createPolyfoil import CreatePolyfoilAlgorithm
 from .createHeart import CreateHeartAlgorithm
 from .createRadialLines import CreateRadialLinesAlgorithm
+from .createPointsAlongLob import CreatePointsAlongLobAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -40,6 +41,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateEllipseAlgorithm())
         self.addAlgorithm(CreateDonutAlgorithm())
         self.addAlgorithm(CreateLobAlgorithm())
+        self.addAlgorithm(CreatePointsAlongLobAlgorithm())
         self.addAlgorithm(CreatePieAlgorithm())
         self.addAlgorithm(CreateArcAlgorithm())
         self.addAlgorithm(CreatePolygonAlgorithm())
