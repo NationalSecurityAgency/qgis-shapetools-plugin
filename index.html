@@ -79,8 +79,8 @@ code {
 <p>They can also be accessed from the <em>Vector-&gt;Shape Tools-&gt;Create Shapes</em> menu.</p>
 <div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create Shapes"></div>
 
-<p>Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
-<p>The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:</p>
+<p>Ellipses, lines of bearing, points along a line of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
+<p>The following are details for creating each shape. All of the shapes are created centered around a point feature or from a point feature. Common elements are:</p>
 <ul>
 <li><strong>Input layer</strong> - Select the desired point vector layer.</li>
 <li><strong>Output layer</strong> - Select either <strong><em>[Create temporary layer]</em></strong>, <strong><em>Save to file...</em></strong>, <strong><em>Save to GeoPackage...</em></strong>, or <strong><em>Save to PostGIS Table...</em></strong>.</li>
@@ -96,7 +96,22 @@ code {
 
 <p>Alternatively, the user can click on the <strong><em>Edit...</em></strong> button and use any valid expression.</p>
 <h3>Line of Bearing</h3>
-<p><strong>Bearing</strong> is the angle measured in degrees, in a clockwise direction from the north line. A <strong>line of bearing</strong> is the line drawn from a starting point in the direction of the <strong>bearing</strong> or azimuth for the selected distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. </p>
+<p>A <strong>line of bearing</strong> is the line drawn from a starting point in the direction of the <strong>asimuth</strong> or <strong>bearing</strong> for the specified distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface.</p>
+<ul>
+<li><strong>Azimuth/bearing</strong> is the angle measured in degrees, in a clockwise direction from the north line.</li>
+<li><strong>Distance</strong> - The line will be drawn from the originating point plus the offset in the <strong>azimuth</strong> direction until it reaches this distance from the origin.</li>
+<li><strong>Line offset from origin</strong> - In some instances you may only be interested in distances away from the point of origin. This parameter allows the user to start the line at some offset distance from the origin.</li>
+<li><strong>Distance units</strong> - The unit of distance measurements of the above parameters.</li>
+</ul>
+<h3>Points Along a Bearing</h3>
+<p>A <strong>line of bearing</strong> is the line drawn from a starting point in the direction of the <strong>azimuth</strong> or <strong>bearing</strong> for the specified distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. In this algoirthm rather than drawing a line, equally spaced points are created along the line.</p>
+<ul>
+<li><strong>Azimuth/bearing</strong> - This is the angle measured in degrees, in a clockwise direction from the north line.</li>
+<li><strong>Distance</strong> - This is the distance in which points will be drawn.</li>
+<li><strong>Distance from origin to the first point</strong> - In some instances you may only be interested in distances away from the point of origin. This parameter allows the user to start the points at some offset distance from the origin.</li>
+<li><strong>Distance between points</strong> - This is the stepping distance between rendered points. The value must be greater than 0.</li>
+<li><strong>Distance units</strong> - The unit of distance measurements of the above parameters.</li>
+</ul>
 <h3>Pie Wedge</h3>
 <p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.</p>
 <h3>Donut</h3>
@@ -244,7 +259,7 @@ code {
 <p>To the right of each parameter is the data defined override button <img alt="" src="doc/datadefined.jpg" /> where the default value is overridden with a value from one of the attributes or an expression. This leads to some powerful and creative applications.</p>
 <div style="text-align:center"><img src="doc/geodesictransformexample.jpg" alt="Geodesic Transformation Example"></div>
 
-<p>This was created by clicking on the <strong><em>Rotation angle about the centroid</em></strong> data defined override button, clicking on <strong>Edit</strong> and using the expression <code><span style="font-family:'Courier New'"><b>randf( -10, 10)</b></span></code> and for <strong><em>Scale factor about the centroid</em></strong> using the expression <code><span style="font-family:'Courier New'"><b>randf(0.65, 0.85)</b></style></code>. For each polygin in the input layer it rotates them using a random value between -10 and 10 degrees and scales them by a factor betweeen 0.65 and 0.85.</p>
+<p>This was created by clicking on the <strong><em>Rotation angle about the centroid</em></strong> data defined override button, clicking on <strong>Edit</strong> and using the expression <code><span style="font-family:'Courier New'"><b>randf( -10, 10)</b></span></code> and for <strong><em>Scale factor about the centroid</em></strong> using the expression <code><span style="font-family:'Courier New'"><b>randf(0.65, 0.85)</b></style>.</code> For each polygin in the input layer it rotates them using a random value between -10 and 10 degrees and scales them by a factor betweeen 0.65 and 0.85.</p>
 <h2><a name="geodesic-flip"></a> <img alt="Geodesic Flip and Rotate Tools" src="images/flip.svg" /> Geodesic Flip and Rotate Tools</h2>
 <p>This is a collection of geodesic tools that transform vector features including the ability to flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees. The first is a processing toolbox algorithm that allows the selection of one of these five transforms.</p>
 <div style="text-align:center"><img src="doc/fliptool.jpg" alt="Geodesic Flip and Rotate"></div>

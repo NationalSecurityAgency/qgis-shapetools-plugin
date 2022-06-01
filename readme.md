@@ -45,9 +45,9 @@ They can also be accessed from the *Vector->Shape Tools->Create Shapes* menu.
 
 <div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create Shapes"></div>
 
-Ellipses, lines of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
+Ellipses, lines of bearing, points along a line of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
 
-The following are details for creating each shape. All of the shapes are created centered about the point or from the point. Common elements are:
+The following are details for creating each shape. All of the shapes are created centered around a point feature or from a point feature. Common elements are:
 
 * **Input layer** - Select the desired point vector layer.
 * **Output layer** - Select either ***[Create temporary layer]***, ***Save to file...***, ***Save to GeoPackage...***, or ***Save to PostGIS Table...***.
@@ -69,7 +69,22 @@ Alternatively, the user can click on the ***Edit...*** button and use any valid 
 
 ### Line of Bearing
 
-**Bearing** is the angle measured in degrees, in a clockwise direction from the north line. A **line of bearing** is the line drawn from a starting point in the direction of the **bearing** or azimuth for the selected distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. 
+A **line of bearing** is the line drawn from a starting point in the direction of the **asimuth** or **bearing** for the specified distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface.
+
+* **Azimuth/bearing** is the angle measured in degrees, in a clockwise direction from the north line.
+* **Distance** - The line will be drawn from the originating point plus the offset in the **azimuth** direction until it reaches this distance from the origin.
+* **Line offset from origin** - In some instances you may only be interested in distances away from the point of origin. This parameter allows the user to start the line at some offset distance from the origin.
+* **Distance units** - The unit of distance measurements of the above parameters.
+
+### Points Along a Bearing
+
+A **line of bearing** is the line drawn from a starting point in the direction of the **azimuth** or **bearing** for the specified distance. The line of bearing uses geodesic math to find the shortest path and is accurate along the Earth's surface. In this algoirthm rather than drawing a line, equally spaced points are created along the line.
+
+* **Azimuth/bearing** - This is the angle measured in degrees, in a clockwise direction from the north line.
+* **Distance** - This is the distance in which points will be drawn.
+* **Distance from origin to the first point** - In some instances you may only be interested in distances away from the point of origin. This parameter allows the user to start the points at some offset distance from the origin.
+* **Distance between points** - This is the stepping distance between rendered points. The value must be greater than 0.
+* **Distance units** - The unit of distance measurements of the above parameters.
 
 ### Pie Wedge
 
@@ -271,7 +286,7 @@ To the right of each parameter is the data defined override button ![](doc/datad
 
 <div style="text-align:center"><img src="doc/geodesictransformexample.jpg" alt="Geodesic Transformation Example"></div>
 
-This was created by clicking on the ***Rotation angle about the centroid*** data defined override button, clicking on **Edit** and using the expression <code><span style="font-family:'Courier New'"><b>randf( -10, 10)</b></span></code> and for ***Scale factor about the centroid*** using the expression <code><span style="font-family:'Courier New'"><b>randf(0.65, 0.85)</b></style></code>. For each polygin in the input layer it rotates them using a random value between -10 and 10 degrees and scales them by a factor betweeen 0.65 and 0.85.
+This was created by clicking on the ***Rotation angle about the centroid*** data defined override button, clicking on **Edit** and using the expression <code><span style="font-family:'Courier New'"><b>randf( -10, 10)</b></span></code> and for ***Scale factor about the centroid*** using the expression <code><span style="font-family:'Courier New'"><b>randf(0.65, 0.85)</b></style>.</code> For each polygin in the input layer it rotates them using a random value between -10 and 10 degrees and scales them by a factor betweeen 0.65 and 0.85.
 
 ## <a name="geodesic-flip"></a> ![Geodesic Flip and Rotate Tools](images/flip.svg) Geodesic Flip and Rotate Tools
 This is a collection of geodesic tools that transform vector features including the ability to flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees. The first is a processing toolbox algorithm that allows the selection of one of these five transforms.
