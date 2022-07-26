@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="zh" sourcelanguage="eo">
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN" sourcelanguage="en_US">
 <context>
     <name>@default</name>
     <message>
         <location filename="../shapeTools.py" line="63"/>
         <source>Create arc wedge</source>
-        <translation>半圆环形</translation>
+        <translation>楔形</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="67"/>
@@ -40,7 +41,7 @@
     <message>
         <location filename="../shapeTools.py" line="91"/>
         <source>Create line of bearing</source>
-        <translation>带方位角的线形</translation>
+        <translation>方向线段</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="99"/>
@@ -114,17 +115,17 @@
     </message>
     <message>
         <location filename="../shapeTools.py" line="218"/>
-        <source>Rotate 180&#xb0;</source>
+        <source>Rotate 180°</source>
         <translation>旋转180°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="222"/>
-        <source>Rotate 90&#xb0; CW</source>
+        <source>Rotate 90° CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="226"/>
-        <source>Rotate 90&#xb0; CCW</source>
+        <source>Rotate 90° CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
     <message>
@@ -160,22 +161,22 @@
     <message>
         <location filename="../xyToLine.py" line="54"/>
         <source>Input CRS for coordinates within the vector fields</source>
-        <translation>输入点的坐标参考系统</translation>
+        <translation>输入点的坐标参照系</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="60"/>
         <source>Output layer CRS</source>
-        <translation>输出图层的坐标参考系统</translation>
+        <translation>输出图层坐标参照系</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="66"/>
         <source>Line type</source>
-        <translation>线条类型</translation>
+        <translation>线段类型</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="74"/>
         <source>Use the point geometry for the line starting point</source>
-        <translation>使用点的几何形状作为线条的起点</translation>
+        <translation>使用点的几何形状作为线段的起点</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="81"/>
@@ -190,7 +191,7 @@
     <message>
         <location filename="../xyToLine.py" line="99"/>
         <source>Use the point geometry for the line ending point</source>
-        <translation>使用点的几何形状作为线条的终点</translation>
+        <translation>使用点的几何形状作为线段的终点</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="106"/>
@@ -215,12 +216,12 @@
     <message>
         <location filename="../xyToLine.py" line="138"/>
         <source>Break lines at -180, 180 boundary for better rendering</source>
-        <translation>为了更好的显示效果，在-180°和180°的边界处裂线</translation>
+        <translation>为了更好的显示效果，在-180°和180°的边界处终止线段</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="145"/>
         <source>Output line layer</source>
-        <translation>输出线条图层</translation>
+        <translation>输出线段图层</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="150"/>
@@ -240,7 +241,7 @@
     <message>
         <location filename="../xyToLine.py" line="182"/>
         <source>Please select valid starting and ending point columns</source>
-        <translation>请选择起点和终点的有效列</translation>
+        <translation>请选择有效得起点和终点列</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="205"/>
@@ -255,22 +256,22 @@
     <message>
         <location filename="../xyToLine.py" line="335"/>
         <source>XY to line</source>
-        <translation>点构造线条</translation>
+        <translation>两点构造线段</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="338"/>
         <source>Vector geometry</source>
-        <translation>矢量几何属性</translation>
+        <translation>矢量几何图形</translation>
     </message>
     <message>
         <location filename="../settings.py" line="162"/>
         <source>Azimuth Range -180 to 180</source>
-        <translation>方位角范围 -180 ~ 180</translation>
+        <translation>方位角范围 -180到180</translation>
     </message>
     <message>
         <location filename="../settings.py" line="162"/>
         <source>Azimuth Range 0 tp 360</source>
-        <translation>方位角范围 0 ~ 360</translation>
+        <translation>方位角范围 0到360</translation>
     </message>
     <message>
         <location filename="../settings.py" line="163"/>
@@ -290,12 +291,12 @@
     <message>
         <location filename="../geodesicDensify.py" line="44"/>
         <source>Discard inner vertices (lines only)</source>
-        <translation>忽略内部顶点（只限线条）</translation>
+        <translation>忽略内部顶点（仅线段）</translation>
     </message>
     <message>
         <location filename="../geodesicDensify.py" line="51"/>
         <source>Maximum line segment length (in kilometers)</source>
-        <translation>最多分段长度（单位千米）</translation>
+        <translation>最大分段长度（单位千米）</translation>
     </message>
     <message>
         <location filename="../idlbreakline.py" line="33"/>
@@ -570,7 +571,7 @@
     <message>
         <location filename="../createRose.py" line="120"/>
         <source>Radius units of measure</source>
-        <translation>测量半径单位</translation>
+        <translation>半径单位</translation>
     </message>
     <message>
         <location filename="../createHypocycloid.py" line="60"/>
@@ -590,7 +591,7 @@
     <message>
         <location filename="../createPolyfoil.py" line="103"/>
         <source>Number of lobes</source>
-        <translation>海星形页数</translation>
+        <translation>花瓣数</translation>
     </message>
     <message>
         <location filename="../createHeart.py" line="119"/>
@@ -700,247 +701,247 @@
     <message>
         <location filename="../shapeTools.py" line="153"/>
         <source>Geodesic line decimate</source>
-        <translation type="unfinished"></translation>
+        <translation>测地线削减</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="156"/>
         <source>Geodesic point decimate</source>
-        <translation type="unfinished"></translation>
+        <translation>测地点削减</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="160"/>
         <source>Geodesic geometry simplification</source>
-        <translation type="unfinished"></translation>
+        <translation>测地几何图形简化</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="229"/>
         <source>Geodesic transforms</source>
-        <translation type="unfinished"></translation>
+        <translation>测地变换</translation>
     </message>
     <message>
         <location filename="../createPie.py" line="98"/>
         <source>Use center azimuth and azimuth width</source>
-        <translation type="unfinished"></translation>
+        <translation>使用中心方位角和波瓣宽度</translation>
     </message>
     <message>
         <location filename="../createPie.py" line="114"/>
         <source>Beginning azimuth / Center azimuth</source>
-        <translation type="unfinished"></translation>
+        <translation>起始方位角/中心方位角</translation>
     </message>
     <message>
         <location filename="../createPie.py" line="128"/>
         <source>Ending azimuth / Azimuth width</source>
-        <translation type="unfinished"></translation>
+        <translation>结束方位角/波瓣宽度</translation>
     </message>
     <message>
         <location filename="../createStar.py" line="117"/>
         <source>Outer radius</source>
-        <translation type="unfinished"></translation>
+        <translation>外环半径</translation>
     </message>
     <message>
         <location filename="../createStar.py" line="132"/>
         <source>Inner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>内环半径</translation>
     </message>
     <message>
         <location filename="../createEllipse.py" line="143"/>
         <source>Semi-major axis</source>
-        <translation type="unfinished"></translation>
+        <translation>长半轴</translation>
     </message>
     <message>
         <location filename="../createEllipse.py" line="158"/>
         <source>Semi-minor axis</source>
-        <translation type="unfinished"></translation>
+        <translation>短半轴</translation>
     </message>
     <message>
         <location filename="../createEllipse.py" line="174"/>
         <source>Orientation of axis</source>
-        <translation type="unfinished"></translation>
+        <translation>轴朝向</translation>
     </message>
     <message>
         <location filename="../createPointsAlongLob.py" line="87"/>
         <source>Azimuth/bearing</source>
-        <translation type="unfinished"></translation>
+        <translation>方位角</translation>
     </message>
     <message>
         <location filename="../createLob.py" line="117"/>
         <source>Line offset from origin</source>
-        <translation type="unfinished"></translation>
+        <translation>线条离源点偏移量</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="95"/>
         <source>Create points along a bearing</source>
-        <translation type="unfinished"></translation>
+        <translation>方向点阵</translation>
     </message>
     <message>
         <location filename="../createPointsAlongLob.py" line="117"/>
         <source>Distance from origin to first point</source>
-        <translation type="unfinished"></translation>
+        <translation>源点到第一个点的距离</translation>
     </message>
     <message>
         <location filename="../createPointsAlongLob.py" line="132"/>
         <source>Distance between points</source>
-        <translation type="unfinished"></translation>
+        <translation>两点间距离</translation>
     </message>
     <message>
         <location filename="../createPolygon.py" line="101"/>
         <source>Number of sides</source>
-        <translation type="unfinished"></translation>
+        <translation>边数</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="111"/>
         <source>Create radial lines</source>
-        <translation type="unfinished"></translation>
+        <translation>放射线</translation>
     </message>
     <message>
         <location filename="../createRadialLines.py" line="88"/>
         <source>Number of radial lines</source>
-        <translation type="unfinished"></translation>
+        <translation>放射线数量</translation>
     </message>
     <message>
         <location filename="../createStar.py" line="102"/>
         <source>Number of points on the star</source>
-        <translation type="unfinished"></translation>
+        <translation>星瓣数量</translation>
     </message>
     <message>
         <location filename="../geodesicLayerMeasure.py" line="54"/>
         <source>Retain the original feature&apos;s attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>保留原始要素的属性</translation>
     </message>
     <message>
         <location filename="../geodesicLineDecimate.py" line="36"/>
         <source>Input line layer</source>
-        <translation type="unfinished"></translation>
+        <translation>输入的线图层</translation>
     </message>
     <message>
         <location filename="../geodesicLineDecimate.py" line="42"/>
         <source>Preserve final vertex</source>
-        <translation type="unfinished"></translation>
+        <translation>保留最终顶点</translation>
     </message>
     <message>
         <location filename="../geodesicLineDecimate.py" line="48"/>
         <source>Decimation minimum distance between vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>削减顶点间的最大距离</translation>
     </message>
     <message>
         <location filename="../geodesicLineDecimate.py" line="81"/>
         <source>Please select a valid line layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>请选择一个有效的线图层</translation>
     </message>
     <message>
         <location filename="../geodesicLineDecimate.py" line="162"/>
         <source>{} out of {} features from input layer were invalid and were skipped.</source>
-        <translation type="unfinished"></translation>
+        <translation>{}超出超出输入图层的要素数{}，忽略</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="56"/>
         <source>Point order field</source>
-        <translation type="unfinished"></translation>
+        <translation>点顺序字段</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="65"/>
         <source>Point grouuping field</source>
-        <translation type="unfinished"></translation>
+        <translation>点分组字段</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="74"/>
         <source>Preserve final point</source>
-        <translation type="unfinished"></translation>
+        <translation>保留最终的点</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="80"/>
         <source>Remove points that are less than the minimum distance</source>
-        <translation type="unfinished"></translation>
+        <translation>删除小于最小距离的点</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="86"/>
         <source>Minimum distance between points</source>
-        <translation type="unfinished"></translation>
+        <translation>两点间的最小距离</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="100"/>
         <source>Remove points by minumum time interval</source>
-        <translation type="unfinished"></translation>
+        <translation>按最小时间间隔删除点</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="106"/>
         <source>Time field (Must be a DateTime field)</source>
-        <translation type="unfinished"></translation>
+        <translation>时间字段（必须是日期时间字段）</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="115"/>
         <source>Minimum time between points</source>
-        <translation type="unfinished"></translation>
+        <translation>两点间的最小时间</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="122"/>
         <source>Time units</source>
-        <translation type="unfinished"></translation>
+        <translation>时间单位</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="122"/>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>秒</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="122"/>
         <source>Minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>分</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="122"/>
         <source>Hours</source>
-        <translation type="unfinished"></translation>
+        <translation>小时</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="122"/>
         <source>Days</source>
-        <translation type="unfinished"></translation>
+        <translation>天</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="129"/>
         <source>When both decimate by distance and time are selected, preserve points if</source>
-        <translation type="unfinished"></translation>
+        <translation>按选择的距离和时间削减时，保留以下条件的点</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="129"/>
         <source>Distance AND time requrements are met</source>
-        <translation type="unfinished"></translation>
+        <translation>距离和时间同时满足</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="129"/>
         <source>Distance OR time requirement is met</source>
-        <translation type="unfinished"></translation>
+        <translation>距离或时间满足其一</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="162"/>
         <source>Please select a DateTime field when decimating by time</source>
-        <translation type="unfinished"></translation>
+        <translation>按时间削减时，请选择日期时间字段</translation>
     </message>
     <message>
         <location filename="../geodesicPointDecimate.py" line="179"/>
         <source>Only supports single part Point geometry</source>
-        <translation type="unfinished"></translation>
+        <translation>仅支持单个点的几何图形</translation>
     </message>
     <message>
         <location filename="../geodesicTransformation.py" line="50"/>
         <source>Transformed layer</source>
-        <translation type="unfinished"></translation>
+        <translation>变换后的图层</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="174"/>
         <source>The layer geometry cannot be used for both the starting and ending points.</source>
-        <translation type="unfinished"></translation>
+        <translation>图层的几何图形不能用作起点和终点</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="210"/>
         <source>No beginning or ending points were selected so a point layer will not be generated.</source>
-        <translation type="unfinished"></translation>
+        <translation>未选择起点和终点，因此不会生成点图层</translation>
     </message>
     <message>
         <location filename="../xyToLine.py" line="318"/>
         <source>One of more features had the same beginning and ending coordinate and are invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>多个要素有相同的起点和终点坐标是非法的</translation>
     </message>
 </context>
 <context>
@@ -948,37 +949,37 @@
     <message>
         <location filename="../ui/measureaddnode.ui" line="14"/>
         <source>Add Measurement Point</source>
-        <translation type="unfinished"></translation>
+        <translation>添加测量点</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="22"/>
         <source>Enter Coordinate</source>
-        <translation type="unfinished"></translation>
+        <translation>输入坐标</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="29"/>
         <source>Input coordinate projection</source>
-        <translation type="unfinished"></translation>
+        <translation>坐标投影</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="51"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="48"/>
         <source>Input coordinate order</source>
-        <translation type="unfinished"></translation>
+        <translation>坐标顺序</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="110"/>
         <source>Add Point</source>
-        <translation type="unfinished"></translation>
+        <translation>添加点</translation>
     </message>
     <message>
         <location filename="../ui/measureaddnode.ui" line="120"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
 </context>
 <context>
@@ -991,7 +992,7 @@
     <message>
         <location filename="../ui/azDistDigitizer.ui" line="25"/>
         <source>Azimuth </source>
-        <translation>方位角</translation>
+        <translation>方位</translation>
     </message>
     <message>
         <location filename="../ui/azDistDigitizer.ui" line="35"/>
@@ -1001,7 +1002,7 @@
     <message>
         <location filename="../ui/lineDigitizer.ui" line="32"/>
         <source>Distance units of measure</source>
-        <translation>测量距离单位</translation>
+        <translation>距离单位</translation>
     </message>
     <message>
         <location filename="../ui/azDistDigitizer.ui" line="55"/>
@@ -1066,7 +1067,7 @@
     <message>
         <location filename="../ui/settings.ui" line="23"/>
         <source>Create Shapes default column names for input  X,Y (Lat, Lon) geometry</source>
-        <translation>创建图形所需要输入的X,Y坐标（纬度，经度）的默认列名</translation>
+        <translation>创建图形需要输入X,Y坐标（纬度，经度）的默认列名</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="29"/>
@@ -1141,22 +1142,22 @@
     <message>
         <location filename="../ui/geodesicMeasureDialog.ui" line="46"/>
         <source>Show manual coordinate entry dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>弹出输入坐标对话框</translation>
     </message>
     <message>
         <location filename="../ui/geodesicMeasureDialog.ui" line="59"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../ui/geodesicMeasureDialog.ui" line="56"/>
         <source>Show configuration settings</source>
-        <translation type="unfinished"></translation>
+        <translation>弹出设置对话框</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="183"/>
         <source>Save to layer significant digits</source>
-        <translation type="unfinished"></translation>
+        <translation>保存到图层的有效数字</translation>
     </message>
 </context>
 </TS>
