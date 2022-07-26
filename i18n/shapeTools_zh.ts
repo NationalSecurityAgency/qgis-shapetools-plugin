@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN" sourcelanguage="en_US">
+<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="en_US">
 <context>
     <name>@default</name>
     <message>
@@ -115,17 +114,17 @@
     </message>
     <message>
         <location filename="../shapeTools.py" line="218"/>
-        <source>Rotate 180°</source>
+        <source>Rotate 180&#xb0;</source>
         <translation>旋转180°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="222"/>
-        <source>Rotate 90° CW</source>
+        <source>Rotate 90&#xb0; CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="226"/>
-        <source>Rotate 90° CCW</source>
+        <source>Rotate 90&#xb0; CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
     <message>
