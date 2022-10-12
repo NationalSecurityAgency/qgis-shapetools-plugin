@@ -16,6 +16,7 @@ from .idlbreakline import IdlBreakLineAlgorithm
 from .createPie import CreatePieAlgorithm
 from .createArc import CreateArcAlgorithm
 from .createStar import CreateStarAlgorithm
+from .createGear import CreateGearAlgorithm
 from .createRose import CreateRoseAlgorithm
 from .createHypocycloid import CreateHypocycloidAlgorithm
 from .createEpicycloid import CreateEpicycloidAlgorithm
@@ -46,6 +47,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateArcAlgorithm())
         self.addAlgorithm(CreatePolygonAlgorithm())
         self.addAlgorithm(CreateStarAlgorithm())
+        self.addAlgorithm(CreateGearAlgorithm())
         self.addAlgorithm(CreateRoseAlgorithm())
         self.addAlgorithm(CreateEpicycloidAlgorithm())
         self.addAlgorithm(CreateHypocycloidAlgorithm())

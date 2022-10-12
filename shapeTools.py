@@ -79,6 +79,10 @@ class ShapeTools(object):
         self.createEpicycloidAction = menu.addAction(icon, tr('Create epicycloid'), self.createEpicycloid)
         self.createEpicycloidAction.setObjectName('stCreateEpicycloid')
 
+        icon = QIcon(self.plugin_dir + '/images/gear.png')
+        self.createGearAction = menu.addAction(icon, tr('Create gear'), self.createGear)
+        self.createGearAction.setObjectName('stCreateGear')
+
         icon = QIcon(self.plugin_dir + '/images/heart.png')
         self.createHeartAction = menu.addAction(icon, tr('Create heart'), self.createHeart)
         self.createHeartAction.setObjectName('stCreateHeart')
@@ -267,7 +271,7 @@ class ShapeTools(object):
 
         # Help
         icon = QIcon(self.plugin_dir + '/images/help.svg')
-        self.helpAction = QAction(icon, tr('Shape Tools help'), self.iface.mainWindow())
+        self.helpAction = QAction(icon, tr('Help'), self.iface.mainWindow())
         self.helpAction.setObjectName('shapeToolsHelp')
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToVectorMenu('Shape Tools', self.helpAction)
@@ -380,6 +384,9 @@ class ShapeTools(object):
 
     def createEpicycloid(self):
         processing.execAlgorithmDialog('shapetools:createepicycloid', {})
+
+    def createGear(self):
+        processing.execAlgorithmDialog('shapetools:creategear', {})
 
     def createHeart(self):
         processing.execAlgorithmDialog('shapetools:createheart', {})

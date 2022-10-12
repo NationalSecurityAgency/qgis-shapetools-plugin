@@ -1,12 +1,12 @@
 [general]
 name=Shape Tools
 qgisMinimumVersion=3.4
-description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, points along a line of bearing, pie wedge, donut, arc wedge, polygon, star, ellipse rose, hypocyloid, polyfoil, epicycloid, radial line, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
-version=3.4.7
+description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, points along a line of bearing, pie wedge, donut, arc wedge, star, ellipse rose, epicycloid, gear, hypocyloid, polyfoil, polygon, radial line, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
+version=3.4.8
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
-    "Create Shapes" processes a point vector layer to create ellipses, pie wedges, donuts, arc wedges, lines of bearing, points along a line of bearing, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicycloids, radial lines, and hearts based on the table's fields and other parameters.
+    "Create Shapes" processes a point vector layer to create ellipses, arc wedges, pie wedges, donuts, lines of bearing, points along a line of bearing, ellipse roses, epicycloids, hypocyloids, polyfoils, polygons, radial lines, stars, and hearts based on the table's fields and other parameters.
     "XY to Line" uses pairs of coordinates from each record to create geodesic lines. 
     "Geodesic Line Break" breaks lines at the International Date Line. 
     "Geodesic Densifier" creates geodesic lines and polygons by adding additional vertices along geodesic paths within the shape. 
@@ -19,7 +19,7 @@ about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is i
     "Field Calculator Functions" provides geodesic functions in the field calculator.
 tracker=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin/issues
 repository=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
-tags=ellipse,pie,donut,bearing,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,decimate,decimation,simplify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate,expression,field calculator
+tags=ellipse,pie,donut,bearing,gear,polygon,star,rose,hypocyloid,polyfoil,epicycloid,heart,xy to line,geodesic line,geodesic polygon,densifier,densify,decimate,decimation,simplify,measure,measurements,azimuth,distance,digitize,line split,international date line,surveying,resize,scale,rotate,flip,translate,expression,field calculator
 homepage=https://github.com/NationalSecurityAgency/qgis-shapetools-plugin
 category=Vector
 icon=icon.png
@@ -27,6 +27,7 @@ experimental=False
 deprecated=False
 hasProcessingProvider=yes
 changelog=
+    3.4.8 - Add a shape that looks like a gear
     3.4.7 - Updated translation
     3.4.6 - Added a point along a line of bearing algorithm and offset to line of bearing algorithm.
     3.4.5 - Changed the geodesic measure tool to not add a final end point with right click, but simply stop measuring.

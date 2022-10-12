@@ -130,6 +130,10 @@ Create a mathematical heart which fits within the circle defined by its radius.
 
 Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.
 
+### Gear
+
+Create an N-toothed shape that look like a gear.
+
 ## <a name="xy-to-line"></a> ![XY to Line](images/xyline.svg) XY to Line
 This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.
 
