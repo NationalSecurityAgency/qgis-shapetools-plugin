@@ -266,6 +266,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 for x, ptout in enumerate(pts):
                     pts[x] = self.toSinkCrs.transform(ptout)
 
+            pts.append(pts[0])
             if self.shape_type == 0:
                 feature.setGeometry(QgsGeometry.fromPolygonXY([pts]))
             else:
