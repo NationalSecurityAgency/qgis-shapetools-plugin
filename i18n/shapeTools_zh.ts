@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="en_US">
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN" sourcelanguage="en_US">
 <context>
     <name>@default</name>
     <message>
@@ -114,17 +115,17 @@
     </message>
     <message>
         <location filename="../shapeTools.py" line="222"/>
-        <source>Rotate 180&#xb0;</source>
+        <source>Rotate 180°</source>
         <translation>旋转180°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="226"/>
-        <source>Rotate 90&#xb0; CW</source>
+        <source>Rotate 90° CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="230"/>
-        <source>Rotate 90&#xb0; CCW</source>
+        <source>Rotate 90° CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
     <message>
@@ -945,27 +946,27 @@
     <message>
         <location filename="../shapeTools.py" line="83"/>
         <source>Create gear</source>
-        <translation type="unfinished"></translation>
+        <translation>齿轮形</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="274"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <location filename="../createGear.py" line="99"/>
         <source>Number of teeth</source>
-        <translation type="unfinished"></translation>
+        <translation>轮齿数</translation>
     </message>
     <message>
         <location filename="../createGear.py" line="115"/>
         <source>Teeth width (percent)</source>
-        <translation type="unfinished"></translation>
+        <translation>轮齿宽度(百分比)</translation>
     </message>
     <message>
         <location filename="../createGear.py" line="131"/>
         <source>Slot width (percent)</source>
-        <translation type="unfinished"></translation>
+        <translation>齿槽宽度(百分比)</translation>
     </message>
 </context>
 <context>
