@@ -263,27 +263,27 @@
         <translation>矢量几何图形</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="162"/>
+        <location filename="../settings.py" line="163"/>
         <source>Azimuth Range -180 to 180</source>
         <translation>方位角范围 -180到180</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="162"/>
+        <location filename="../settings.py" line="163"/>
         <source>Azimuth Range 0 tp 360</source>
         <translation>方位角范围 0到360</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="163"/>
+        <location filename="../settings.py" line="164"/>
         <source>System Ellipsoids</source>
         <translation>系统椭球体</translation>
     </message>
     <message>
-        <location filename="../settings.py" line="163"/>
+        <location filename="../settings.py" line="164"/>
         <source>Historical Ellipsoids</source>
         <translation>曾用椭球体</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="41"/>
+        <location filename="../geodesicLayerMeasure.py" line="44"/>
         <source>Line or polygon layer</source>
         <translation>线形或多边形图层</translation>
     </message>
@@ -313,7 +313,7 @@
         <translation>测地增密器</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="47"/>
+        <location filename="../geodesicLayerMeasure.py" line="50"/>
         <source>Measure total length rather than each line segment</source>
         <translation>测量总长度而不是每条线段长度</translation>
     </message>
@@ -323,27 +323,27 @@
         <translation>距离单位</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="69"/>
+        <location filename="../geodesicLayerMeasure.py" line="80"/>
         <source>Use automatic styling</source>
         <translation>使用自动样式</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="141"/>
+        <location filename="../geodesicMeasureTool.py" line="191"/>
         <source>Heading To</source>
         <translation>航向角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="141"/>
+        <location filename="../geodesicMeasureTool.py" line="191"/>
         <source>Heading From</source>
         <translation>返航角度</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="141"/>
+        <location filename="../geodesicMeasureTool.py" line="191"/>
         <source>Distance</source>
         <translation>距离</translation>
     </message>
     <message>
-        <location filename="../geodesicMeasureTool.py" line="191"/>
+        <location filename="../geodesicMeasureTool.py" line="209"/>
         <source>Ellipsoid: </source>
         <translation>椭球体</translation>
     </message>
@@ -803,7 +803,7 @@
         <translation>星瓣数量</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="54"/>
+        <location filename="../geodesicLayerMeasure.py" line="65"/>
         <source>Retain the original feature&apos;s attributes</source>
         <translation>保留原始要素的属性</translation>
     </message>
@@ -966,6 +966,46 @@
         <location filename="../createGear.py" line="131"/>
         <source>Slot width (percent)</source>
         <translation>齿槽宽度(百分比)</translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>Add compass cardinal directions (not used if above is checked)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>32 point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>16 point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>8 point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <source>4 point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicMeasureTool.py" line="188"/>
+        <source>Compass To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicMeasureTool.py" line="188"/>
+        <source>Compass From</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1144,22 +1184,22 @@
         <translation>复制到剪贴板的有效数字</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="205"/>
+        <location filename="../ui/settings.ui" line="244"/>
         <source>Ellipsoid Used for Measurements</source>
         <translation>测量使用的椭球体</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="213"/>
+        <location filename="../ui/settings.ui" line="252"/>
         <source>Ellipsoid group</source>
         <translation>椭球体组</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="223"/>
+        <location filename="../ui/settings.ui" line="262"/>
         <source>System Ellipsoids</source>
         <translation>系统椭球体</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="233"/>
+        <location filename="../ui/settings.ui" line="272"/>
         <source>Historical Ellipsoids</source>
         <translation>曾用椭球体</translation>
     </message>
@@ -1182,6 +1222,36 @@
         <location filename="../ui/settings.ui" line="183"/>
         <source>Save to layer significant digits</source>
         <translation>保存到图层的有效数字</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="204"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="209"/>
+        <source>32 points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="214"/>
+        <source>16 points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="219"/>
+        <source>8 points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="224"/>
+        <source>4 points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="232"/>
+        <source>Points of the compass</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
