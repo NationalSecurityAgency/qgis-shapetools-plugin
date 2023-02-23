@@ -16,6 +16,7 @@ from qgis.PyQt import uic
 # import traceback
 
 from .settings import epsg4326, settings, geod
+from .compass import Compass
 from .utils import tr, DISTANCE_LABELS, parseDMSString
 unitsAbbr = ['km', 'm', 'cm', 'mi', 'yd', 'ft', 'in', 'nm']
 
@@ -120,6 +121,7 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.canvas = iface.mapCanvas()
         self.pointDigitizerDialog = AddMeasurePointWidget(self, iface, parent)
         qset = QSettings()
+        self.comp = Compass()
 
         self.manualEntryButton.setIcon(QIcon(os.path.dirname(__file__) + "/images/manualpoint.png"))
         self.manualEntryButton.clicked.connect(self.showManualEntryDialog)
@@ -136,14 +138,21 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         saved_default_unit = int(qset.value('/ShapeTools/DefaultMeasureUnit', 0))
         self.unitsComboBox.setCurrentIndex(saved_default_unit)
 
-        self.tableWidget.setColumnCount(3)
+        self.compassResolution = settings.compassResolution
+        if self.compassResolution:
+            self.tableWidget.setColumnCount(5)
+            self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Compass To'), tr('Heading From'), tr('Compass From'), tr('Distance')])
+        else:
+            self.tableWidget.setColumnCount(3)
+            self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Heading From'), tr('Distance')])
         self.tableWidget.setSortingEnabled(False)
-        self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Heading From'), tr('Distance')])
 
         self.unitsComboBox.activated.connect(self.unitsChanged)
 
         self.capturedPoints = []
         self.distances = []
+        self.startAngles = []
+        self.endAngles = []
         self.activeMeasuring = True
         self.lastMotionPt = None
         self.unitsChanged()
@@ -171,6 +180,15 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
     def stop(self):
         self.activeMeasuring = False
         self.lastMotionPt = None
+
+    def showEvent(self, e):
+        self.compassResolution = settings.compassResolution
+        if self.compassResolution:
+            self.tableWidget.setColumnCount(5)
+            self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Compass To'), tr('Heading From'), tr('Compass From'), tr('Distance')])
+        else:
+            self.tableWidget.setColumnCount(3)
+            self.tableWidget.setHorizontalHeaderLabels([tr('Heading To'), tr('Heading From'), tr('Distance')])
 
     def closeEvent(self, event):
         self.closeDialog()
@@ -242,13 +260,19 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         qset.setValue('/ShapeTools/DefaultMeasureUnit', selected_unit)
         label = "Distance [{}]".format(DISTANCE_LABELS[selected_unit])
         item = QTableWidgetItem(label)
-        self.tableWidget.setHorizontalHeaderItem(2, item)
+        if self.compassResolution:
+            self.tableWidget.setHorizontalHeaderItem(4, item)
+        else:
+            self.tableWidget.setHorizontalHeaderItem(2, item)
         ptcnt = len(self.capturedPoints)
         if ptcnt >= 2:
             i = 0
             while i < ptcnt - 1:
                 item = QTableWidgetItem('{:.4f}'.format(self.unitDistance(self.distances[i])))
-                self.tableWidget.setItem(i, 2, item)
+                if self.compassResolution:
+                    self.tableWidget.setItem(i, 4, item)
+                else:
+                    self.tableWidget.setItem(i, 2, item)
                 i += 1
             self.formatTotal()
 
@@ -274,6 +298,8 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             self.saveToLayerButton.setEnabled(True)
             (distance, startAngle, endAngle) = self.calcParameters(self.capturedPoints[index - 1], self.capturedPoints[index])
             self.distances.append(distance)
+            self.startAngles.append(startAngle)
+            self.endAngles.append(endAngle)
             self.insertParams(index, distance, startAngle, endAngle)
             # Add Rubber Band Line
             linePts = self.getLinePts(distance, self.capturedPoints[index - 1], self.capturedPoints[index])
@@ -354,6 +380,9 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         fields.append(QgsField("heading_to", QVariant.Double))
         fields.append(QgsField("heading_from", QVariant.Double))
         fields.append(QgsField("total_dist", QVariant.Double))
+        if self.compassResolution:
+            fields.append(QgsField("compass_to", QVariant.String))
+            fields.append(QgsField("compass_from", QVariant.String))
 
         layer = QgsVectorLayer("LineString?crs={}".format(canvasCrs.authid()), "Measurements", "memory")
         dp = layer.dataProvider()
@@ -377,6 +406,9 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             feat.setAttribute(3, startA)
             feat.setAttribute(4, endA)
             feat.setAttribute(5, total)
+            if self.compassResolution:
+                feat.setAttribute(6, self.compass(startA))
+                feat.setAttribute(7, self.compass(endA))
             feat.setGeometry(QgsGeometry.fromPolylineXY(pts))
             dp.addFeatures([feat])
 
@@ -405,13 +437,29 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
             self.tableWidget.insertRow(position - 1)
         item = QTableWidgetItem('{:.4f}'.format(self.unitDistance(distance)))
         item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        self.tableWidget.setItem(position - 1, 2, item)
+        if self.compassResolution:
+            self.tableWidget.setItem(position - 1, 4, item)
+        else:
+            self.tableWidget.setItem(position - 1, 2, item)
+
         item = QTableWidgetItem('{:.4f}'.format(startAngle))
         item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.tableWidget.setItem(position - 1, 0, item)
+        if self.compassResolution:
+            item = QTableWidgetItem(self.compass(startAngle))
+            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.tableWidget.setItem(position - 1, 1, item)
+
         item = QTableWidgetItem('{:.4f}'.format(endAngle))
         item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        self.tableWidget.setItem(position - 1, 1, item)
+        if self.compassResolution:
+            self.tableWidget.setItem(position - 1, 2, item)
+        else:
+            self.tableWidget.setItem(position - 1, 1, item)
+        if self.compassResolution:
+            item = QTableWidgetItem(self.compass(endAngle))
+            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.tableWidget.setItem(position - 1, 3, item)
 
     def formatTotal(self):
         total = self.currentDistance
@@ -432,6 +480,8 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         self.tableWidget.setRowCount(0)
         self.capturedPoints = []
         self.distances = []
+        self.startAngles = []
+        self.endAngles = []
         self.activeMeasuring = True
         self.currentDistance = 0.0
         self.distanceLineEdit.setText('')
@@ -464,6 +514,18 @@ class GeodesicMeasureDialog(QDialog, FORM_CLASS):
         units = self.unitsComboBox.currentIndex()
         return unitsAbbr[units]
 
+    def compass(self, degree):
+        if self.compassResolution == 0:  # Disabled
+            return('')
+        elif self.compassResolution == 1:  # 32 points
+            s = self.comp.abbr(degree)
+        elif self.compassResolution == 2:  # 16 points
+            s = self.comp.abbr16(degree)
+        elif self.compassResolution == 3:  # 3 points
+            s = self.comp.abbr08(degree)
+        else: # 4 points
+            s =self.comp.abbr04(degree)
+        return(s)
 
 FORM_CLASS2, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/measureaddnode.ui'))

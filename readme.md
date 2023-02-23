@@ -253,13 +253,21 @@ By right-mouse clicking on the **Measurement** layer and selecting **Open Attrib
 
 <div style="text-align:center"><img src="doc/geodesicmeasure3.jpg" alt="Geodesic Measure Tool"></div>
 
+If **Points of the compass** settings are set to somthing other than **None**, then compass cardinal directions will be added to the **Geodesic measure tool** dialog box like this.
+
+<div style="text-align:center"><img src="doc/geodesicmeasure5.jpg" alt="Geodesic Measure Tool"></div>
+
+These attributes will also be saved when exporting by using the **Save to Layer** button.
+
+<div style="text-align:center"><img src="doc/geodesicmeasure6.jpg" alt="Geodesic Measure Tool"></div>
+
 By clicking on the ***Add measurement point*** icon ![Add measurement point](images/manualpoint.png), a new dialog windows is displayed were precise measurement points can be added. The coordinates can be in WGS 84 (EPSG:4326), the project CRS, or some other custom projection. In the drop down menus specify the projection and the coordinate order in which the coordinates are entered.
 
 <div style="text-align:center"><img src="doc/geodesicmeasure4.jpg" alt="Add measurement point"></div>
 
 ## <a name="geodesic-measure-layer"></a> ![Geodesic Measurement Layer](images/linedigitize.svg) Geodesic Measurement Layer
 
-This take either a polygon or line layer and for each of the geometries calculates the geodesic distances of each feature. The user can choose whether each line segment is measured and output as a line measurement or whether the entire line/polygon geometry is measured. It outputs a new line layer of lines that contain attributes with all the measurements. If measuring individual line segments the attributes are a label, distance, units of measure, azimuth/bearing to the next point, and the total distance of the geometry. If measuring the entire geometry then the attributes are a label, distance, and units of measure. The input is either a line or polygon layer. Select whether you want to measure the entire line or polygon or each line segment within the line or polygon. **Distance units** can be kilometers, meters, centimeters, miles, yards, feet, inches, or nautical miles. **Use automatic styling** styles the QGIS layer with the label string in the attribute table and with the text and line colors found in **Settings**. Select the checkbox for **Retain the original feature's attributes** if you want the original attributes included in the output layer; otherewise, only the calculated measurements will be included.
+This take either a polygon or line layer and for each of the geometries calculates the geodesic distances of each feature. The user can choose whether each line segment is measured and output as a line measurement or whether the entire line/polygon geometry is measured. It outputs a new line layer of lines that contain attributes with all the measurements. If measuring individual line segments the attributes are a label, distance, units of measure, azimuth/bearing to the next point, and the total distance of the geometry. If measuring the entire geometry then the attributes are a label, distance, and units of measure. The input is either a line or polygon layer. Select whether you want to measure the entire line or polygon or each line segment within the line or polygon. **Add compass cardinal directions** will add compass cardinal directions if it is not set to **None** and you are measuring the individaul line segments. **Distance units** can be kilometers, meters, centimeters, miles, yards, feet, inches, or nautical miles. **Use automatic styling** styles the QGIS layer with the label string in the attribute table and with the text and line colors found in **Settings**. Select the checkbox for **Retain the original feature's attributes** if you want the original attributes included in the output layer; otherewise, only the calculated measurements will be included.
 
 <div style="text-align:center"><img src="doc/measurement-layer.jpg" alt="Geodesic Measurement Layer"></div>
 
@@ -270,6 +278,10 @@ Here is an example of running this on a polygon. Notice how it measures both the
 Here is what the attributes table looks like.
 
 <div style="text-align:center"><img src="doc/measurement-attributes.jpg" alt="Measurement Attributes"></div>
+
+If **Add compass cardinal directions** is not **None** and **Measure total length rather than each line segment** is not checked then additional compass cardinal direction atttibutes will be added. Here is what the attributes table looks like with **Add compass cardinal directions** is set to **16 point**.
+
+<div style="text-align:center"><img src="doc/measurement-attributes2.jpg" alt="Measurement Attributes"></div>
 
 ## <a name="geodesic-transformations"></a> ![Geodesic Transformations](images/transformShape.svg) Geodesic Transformations Tool
 
@@ -434,6 +446,7 @@ The settings dialog box can be accessed from the Shape Tools menu *Vector->Shape
     * **Maximum number of segments per line** - This is the maximum number of line segments that will be created for any line even though the maximum segment length may be exceeded. This takes precedence.
 * **Measure Tool Settings** - These are settings for the **Geodesic Measure Tool**.
     * **Azimuth Range** - The azimuth is displayed from **-180 to 180** degrees or from **0 to 360** degrees.
+    * **Points of the compass** - The options are **None**, **32 point**, **16 point**, **8 point**, and **4 point**. If set to any option other than **None**, the measure tool dialog box will included additional compass cardinal headings.
     * **Rubber band color** - Selects the rubber band line color used by the measure tool.
     * **Measurement layer color** - Vector line color when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.
     * **Measurement layer text** - Color of the text when a measurement layer is created from the ***Geodesic measure tool*** or from the ***Geodesic measurement layer*** tool.

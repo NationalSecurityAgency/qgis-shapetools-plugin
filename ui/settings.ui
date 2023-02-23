@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>442</width>
-    <height>535</height>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,14 +106,14 @@
       </item>
       <item>
        <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>Rubber band color </string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="1" column="1">
          <widget class="QgsColorButton" name="rubberBandColorButton">
           <property name="color">
            <color>
@@ -124,14 +124,14 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Measurement layer color</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QgsColorButton" name="measureLineColorButton">
           <property name="color">
            <color>
@@ -142,14 +142,14 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Measurement text color</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QgsColorButton" name="measureTextColorButton">
           <property name="color">
            <color>
@@ -160,14 +160,14 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_11">
           <property name="text">
            <string>Copy to clipboard significant digits</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QSpinBox" name="significantDigitsSpinBox">
           <property name="maximum">
            <number>16</number>
@@ -177,20 +177,59 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_12">
           <property name="text">
            <string>Save to layer significant digits</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QSpinBox" name="saveToLayerSignificantDigitsSpinBox">
           <property name="maximum">
            <number>16</number>
           </property>
           <property name="value">
            <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="compassComboBox">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>32 points</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>16 points</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>8 points</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4 points</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Points of the compass</string>
           </property>
          </widget>
         </item>
