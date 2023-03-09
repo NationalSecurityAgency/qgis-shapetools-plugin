@@ -244,7 +244,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                 s = self.comp.abbr(angle)
             elif res == 2:  # 16 points
                 s = self.comp.abbr16(angle)
-            elif res == 3:  # 3 points
+            elif res == 3:  # 8 points
                 s = self.comp.abbr08(angle)
             else: # 4 points
                 s =self.comp.abbr04(angle)
@@ -253,7 +253,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                 s = self.comp.point(degree=angle)
             elif res == 2:  # 16 points
                 s = self.comp.point16(degree=angle)
-            elif res == 3:  # 3 points
+            elif res == 3:  # 8 points
                 s = self.comp.point08(degree=angle)
             else: # 4 points
                 s =self.comp.point04(degree=angle)
@@ -262,7 +262,7 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                 s = self.comp.traditional(degree=angle)
             elif res == 2:  # 16 points
                 s = self.comp.traditional16(degree=angle)
-            elif res == 3:  # 3 points
+            elif res == 3:  # 8 points
                 s = self.comp.traditional08(degree=angle)
             else: # 4 points
                 s =self.comp.traditional04(degree=angle)
