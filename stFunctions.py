@@ -3,8 +3,9 @@ from geographiclib.geodesic import Geodesic
 from qgis.core import QgsUnitTypes, QgsPointXY, QgsPoint, QgsGeometry, QgsExpression, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject, QgsWkbTypes
 from qgis.utils import qgsfunction
 from .settings import epsg4326, geod, settings
+from .compass import Compass
 
-import traceback
+# import traceback
 
 group_name = 'Shape Tools'
 
@@ -26,6 +27,7 @@ def InitShapeToolsFunctions():
     QgsExpression.registerFunction(st_geodesic_distance)
     QgsExpression.registerFunction(st_geodesic_bearing)
     QgsExpression.registerFunction(st_geodesic_transform)
+    QgsExpression.registerFunction(st_compass)
 
 def UnloadShapeToolsFunctions():
     QgsExpression.unregisterFunction('st_from_meters')
@@ -33,6 +35,39 @@ def UnloadShapeToolsFunctions():
     QgsExpression.unregisterFunction('st_geodesic_distance')
     QgsExpression.unregisterFunction('st_geodesic_bearing')
     QgsExpression.unregisterFunction('st_geodesic_transform')
+    QgsExpression.unregisterFunction('st_compass')
+
+comp = Compass()
+def compass(azimuth, res, mode):
+    if mode == 'trad':
+        if res == 32:  # 32 points
+            s = comp.traditional(degree=azimuth)
+        elif res == 16:  # 16 points
+            s = comp.traditional16(degree=azimuth)
+        elif res == 8:  # 8 points
+            s = comp.traditional08(degree=azimuth)
+        else: # 4 points
+            s = comp.traditional04(degree=azimuth)
+    elif mode == 'full':
+        if res == 32:  # 32 points
+            s = comp.point(degree=azimuth)
+        elif res == 16:  # 16 points
+            s = comp.point16(degree=azimuth)
+        elif res == 8:  # 8 points
+            s = comp.point08(degree=azimuth)
+        else: # 4 points
+            s = comp.point04(degree=azimuth)
+    else:
+        if res == 32:  # 32 points
+            s = comp.abbr(azimuth)
+        elif res == 16:  # 16 points
+            s = comp.abbr16(azimuth)
+        elif res == 8:  # 8 points
+            s = comp.abbr08(azimuth)
+        else: # 4 points
+            s = comp.abbr04(azimuth)
+    return(s)
+
 
 @qgsfunction(args=2, group=group_name)
 def st_from_meters(values, feature, parent):
@@ -209,7 +244,7 @@ def st_geodesic_distance(values, feature, parent):
 @qgsfunction(-1, group=group_name)
 def st_geodesic_bearing(values, feature, parent):
     """
-    Returns the geodesic azimuth or bearing starting from the first y, x (latitude, longitude) coordinate in the direction of the second coordinate.
+    Returns the geodesic azimuth starting from the first y, x (latitude, longitude) coordinate in the direction of the second coordinate.
 
     <h4>Syntax</h4>
     <p><b>st_geodesic_bearing</b>( <i>y1, x1, y2, x2[, crs='EPSG:4326']</i> )</p>
@@ -384,3 +419,45 @@ def st_geodesic_transform(values, feature, parent):
         parent.setEvalErrorString(s)'''
         parent.setEvalErrorString("Error: invalid input")
         return
+
+@qgsfunction(-1, group=group_name)
+def st_compass(values, feature, parent):
+    """
+    Returns the cardinal or compass direction given an azimuth as a string.
+
+    <h4>Syntax</h4>
+    <p><b>st_compass</b>( <i>azimuth[, npt=16, mode='abbr']</i> )</p>
+
+    <h4>Arguments</h4>
+    <p><i>azimuth</i> &rarr; specifies the azimuth and can be between -180 to 180 or 0 to 360.<br />
+    <i>npt</i> &rarr; the number compass directions. Valid values are 4, 8, 16, and 32.<br />
+    <i>mode</i> &rarr; 'abbr' returns the abbreviated compass direction, 'full' returns the full name and 'trad' returns the traditional name of the Mediterranean basin.<br />
+
+    <h4>Example usage</h4>
+    <ul>
+      <li><b>st_compass</b>(33) &rarr; 'NNE'</li>
+      <li><b>st_compass</b>(33, 8) &rarr; 'NE'</li>
+      <li><b>st_compass</b>(33, 32) &rarr; 'NEbN'</li>
+      <li><b>st_compass</b>(33, 16,'full') &rarr; 'north-northeast'</li>
+      <li><b>st_compass</b>(33, 32,'full') &rarr; 'northeast by north'</li>
+      <li><b>st_compass</b>(33, 32,'trad') &rarr; 'Quarto di Greco verso Tramontana'</li>
+    </ul>
+    """
+    num_args = len(values)
+    if num_args < 1 or num_args > 3:
+        parent.setEvalErrorString("Error: invalid number of arguments")
+        return
+    try:
+        azimuth = float(values[0])
+        npt = 16
+        mode = 'abbr'
+        if num_args >= 2:
+            npt = float(values[1])
+        if num_args == 3:
+            mode = values[2].strip()
+        s = compass(azimuth, npt, mode)
+        return(s)
+    except Exception:
+        parent.setEvalErrorString("Error: invalid  parameters")
+        return
+

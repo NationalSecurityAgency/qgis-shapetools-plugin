@@ -51,7 +51,13 @@ code {
 <li><img alt="Geodesic flip and rotate" src="images/flip.svg" /> <strong>Geodesic flip &amp; rotate tools</strong> provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.</li>
 <li><img alt="Azimuth, distance digitizer" src="images/dazdigitize.svg" /> <strong>Azimuth, distance digitizer</strong> creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.</li>
 <li><img alt="Azimuth distance sequence digitizer" src="images/linedigitize.svg" /> <strong>Azimuth distance sequence digitizer</strong> digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.</li>
-<li><strong>Field Calculator Expression Functions</strong> provides 5 expressions: st_from_meters(), st_to_meters(), st_geodesic_bearing(), st_geodesic_distance(), and st_geodesic_transform().</li>
+<li><strong>Field Calculator Expression Functions</strong></li>
+<li>st_compass() - Returns the cardinal or compass direction given an azimuth as a string.</li>
+<li>st_from_meters() - Convert a length in meters to another unit.</li>
+<li>st_to_meters() - Convert a length to meters.</li>
+<li>st_geodesic_bearing() - Returns the geodesic azimuth starting from the first coordinate in the direction of the second coordinate.</li>
+<li>st_geodesic_distance() - Returns the geodesic distance in meters between two coordinates or two geometry points.</li>
+<li>st_geodesic_transform() - Geodesically transfrom a shape (point, line, polygon) using rotation, translation, and scaling.</li>
 </ul>
 <h2>Contents</h2>
 <ul>
