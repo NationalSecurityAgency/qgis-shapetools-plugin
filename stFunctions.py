@@ -429,7 +429,7 @@ def st_compass(values, feature, parent):
     <p><b>st_compass</b>( <i>azimuth[, npt=16, mode='abbr']</i> )</p>
 
     <h4>Arguments</h4>
-    <p><i>azimuth</i> &rarr; specifies the azimuth and can be between -180 to 180 or 0 to 360.<br />
+    <p><i>azimuth</i> &rarr; specifies the azimuth and can be between -180 to 180 or 0 to 360 where 0 degrees is north.<br />
     <i>npt</i> &rarr; the number compass directions. Valid values are 4, 8, 16, and 32.<br />
     <i>mode</i> &rarr; 'abbr' returns the abbreviated compass direction, 'full' returns the full name and 'trad' returns the traditional name of the Mediterranean basin.<br />
 
