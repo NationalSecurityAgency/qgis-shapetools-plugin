@@ -283,7 +283,7 @@
         <translation>曾用椭球体</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="44"/>
+        <location filename="../geodesicLayerMeasure.py" line="45"/>
         <source>Line or polygon layer</source>
         <translation>线形或多边形图层</translation>
     </message>
@@ -313,7 +313,7 @@
         <translation>测地增密器</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="50"/>
+        <location filename="../geodesicLayerMeasure.py" line="51"/>
         <source>Measure total length rather than each line segment</source>
         <translation>测量总长度而不是每条线段长度</translation>
     </message>
@@ -323,7 +323,7 @@
         <translation>距离单位</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="80"/>
+        <location filename="../geodesicLayerMeasure.py" line="88"/>
         <source>Use automatic styling</source>
         <translation>使用自动样式</translation>
     </message>
@@ -803,7 +803,7 @@
         <translation>星瓣数量</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="65"/>
+        <location filename="../geodesicLayerMeasure.py" line="73"/>
         <source>Retain the original feature&apos;s attributes</source>
         <translation>保留原始要素的属性</translation>
     </message>
@@ -968,32 +968,27 @@
         <translation>齿槽宽度(百分比)</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
-        <source>Add compass cardinal directions (not used if above is checked)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
         <source>32 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
         <source>16 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
         <source>8 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="57"/>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
         <source>4 point</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1005,6 +1000,16 @@
     <message>
         <location filename="../geodesicMeasureTool.py" line="188"/>
         <source>Compass From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <source>Compass direction resolution (not used when total length is selected)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../geodesicLayerMeasure.py" line="66"/>
+        <source>Add compass directions to label based on above resolution</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
