@@ -2,7 +2,7 @@
 name=Shape Tools
 qgisMinimumVersion=3.4
 description=Shape Tools is a collection of geodesic shapes and tools. Create ellipse, line of bearing, points along a line of bearing, pie wedge, donut, arc wedge, star, ellipse rose, epicycloid, gear, hypocyloid, polyfoil, polygon, radial line, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
-version=3.4.12
+version=3.4.13
 author=C Hamilton
 email=adenaculture@gmail.com
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
@@ -27,6 +27,7 @@ experimental=False
 deprecated=False
 hasProcessingProvider=yes
 changelog=
+    3.4.13 - Geodesic measure layer can add compass directions to label.
     3.4.12 - Fix to allow qgis_process to function correctly.
     3.4.11 - Add st_compass(...) expression.
     3.4.10 - Add compass cardinal directions to geodesic measurements
