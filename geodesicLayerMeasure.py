@@ -37,7 +37,8 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
     PrmUnitsOfMeasure = 'UnitsOfMeasure'
     PrmAutomaticStyline = 'AutomaticStyline'
     PrmRetainAttributes = 'RetainAttributes'
-    PrmCompassDirection = 'CompassDirection'
+    PrmCompassResolution = 'CompassResolution'
+    PrmCompassLabel = 'CompassLabel'
     comp = Compass()
 
     def initAlgorithm(self, config):
@@ -56,11 +57,18 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.PrmCompassDirection,
-                tr('Add compass cardinal directions (not used if above is checked)'),
+                self.PrmCompassResolution,
+                tr('Compass direction resolution (not used when total length is selected)'),
                 options=[tr('None'), tr('32 point'), tr('16 point'), tr('8 point'), tr('4 point')],
                 defaultValue=0,
                 optional=False)
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.PrmCompassLabel,
+                tr('Add compass directions to label based on above resolution'),
+                False,
+                optional=True)
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
@@ -95,9 +103,12 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
         totalLength = self.parameterAsBool(parameters, self.PrmMeasureTotalLength, context)
         retain_attributes = self.parameterAsBool(parameters, self.PrmRetainAttributes, context)
         units = self.parameterAsInt(parameters, self.PrmUnitsOfMeasure, context)
-        compass_mode = self.parameterAsInt(parameters, self.PrmCompassDirection, context)
-        if totalLength:  # This will not be calculated is only total length is desired
+        compass_mode = self.parameterAsInt(parameters, self.PrmCompassResolution, context)
+        compass_label = self.parameterAsBool(parameters, self.PrmCompassLabel, context)
+        if totalLength:  # Compass directions will not be calculated when total length is desired
             compass_mode = 0
+        if compass_mode == 0:
+            compass_label = False
         autoStyle = self.parameterAsBool(parameters, self.PrmAutomaticStyline, context)
 
         srcCRS = source.sourceCrs()
@@ -220,11 +231,16 @@ class GeodesicLayerMeasureAlgorithm(QgsProcessingAlgorithm):
                             ptStart = ptEnd
                             pt1 = pt2
                             distance = self.unitDistance(units, l['s12'])
-                            if compass_mode:
-                                angle = l['azi1']
-                                attr = ["{:.2f} {}".format(distance, unitsAbbr[units]), distance, unitsAbbr[units], l['azi1'],totalDistance, self.compass(angle, compass_mode, 0), self.compass(angle, compass_mode, 1), self.compass(angle, compass_mode, 2)]
+                            angle = l['azi1']
+                            if compass_label:
+                                label = "{:.2f} {} {}".format(distance, unitsAbbr[units], self.compass(angle, compass_mode, 0))
                             else:
-                                attr = ["{:.2f} {}".format(distance, unitsAbbr[units]), distance, unitsAbbr[units], l['azi1'],totalDistance ]
+                                label = "{:.2f} {}".format(distance, unitsAbbr[units])
+                            if compass_mode:
+                                attr = [label, distance, unitsAbbr[units], l['azi1'], totalDistance, self.compass(angle, compass_mode, 0), self.compass(angle, compass_mode, 1), self.compass(angle, compass_mode, 2)]
+                            else:
+                                attr = [label, distance, unitsAbbr[units], l['azi1'], totalDistance]
+
                             if retain_attributes:
                                 f.setAttributes(attr + feature.attributes())
                             else:
