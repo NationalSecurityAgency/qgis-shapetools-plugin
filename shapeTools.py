@@ -63,6 +63,10 @@ class ShapeTools(object):
         self.createArcAction = menu.addAction(icon, tr('Create arc wedge'), self.createArc)
         self.createArcAction.setObjectName('stCreateArcWedge')
 
+        icon = QIcon(self.plugin_dir + '/images/circle.png')
+        self.createCircleAction = menu.addAction(icon, tr('Create circle'), self.createCircle)
+        self.createCircleAction.setObjectName('stCreateCircle')
+
         icon = QIcon(self.plugin_dir + '/images/donut.png')
         self.createDonutAction = menu.addAction(icon, tr('Create donut'), self.createDonut)
         self.createDonutAction.setObjectName('stCreateDonut')
@@ -372,6 +376,9 @@ class ShapeTools(object):
 
     def createArc(self):
         processing.execAlgorithmDialog('shapetools:createarc', {})
+
+    def createCircle(self):
+        processing.execAlgorithmDialog('shapetools:createcircle', {})
 
     def createDonut(self):
         processing.execAlgorithmDialog('shapetools:createdonut', {})
