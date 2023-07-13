@@ -8,62 +8,62 @@
         <translation>楔形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="67"/>
+        <location filename="../shapeTools.py" line="71"/>
         <source>Create donut</source>
         <translation>圆环形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="71"/>
+        <location filename="../shapeTools.py" line="75"/>
         <source>Create ellipse</source>
         <translation>椭圆形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="75"/>
+        <location filename="../shapeTools.py" line="79"/>
         <source>Create ellipse rose</source>
         <translation>花瓣形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="79"/>
+        <location filename="../shapeTools.py" line="83"/>
         <source>Create epicycloid</source>
         <translation>梅花形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="87"/>
+        <location filename="../shapeTools.py" line="91"/>
         <source>Create heart</source>
         <translation>心形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="91"/>
+        <location filename="../shapeTools.py" line="95"/>
         <source>Create hypocycloid</source>
         <translation>圆内螺线形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="95"/>
+        <location filename="../shapeTools.py" line="99"/>
         <source>Create line of bearing</source>
         <translation>方向线段</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="103"/>
+        <location filename="../shapeTools.py" line="107"/>
         <source>Create pie wedge</source>
         <translation>扇形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="107"/>
+        <location filename="../shapeTools.py" line="111"/>
         <source>Create polyfoil</source>
         <translation>海星形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="111"/>
+        <location filename="../shapeTools.py" line="115"/>
         <source>Create polygon</source>
         <translation>多边形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="119"/>
+        <location filename="../shapeTools.py" line="123"/>
         <source>Create star</source>
         <translation>星形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="124"/>
+        <location filename="../shapeTools.py" line="128"/>
         <source>Create shapes</source>
         <translation>创建形状</translation>
     </message>
@@ -73,57 +73,57 @@
         <translation type="obsolete">点构造线条</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="147"/>
+        <location filename="../shapeTools.py" line="151"/>
         <source>Geodesic shape densifier</source>
         <translation>测地形状增密器</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="178"/>
+        <location filename="../shapeTools.py" line="182"/>
         <source>Geodesic line break at -180,180</source>
         <translation>测地的线条在-180,180处分裂</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="187"/>
+        <location filename="../shapeTools.py" line="191"/>
         <source>Geodesic measure tool</source>
         <translation>大地测量工具</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="196"/>
+        <location filename="../shapeTools.py" line="200"/>
         <source>Geodesic measurement layer</source>
         <translation>大地测量图层</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="206"/>
+        <location filename="../shapeTools.py" line="210"/>
         <source>Geodesic transformations</source>
         <translation>测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="210"/>
+        <location filename="../shapeTools.py" line="214"/>
         <source>Geodesic flip and rotate</source>
         <translation>测地翻转和旋转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="214"/>
+        <location filename="../shapeTools.py" line="218"/>
         <source>Flip horizontal</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="218"/>
+        <location filename="../shapeTools.py" line="222"/>
         <source>Flip vertical</source>
         <translation>垂直翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="222"/>
+        <location filename="../shapeTools.py" line="226"/>
         <source>Rotate 180&#xb0;</source>
         <translation>旋转180°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="226"/>
+        <location filename="../shapeTools.py" line="230"/>
         <source>Rotate 90&#xb0; CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="230"/>
+        <location filename="../shapeTools.py" line="234"/>
         <source>Rotate 90&#xb0; CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
@@ -133,17 +133,17 @@
         <translation type="obsolete">测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="247"/>
+        <location filename="../shapeTools.py" line="251"/>
         <source>Azimuth distance digitizer</source>
         <translation>方位角距离图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="257"/>
+        <location filename="../shapeTools.py" line="261"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation>方位和角距离对图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="267"/>
+        <location filename="../shapeTools.py" line="271"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -698,22 +698,22 @@
         <translation>变换距离单位</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="157"/>
+        <location filename="../shapeTools.py" line="161"/>
         <source>Geodesic line decimate</source>
         <translation>测地线削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="160"/>
+        <location filename="../shapeTools.py" line="164"/>
         <source>Geodesic point decimate</source>
         <translation>测地点削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="164"/>
+        <location filename="../shapeTools.py" line="168"/>
         <source>Geodesic geometry simplification</source>
         <translation>测地几何图形简化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="233"/>
+        <location filename="../shapeTools.py" line="237"/>
         <source>Geodesic transforms</source>
         <translation>测地变换</translation>
     </message>
@@ -768,7 +768,7 @@
         <translation>线条离源点偏移量</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="99"/>
+        <location filename="../shapeTools.py" line="103"/>
         <source>Create points along a bearing</source>
         <translation>方向点阵</translation>
     </message>
@@ -788,7 +788,7 @@
         <translation>边数</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="115"/>
+        <location filename="../shapeTools.py" line="119"/>
         <source>Create radial lines</source>
         <translation>放射线</translation>
     </message>
@@ -943,12 +943,12 @@
         <translation>多个要素有相同的起点和终点坐标是非法的</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="83"/>
+        <location filename="../shapeTools.py" line="87"/>
         <source>Create gear</source>
         <translation>齿轮形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="274"/>
+        <location filename="../shapeTools.py" line="278"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
@@ -1010,6 +1010,11 @@
     <message>
         <location filename="../geodesicLayerMeasure.py" line="66"/>
         <source>Add compass directions to label based on above resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="67"/>
+        <source>Create circle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
