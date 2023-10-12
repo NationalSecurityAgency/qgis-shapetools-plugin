@@ -45,7 +45,7 @@ class CreateLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create line of bearing')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

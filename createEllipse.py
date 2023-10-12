@@ -89,7 +89,7 @@ class CreateEllipseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create ellipse')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

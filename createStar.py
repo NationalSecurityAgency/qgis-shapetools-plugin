@@ -48,7 +48,7 @@ class CreateStarAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create star')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

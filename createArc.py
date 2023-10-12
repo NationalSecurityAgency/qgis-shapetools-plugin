@@ -48,7 +48,7 @@ class CreateArcAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create arc wedge')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

@@ -49,7 +49,7 @@ class CreateGearAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create gear')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

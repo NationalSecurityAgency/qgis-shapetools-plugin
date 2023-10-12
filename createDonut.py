@@ -47,7 +47,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create donut')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'
@@ -67,7 +67,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
     def outputWkbType(self, input_wkb_type):
         if self.shape_type == 0:
             return (QgsWkbTypes.Polygon)
-        return (QgsWkbTypes.LineString)
+        return (QgsWkbTypes.MultiLineString)
 
     def outputFields(self, input_fields):
         if self.export_geom:
@@ -76,7 +76,7 @@ class CreateDonutAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             input_fields.append(QgsField(name_y, QVariant.Double))
         return(input_fields)
 
-    def  supportInPlaceEdit(self, layer):
+    def supportInPlaceEdit(self, layer):
         return False
 
     def initParameters(self, config=None):

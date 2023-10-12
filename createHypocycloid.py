@@ -48,7 +48,7 @@ class CreateHypocycloidAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create hypocycloid')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

@@ -48,7 +48,7 @@ class CreateRoseAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create ellipse rose')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

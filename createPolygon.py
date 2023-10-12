@@ -47,7 +47,7 @@ class CreatePolygonAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create polygon')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

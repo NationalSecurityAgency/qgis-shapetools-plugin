@@ -44,7 +44,7 @@ class CreatePointsAlongLobAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create points along a bearing')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'

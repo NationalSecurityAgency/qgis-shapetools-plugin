@@ -52,7 +52,7 @@ class CreatePieAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         return tr('Create pie wedge')
 
     def group(self):
-        return tr('Geodesic vector creation')
+        return tr('Geodesic shapes')
 
     def groupId(self):
         return 'vectorcreation'
