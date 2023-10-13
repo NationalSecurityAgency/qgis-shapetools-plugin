@@ -11,6 +11,8 @@ def tr(string):
 
 DISTANCE_LABELS = [tr("Kilometers"), tr("Meters"), tr("Centimeters"), tr("Miles"), tr('Yards'), tr("Feet"), tr("Inches"), tr("Nautical Miles")]
 
+DISTANCE_ABBREVIATIONS = ["km", "m", "cm", "mi", 'yd', "ft", "in", "nm"]
+
 def conversionToMeters(units):
     if units == 0:  # Kilometers
         measureFactor = 1000.0

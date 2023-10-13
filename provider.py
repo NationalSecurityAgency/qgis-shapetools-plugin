@@ -26,6 +26,7 @@ from .createHeart import CreateHeartAlgorithm
 from .createRadialLines import CreateRadialLinesAlgorithm
 from .createPointsAlongLob import CreatePointsAlongLobAlgorithm
 from .interactiveCreateDonut import InteractiveCreateDonutAlgorithm
+from . interactiveConcentricRings import InteractiveConcentricRingsAlgorithm
 
 class ShapeToolsProvider(QgsProcessingProvider):
 
@@ -58,6 +59,7 @@ class ShapeToolsProvider(QgsProcessingProvider):
         self.addAlgorithm(CreateHeartAlgorithm())
         self.addAlgorithm(CreateRadialLinesAlgorithm())
         self.addAlgorithm(InteractiveCreateDonutAlgorithm())
+        self.addAlgorithm(InteractiveConcentricRingsAlgorithm())
 
     def icon(self):
         return QIcon(os.path.dirname(__file__) + '/images/shapes.png')
