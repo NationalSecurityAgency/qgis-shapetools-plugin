@@ -44,19 +44,19 @@ class InteractiveCreateDonutAlgorithm(QgsProcessingAlgorithm):
         return InteractiveCreateDonutAlgorithm()
 
     def name(self):
-        return 'interactivecreatedonut'
+        return 'interactivedonut'
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'images/donut.png'))
 
     def displayName(self):
-        return tr('Interactive create donut')
+        return tr('Interactive donut')
 
     def group(self):
         return tr('Interactive geodesic shapes')
 
     def groupId(self):
-        return 'interactivevectorcreation'
+        return 'interactiveshapes'
 
     def helpUrl(self):
         file = os.path.dirname(__file__) + '/index.html'
