@@ -39,7 +39,8 @@ code {
 <h1>QGIS Shape Tools Plugin</h1>
 <p><strong><em>Shape Tools</em></strong> is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, in the field calculator, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. </p>
 <ul>
-<li><img src="images/shapes.png" width="24"> <strong>Create shapes</strong> processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
+<li><img src="images/shapes.png" width="24"> <strong>Create geodesic shapes</strong> processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
+<li><img src="images/concentricrings.png" width="24"> <strong>Interactive geodesic shapes</strong> allows the user to click on the map and capture its coordinate to create concentric circles with radial lines or donuts centered around the coordinate. All use geodesic math to calculate the shapes. </li>
 <li><img alt="XY to Line" src="images/xyline.svg" /> <strong>XY to Line</strong> uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.</li>
 <li><img alt="Geodesic line break" src="images/idlbreak.svg" /> <strong>Geodesic line break at -180,180</strong> breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.</li>
 <li><img alt="Geodesic densifier" src="images/geodesicDensifier.svg" /> <strong>Geodesic densifier</strong> densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.</li>
@@ -61,7 +62,8 @@ code {
 </ul>
 <h2>Contents</h2>
 <ul>
-<li><a href="#create-shapes">Create Shapes</a></li>
+<li><a href="#create-shapes">Create Geodesic Shapes</a></li>
+<li><a href="#interactive-shapes">Interactive Geodesic Shapes</a></li>
 <li><a href="#xy-to-line">XY to Line</a></li>
 <li><a href="#geodesic-line-break">Geodesic Line Break</a></li>
 <li><a href="#geodesic-densifier">Geodesic Densifier</a></li>
@@ -76,20 +78,20 @@ code {
 <li><a href="#expressions">Field Calculator Expression Functions</a></li>
 <li><a href="#settings">Settings</a></li>
 </ul>
-<h2><a name="create-shapes"></a> <img src="images/shapes.png" width="24"> Create Shapes</h2>
+<h2><a name="create-shapes"></a> <img src="images/shapes.png" width="24"> Create Geodesic Shapes</h2>
 <div style="text-align:center"><img src="doc/examples.png" alt="Examples"></div>
 
 <p>All of these shapes can be accessed from the ShapeTools processing algorithms.</p>
 <div style="text-align:center"><img src="doc/processing-shapes.jpg" alt="Processing Shapes"></div>
 
-<p>They can also be accessed from the <em>Vector-&gt;Shape Tools-&gt;Create Shapes</em> menu.</p>
-<div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create Shapes"></div>
+<p>They can also be accessed from the <em>Vector-&gt;Shape Tools-&gt;Create geodesic shapes</em> menu.</p>
+<div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create geodesic shapes"></div>
 
 <p>Ellipses, lines of bearing, points along a line of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
 <p>The following are details for creating each shape. All of the shapes are created centered around a point feature or from a point feature. Common elements are:</p>
 <ul>
 <li><strong>Input layer</strong> - Select the desired point vector layer.</li>
-<li><strong>Output layer</strong> - Select either <strong><em>[Create temporary layer]</em></strong>, <strong><em>Save to file...</em></strong>, <strong><em>Save to GeoPackage...</em></strong>, or <strong><em>Save to PostGIS Table...</em></strong>.</li>
+<li><strong>Output layer</strong> - Select one of <strong><em>[Create Temporary Layer]</em></strong>, <strong><em>Save to file...</em></strong>, <strong><em>Save to GeoPackage...</em></strong>, or <strong><em>Save to Database Table...</em></strong>.</li>
 <li><strong>Shape Type</strong> - Specify whether the shape should be drawn as a polygon or as a line.</li>
 <li><strong>Add input geometry fields to output table</strong> - If checked, the input point geometry will be added to fields in the output shape table. By default these fields are named <strong><em>geom_x</em></strong> and <strong><em>geom_y</em></strong>, but can be changed in <strong>Settings</strong>.</li>
 </ul>
@@ -144,6 +146,18 @@ code {
 <p>Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.</p>
 <h3>Gear</h3>
 <p>Create an N-toothed shape that look like a gear.</p>
+<h2><a name="interactive-shapes"></a> <img src="images/concentricrings.png" width="24"> Interactive Geodesic Shapes</h2>
+<p>The <strong><em>Interactive geodesic shapes</em></strong> algorithms allow the user to click on the map canvas to capture a coordinate and then generate a single shape as defined from the processing dialog box centered around the coordinate. So far there are two shapes that can be created. These can be accessed from the QGIS menu at <em>Vector-&gt;Shape Tools-&gt;Interactive geodesic shapes</em> or from the processing tool box like this.</p>
+<div style="text-align:center"><img src="doc/processing-interactive.jpg" alt="Interactive geodesic shapes"></div>
+
+<ul>
+<li><img src="images/concentricrings.png" width="24"> <strong>Interactive concentric rings</strong> - This creates 'N' concentric rings about the specified coordinate with optional radial lines. Here is an example of the output.</li>
+</ul>
+<div style="text-align:center"><img src="doc/concentriccircles.jpg" alt="Concentric Circles"></div>
+
+<ul>
+<li><img src="images/donut.png" width="24"> <strong>Interactive donut</strong> - This creates a donut shape centered on the specified coordinate. If the inner radius is 0, it creates a circle.</li>
+</ul>
 <h2><a name="xy-to-line"></a> <img alt="XY to Line" src="images/xyline.svg" /> XY to Line</h2>
 <p>This creates geodesic, great circle, or simple lines based on starting and ending coordinates in each table record. One of the coordinates can be from a point layer geometry or both can come from the attribute table data where each record has a starting x-coordinate, starting y-coordinate, and an ending x-coordinate and ending y-coordinate.</p>
 <div style="text-align:center"><img src="doc/xytoline.jpg" alt="XY to Line"></div>
