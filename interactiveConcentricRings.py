@@ -1,7 +1,6 @@
 import os
 import re
 from geographiclib.geodesic import Geodesic
-import traceback
 
 from qgis.core import (
     QgsPointXY, QgsGeometry, QgsFeature, QgsField, QgsFields,
@@ -243,8 +242,6 @@ class InteractiveConcentricRingsAlgorithm(QgsProcessingAlgorithm):
                     f.setGeometry(QgsGeometry.fromPolylineXY(pts_out))
                     sink_radials.addFeature(f)
         except Exception:
-            s = traceback.format_exc()
-            feedback.pushInfo(s)
             raise QgsProcessingException('Somthing went wrong')
 
         if radial_cnt:

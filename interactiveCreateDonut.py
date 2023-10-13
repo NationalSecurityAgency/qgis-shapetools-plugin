@@ -1,6 +1,5 @@
 import os
 from geographiclib.geodesic import Geodesic
-import traceback
 
 from qgis.core import (
     QgsPointXY, QgsGeometry, QgsFeature,
@@ -184,8 +183,6 @@ class InteractiveCreateDonutAlgorithm(QgsProcessingAlgorithm):
                     feature.setGeometry(QgsGeometry.fromMultiPolylineXY([pts_out, pts_in]))
             sink.addFeature(feature)
         except Exception:
-            '''s = traceback.format_exc()
-            feedback.pushInfo(s)'''
             raise QgsProcessingException('Invalid coordinate')
 
         return {self.PrmOutput: dest_id}
