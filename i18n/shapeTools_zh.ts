@@ -65,7 +65,7 @@
     <message>
         <location filename="../shapeTools.py" line="128"/>
         <source>Create shapes</source>
-        <translation>创建形状</translation>
+        <translation type="obsolete">创建形状</translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="108"/>
@@ -73,57 +73,57 @@
         <translation type="obsolete">点构造线条</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="151"/>
+        <location filename="../shapeTools.py" line="178"/>
         <source>Geodesic shape densifier</source>
         <translation>测地形状增密器</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="182"/>
+        <location filename="../shapeTools.py" line="209"/>
         <source>Geodesic line break at -180,180</source>
         <translation>测地的线条在-180,180处分裂</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="191"/>
+        <location filename="../shapeTools.py" line="218"/>
         <source>Geodesic measure tool</source>
         <translation>大地测量工具</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="200"/>
+        <location filename="../shapeTools.py" line="227"/>
         <source>Geodesic measurement layer</source>
         <translation>大地测量图层</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="210"/>
+        <location filename="../shapeTools.py" line="237"/>
         <source>Geodesic transformations</source>
         <translation>测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="214"/>
+        <location filename="../shapeTools.py" line="241"/>
         <source>Geodesic flip and rotate</source>
         <translation>测地翻转和旋转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="218"/>
+        <location filename="../shapeTools.py" line="245"/>
         <source>Flip horizontal</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="222"/>
+        <location filename="../shapeTools.py" line="249"/>
         <source>Flip vertical</source>
         <translation>垂直翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="226"/>
+        <location filename="../shapeTools.py" line="253"/>
         <source>Rotate 180&#xb0;</source>
         <translation>旋转180°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="230"/>
+        <location filename="../shapeTools.py" line="257"/>
         <source>Rotate 90&#xb0; CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="234"/>
+        <location filename="../shapeTools.py" line="261"/>
         <source>Rotate 90&#xb0; CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
@@ -133,17 +133,17 @@
         <translation type="obsolete">测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="251"/>
+        <location filename="../shapeTools.py" line="278"/>
         <source>Azimuth distance digitizer</source>
         <translation>方位角距离图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="261"/>
+        <location filename="../shapeTools.py" line="288"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation>方位和角距离对图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="271"/>
+        <location filename="../shapeTools.py" line="298"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -283,7 +283,7 @@
         <translation>曾用椭球体</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="45"/>
+        <location filename="../geodesicLayerMeasure.py" line="44"/>
         <source>Line or polygon layer</source>
         <translation>线形或多边形图层</translation>
     </message>
@@ -313,7 +313,7 @@
         <translation>测地增密器</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="51"/>
+        <location filename="../geodesicLayerMeasure.py" line="50"/>
         <source>Measure total length rather than each line segment</source>
         <translation>测量总长度而不是每条线段长度</translation>
     </message>
@@ -323,7 +323,7 @@
         <translation>距离单位</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="88"/>
+        <location filename="../geodesicLayerMeasure.py" line="87"/>
         <source>Use automatic styling</source>
         <translation>使用自动样式</translation>
     </message>
@@ -455,7 +455,7 @@
     <message>
         <location filename="../createStar.py" line="51"/>
         <source>Geodesic vector creation</source>
-        <translation>测地航向创建</translation>
+        <translation type="obsolete">测地航向创建</translation>
     </message>
     <message>
         <location filename="../createLob.py" line="46"/>
@@ -698,22 +698,22 @@
         <translation>变换距离单位</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="161"/>
+        <location filename="../shapeTools.py" line="188"/>
         <source>Geodesic line decimate</source>
         <translation>测地线削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="164"/>
+        <location filename="../shapeTools.py" line="191"/>
         <source>Geodesic point decimate</source>
         <translation>测地点削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="168"/>
+        <location filename="../shapeTools.py" line="195"/>
         <source>Geodesic geometry simplification</source>
         <translation>测地几何图形简化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="237"/>
+        <location filename="../shapeTools.py" line="264"/>
         <source>Geodesic transforms</source>
         <translation>测地变换</translation>
     </message>
@@ -803,7 +803,7 @@
         <translation>星瓣数量</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="73"/>
+        <location filename="../geodesicLayerMeasure.py" line="72"/>
         <source>Retain the original feature&apos;s attributes</source>
         <translation>保留原始要素的属性</translation>
     </message>
@@ -948,7 +948,7 @@
         <translation>齿轮形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="278"/>
+        <location filename="../shapeTools.py" line="305"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
@@ -968,27 +968,27 @@
         <translation>齿槽宽度(百分比)</translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>32 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>16 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>8 point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>4 point</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1003,18 +1003,43 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="58"/>
+        <location filename="../geodesicLayerMeasure.py" line="57"/>
         <source>Compass direction resolution (not used when total length is selected)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../geodesicLayerMeasure.py" line="66"/>
+        <location filename="../geodesicLayerMeasure.py" line="65"/>
         <source>Add compass directions to label based on above resolution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../shapeTools.py" line="67"/>
         <source>Create circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../createStar.py" line="51"/>
+        <source>Geodesic shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="128"/>
+        <source>Create geodesic shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="146"/>
+        <source>Interactive concentric rings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="150"/>
+        <source>Interactive donut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="155"/>
+        <source>Interactive geodesic shapes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
