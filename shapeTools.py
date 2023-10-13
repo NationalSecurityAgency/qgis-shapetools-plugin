@@ -125,7 +125,7 @@ class ShapeTools(object):
 
         # Add the shape creation tools to the menu
         icon = QIcon(self.plugin_dir + '/images/shapes.png')
-        self.createShapesAction = QAction(icon, tr('Create shapes'), self.iface.mainWindow())
+        self.createShapesAction = QAction(icon, tr('Create geodesic shapes'), self.iface.mainWindow())
         self.createShapesAction.setMenu(menu)
         self.iface.addPluginToVectorMenu('Shape Tools', self.createShapesAction)
 
@@ -137,6 +137,33 @@ class ShapeTools(object):
         self.createShapeButton.triggered.connect(self.createShapeTriggered)
         self.createShapeToolbar = self.toolbar.addWidget(self.createShapeButton)
         self.createShapeToolbar.setObjectName('stCreateShape')
+
+        # Initialize the interactive shape menu items
+        menu = QMenu()
+        menu.setObjectName('stInteractiveShapes')
+        # Initialize Interactive concentric rings
+        icon = QIcon(self.plugin_dir + '/images/concentricrings.png')
+        self.interactiveRingsAction = menu.addAction(icon, tr('Interactive concentric rings'), self.interactiveRings)
+        self.interactiveRingsAction.setObjectName('stInteractiveRings')
+
+        icon = QIcon(self.plugin_dir + '/images/donut.png')
+        self.interactiveDonutAction = menu.addAction(icon, tr('Interactive donut'), self.interactiveDonut)
+        self.interactiveDonutAction.setObjectName('stInteractiveDonut')
+
+        # Add the interactive creation tools to the menu
+        icon = QIcon(self.plugin_dir + '/images/concentricrings.png')
+        self.interactiveShapesAction = QAction(icon, tr('Interactive geodesic shapes'), self.iface.mainWindow())
+        self.interactiveShapesAction.setMenu(menu)
+        self.iface.addPluginToVectorMenu('Shape Tools', self.interactiveShapesAction)
+
+        # Add the interactive creation tools to the toolbar
+        self.createInteractiveButton = QToolButton()
+        self.createInteractiveButton.setMenu(menu)
+        self.createInteractiveButton.setDefaultAction(self.interactiveRingsAction)
+        self.createInteractiveButton.setPopupMode(QToolButton.MenuButtonPopup)
+        self.createInteractiveButton.triggered.connect(self.interactiveShapeTriggered)
+        self.createInteractiveShapeToolbar = self.toolbar.addWidget(self.createInteractiveButton)
+        self.createInteractiveShapeToolbar.setObjectName('stInteractiveShape')
 
         # Initialize the XY to Line menu item
         icon = QIcon(self.plugin_dir + '/images/xyline.svg')
@@ -307,6 +334,7 @@ class ShapeTools(object):
 
         # remove from menu
         self.iface.removePluginVectorMenu('Shape Tools', self.createShapesAction)
+        self.iface.removePluginVectorMenu('Shape Tools', self.interactiveShapesAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.xyLineAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.geodesicDensifyAction)
         self.iface.removePluginVectorMenu('Shape Tools', self.simplifyGeomAction)
@@ -320,6 +348,7 @@ class ShapeTools(object):
         self.iface.removePluginVectorMenu('Shape Tools', self.helpAction)
         # Remove from toolbar
         self.iface.removeToolBarIcon(self.createShapeToolbar)
+        self.iface.removeToolBarIcon(self.createInteractiveShapeToolbar)
         self.iface.removeToolBarIcon(self.xyLineAction)
         self.iface.removeToolBarIcon(self.geodesicDensifyAction)
         self.iface.removeToolBarIcon(self.simplifyToolbar)
@@ -343,6 +372,9 @@ class ShapeTools(object):
 
     def createShapeTriggered(self, action):
         self.createShapeButton.setDefaultAction(action)
+
+    def interactiveShapeTriggered(self, action):
+        self.createInteractiveButton.setDefaultAction(action)
 
     def simplifyTriggered(self, action):
         self.simplifyButton.setDefaultAction(action)
@@ -421,6 +453,12 @@ class ShapeTools(object):
 
     def createStar(self):
         processing.execAlgorithmDialog('shapetools:createstar', {})
+
+    def interactiveRings(self):
+        processing.execAlgorithmDialog('shapetools:interactiverings', {})
+
+    def interactiveDonut(self):
+        processing.execAlgorithmDialog('shapetools:interactivedonut', {})
 
     def measureLayerTool(self):
         processing.execAlgorithmDialog('shapetools:measurelayer', {})
