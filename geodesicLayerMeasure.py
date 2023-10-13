@@ -10,7 +10,6 @@ from qgis.core import (QgsUnitTypes, QgsVectorLayer,
 from qgis.core import (
     QgsProcessing,
     QgsProcessingLayerPostProcessorInterface,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterEnum,
