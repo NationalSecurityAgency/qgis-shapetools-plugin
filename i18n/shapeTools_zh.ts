@@ -58,7 +58,7 @@
         <translation>多边形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="123"/>
+        <location filename="../shapeTools.py" line="127"/>
         <source>Create star</source>
         <translation>星形</translation>
     </message>
@@ -73,57 +73,57 @@
         <translation type="obsolete">点构造线条</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="178"/>
+        <location filename="../shapeTools.py" line="182"/>
         <source>Geodesic shape densifier</source>
         <translation>测地形状增密器</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="209"/>
+        <location filename="../shapeTools.py" line="213"/>
         <source>Geodesic line break at -180,180</source>
         <translation>测地的线条在-180,180处分裂</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="218"/>
+        <location filename="../shapeTools.py" line="222"/>
         <source>Geodesic measure tool</source>
         <translation>大地测量工具</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="227"/>
+        <location filename="../shapeTools.py" line="231"/>
         <source>Geodesic measurement layer</source>
         <translation>大地测量图层</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="237"/>
+        <location filename="../shapeTools.py" line="241"/>
         <source>Geodesic transformations</source>
         <translation>测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="241"/>
+        <location filename="../shapeTools.py" line="245"/>
         <source>Geodesic flip and rotate</source>
         <translation>测地翻转和旋转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="245"/>
+        <location filename="../shapeTools.py" line="249"/>
         <source>Flip horizontal</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="249"/>
+        <location filename="../shapeTools.py" line="253"/>
         <source>Flip vertical</source>
         <translation>垂直翻转</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="253"/>
+        <location filename="../shapeTools.py" line="257"/>
         <source>Rotate 180&#xb0;</source>
         <translation>旋转180°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="257"/>
+        <location filename="../shapeTools.py" line="261"/>
         <source>Rotate 90&#xb0; CW</source>
         <translation>顺时针旋转90°</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="261"/>
+        <location filename="../shapeTools.py" line="265"/>
         <source>Rotate 90&#xb0; CCW</source>
         <translation>逆时针旋转90°</translation>
     </message>
@@ -133,17 +133,17 @@
         <translation type="obsolete">测地变换</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="278"/>
+        <location filename="../shapeTools.py" line="282"/>
         <source>Azimuth distance digitizer</source>
         <translation>方位角距离图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="288"/>
+        <location filename="../shapeTools.py" line="292"/>
         <source>Azimuth distance sequence digitizer</source>
         <translation>方位和角距离对图形化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="298"/>
+        <location filename="../shapeTools.py" line="302"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -393,12 +393,12 @@
         <translation>垂直翻转</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="23"/>
+        <location filename="../interactiveCreateDonut.py" line="25"/>
         <source>Polygon</source>
         <translation>多边形</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="23"/>
+        <location filename="../interactiveCreateDonut.py" line="25"/>
         <source>Line</source>
         <translation>线形</translation>
     </message>
@@ -408,7 +408,7 @@
         <translation>输入点图层</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="86"/>
+        <location filename="../interactiveCreateDonut.py" line="77"/>
         <source>Shape type</source>
         <translation>形状类型</translation>
     </message>
@@ -433,12 +433,12 @@
         <translation type="obsolete">默认内环半径</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="153"/>
+        <location filename="../interactiveCreateDonut.py" line="103"/>
         <source>Radius units</source>
         <translation>半径单位</translation>
     </message>
     <message>
-        <location filename="../createPolyfoil.py" line="147"/>
+        <location filename="../interactiveCreateDonut.py" line="111"/>
         <source>Number of drawing segments</source>
         <translation>绘制的分段数</translation>
     </message>
@@ -698,22 +698,22 @@
         <translation>变换距离单位</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="188"/>
+        <location filename="../shapeTools.py" line="192"/>
         <source>Geodesic line decimate</source>
         <translation>测地线削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="191"/>
+        <location filename="../shapeTools.py" line="195"/>
         <source>Geodesic point decimate</source>
         <translation>测地点削减</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="195"/>
+        <location filename="../shapeTools.py" line="199"/>
         <source>Geodesic geometry simplification</source>
         <translation>测地几何图形简化</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="264"/>
+        <location filename="../shapeTools.py" line="268"/>
         <source>Geodesic transforms</source>
         <translation>测地变换</translation>
     </message>
@@ -733,12 +733,12 @@
         <translation>结束方位角/波瓣宽度</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="117"/>
+        <location filename="../interactiveCreateDonut.py" line="85"/>
         <source>Outer radius</source>
         <translation>外环半径</translation>
     </message>
     <message>
-        <location filename="../createStar.py" line="132"/>
+        <location filename="../interactiveCreateDonut.py" line="94"/>
         <source>Inner radius</source>
         <translation>内环半径</translation>
     </message>
@@ -793,7 +793,7 @@
         <translation>放射线</translation>
     </message>
     <message>
-        <location filename="../createRadialLines.py" line="88"/>
+        <location filename="../interactiveConcentricRings.py" line="131"/>
         <source>Number of radial lines</source>
         <translation>放射线数量</translation>
     </message>
@@ -948,7 +948,7 @@
         <translation>齿轮形</translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="305"/>
+        <location filename="../shapeTools.py" line="309"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
@@ -1023,23 +1023,83 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="128"/>
+        <location filename="../shapeTools.py" line="132"/>
         <source>Create geodesic shapes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="146"/>
+        <location filename="../shapeTools.py" line="150"/>
         <source>Interactive concentric rings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="150"/>
+        <location filename="../shapeTools.py" line="154"/>
         <source>Interactive donut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shapeTools.py" line="155"/>
+        <location filename="../shapeTools.py" line="159"/>
         <source>Interactive geodesic shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shapeTools.py" line="123"/>
+        <source>Create rings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../createRings.py" line="81"/>
+        <source>Radius of first ring. If 0, distance between rings is used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="88"/>
+        <source>Distance between rings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="97"/>
+        <source>Number of rings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="140"/>
+        <source>Starting radial line angle (degrees)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveCreateDonut.py" line="71"/>
+        <source>Select an input coordinate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="79"/>
+        <source>Starting ring radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="106"/>
+        <source>Alternative comma/space separated numbers of ring distances from origin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="150"/>
+        <source>Concentric circle output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="155"/>
+        <source>Radial line output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveConcentricRings.py" line="200"/>
+        <source>Invalid list of ring distances from origin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interactiveCreateDonut.py" line="121"/>
+        <source>Donut polygon</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
