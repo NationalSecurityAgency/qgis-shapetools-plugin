@@ -2,8 +2,8 @@
 
 ***Shape Tools*** is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, in the field calculator, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. 
 
-* <img src="images/shapes.png" width="24"> **Create geodesic shapes** processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
-* <img src="images/concentricrings.png" width="24"> **Interactive geodesic shapes** allows the user to click on the map and capture its coordinate to create concentric circles with radial lines or donuts centered around the coordinate. All use geodesic math to calculate the shapes. 
+* <img src="images/shapes.png" width="24"> **Create geodesic shapes** processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, concentric rings with radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. 
+* <img src="images/concentricrings.png" width="24"> **Interactive geodesic shapes** allows the user to click on the map and capture its coordinate to create concentric rings with radial lines or donuts centered around the coordinate. All use geodesic math to calculate the shapes. 
 * ![XY to Line](images/xyline.svg) **XY to Line** uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.
 * ![Geodesic line break](images/idlbreak.svg) **Geodesic line break at -180,180** breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.
 * ![Geodesic densifier](images/geodesicDensifier.svg) **Geodesic densifier** densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.
@@ -53,7 +53,7 @@ They can also be accessed from the *Vector->Shape Tools->Create geodesic shapes*
 
 <div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create geodesic shapes"></div>
 
-Ellipses, lines of bearing, points along a line of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
+The various shapes can be created from the feature's attributes or from default parameters in the *Create Shapes* tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the [Memory Layer Saver](http://plugins.qgis.org/plugins/MemoryLayerSaver/) plugin.
 
 The following are details for creating each shape. All of the shapes are created centered around a point feature or from a point feature. Common elements are:
 
@@ -94,9 +94,9 @@ A **line of bearing** is the line drawn from a starting point in the direction o
 * **Distance between points** - This is the stepping distance between rendered points. The value must be greater than 0.
 * **Distance units** - The unit of distance measurements of the above parameters.
 
-### Pie Wedge
+### Arc wedge
 
-If **Azimuth mode** it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.
+In essence this takes a wedge of a donut shape. The parameters are similar to **Pie wedge** and **Donut**.
 
 ### Circle
 
@@ -106,45 +106,49 @@ Create a circle shape. The circle radius is specified from the default value, fr
 
 Create a donut shape. The inner and outer radius are specified from the default values, from the attribute table, or expression. If the inner radius is 0 then a solid circle is drawn. **Number of drawing segments** defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.
 
-### Arc wedge
-
-In essence this takes a wedge of a donut shape. The parameters are similar to **Pie wedge** and **Donut**.
-
-### Polygon
-
-Create an N-sided polygon centered on the vector point. The vertices of the polygon lie on a circle of the default radius.
-
-### Star
-
-Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.
-
 ### Ellipse Rose
 
 Create an N-petal rose. The distance from the center to the outer petals are defined by the radius.
-
-### Hypocycloid
-
-Create an N-pointed hypocycloid. A hypocycloid is defined as the curve traced by a point on the circumference of a circle that is rolling on the interior of another circle. The distance from the center to the outer cusps are defined by the radius.
-
-### Polyfoil
-
-Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.
 
 ### Epicycloid
 
 Create an N-leafed epicycloid. The distance from the center to the outer edge is defined by the radius.
 
+### Gear
+
+Create an N-toothed shape that look like a gear.
+
 ### Heart
 
 Create a mathematical heart which fits within the circle defined by its radius.
+
+### Hypocycloid
+
+Create an N-pointed hypocycloid. A hypocycloid is defined as the curve traced by a point on the circumference of a circle that is rolling on the interior of another circle. The distance from the center to the outer cusps are defined by the radius.
+
+### Pie Wedge
+
+If **Azimuth mode** it is set to *Use beginning and ending azimuths*, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the **Starting azimuth** going in a clockwise direction to the **Ending azimuth**. If **Azimuth mode** is set to *Use center azimuth and width*, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of **Azimuth width**. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. **Drawing segments** is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.
+
+### Polyfoil
+
+Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.
+
+### Polygon
+
+Create an N-sided polygon centered on the vector point. The vertices of the polygon lie on a circle of the default radius.
 
 ### Radial lines
 
 Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.
 
-### Gear
+### Rings with radial lines
 
-Create an N-toothed shape that look like a gear.
+Create N-rings around a point. The number or rings, inner ring radius and distance between rings can be specified from the dialog box or from parameters in each feature. N-radial lines can be drawn from the center point to the outer ring.
+
+### Star
+
+Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.
 
 ## <a name="interactive-shapes"></a> <img src="images/concentricrings.png" width="24"> Interactive Geodesic Shapes
 
