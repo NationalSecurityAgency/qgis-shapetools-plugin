@@ -119,6 +119,10 @@ class ShapeTools(object):
         self.createPolygonAction = menu.addAction(icon, tr('Create radial lines'), self.createRadialLines)
         self.createPolygonAction.setObjectName('stCreateRadialLines')
 
+        icon = QIcon(self.plugin_dir + '/images/concentricrings.png')
+        self.createRingsAction = menu.addAction(icon, tr('Create rings'), self.createRings)
+        self.createRingsAction.setObjectName('stCreateRings')
+
         icon = QIcon(self.plugin_dir + '/images/star.png')
         self.createStarAction = menu.addAction(icon, tr('Create star'), self.createStar)
         self.createStarAction.setObjectName('stCreateStar')
@@ -414,6 +418,9 @@ class ShapeTools(object):
 
     def createDonut(self):
         processing.execAlgorithmDialog('shapetools:createdonut', {})
+
+    def createRings(self):
+        processing.execAlgorithmDialog('shapetools:createrings', {})
 
     def createEllipse(self):
         processing.execAlgorithmDialog('shapetools:createellipse', {})

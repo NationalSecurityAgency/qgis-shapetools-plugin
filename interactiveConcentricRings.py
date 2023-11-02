@@ -207,10 +207,7 @@ class InteractiveConcentricRingsAlgorithm(QgsProcessingAlgorithm):
         lon = pt.x()
 
         try:
-            max_dist = 0
             for idx, dist in enumerate(rads):
-                if dist > max_dist:
-                    max_dist = dist
                 pts_out = []
                 angle = 0
                 while angle < 360:
