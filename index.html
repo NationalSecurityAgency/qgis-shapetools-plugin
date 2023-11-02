@@ -39,8 +39,8 @@ code {
 <h1>QGIS Shape Tools Plugin</h1>
 <p><strong><em>Shape Tools</em></strong> is a collection of geodesic tools that are installed in the Vector menu, on the toolbar, in the field calculator, or in the Processing Toolbox. Geodesic is the shortest path between two points on the Earth, a spheroid, or an ellipsoid. </p>
 <ul>
-<li><img src="images/shapes.png" width="24"> <strong>Create geodesic shapes</strong> processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
-<li><img src="images/concentricrings.png" width="24"> <strong>Interactive geodesic shapes</strong> allows the user to click on the map and capture its coordinate to create concentric circles with radial lines or donuts centered around the coordinate. All use geodesic math to calculate the shapes. </li>
+<li><img src="images/shapes.png" width="24"> <strong>Create geodesic shapes</strong> processes a point vector layer to create circles, ellipses, lines of bearing, pie wedges, donuts, arc wedges, polygons, stars, ellipse roses, hypocyloids, polyfoils, epicyloids, radial lines, concentric rings with radial lines, and hearts based on the table's fields and parameters from the dialog box. All use geodesic math to calculate the shapes. </li>
+<li><img src="images/concentricrings.png" width="24"> <strong>Interactive geodesic shapes</strong> allows the user to click on the map and capture its coordinate to create concentric rings with radial lines or donuts centered around the coordinate. All use geodesic math to calculate the shapes. </li>
 <li><img alt="XY to Line" src="images/xyline.svg" /> <strong>XY to Line</strong> uses pairs of coordinates from each layer's records to create geodesic lines in between. The input can be a point vector layer or a table layer that contains pairs of coordinates.</li>
 <li><img alt="Geodesic line break" src="images/idlbreak.svg" /> <strong>Geodesic line break at -180,180</strong> breaks lines at the International Date Line at -180,180 degrees longitude for a more pleasing visual look.</li>
 <li><img alt="Geodesic densifier" src="images/geodesicDensifier.svg" /> <strong>Geodesic densifier</strong> densifies a line or polygon vector layer by adding geodesic points in between each line segment whenever the distance between vertices exceeds a certain threshold. This creates a geodesic path that gives it a nice smooth curved appearance. If the vector layer is a line, it can also draw a geodesic line just between the beginning and ending points.</li>
@@ -87,7 +87,7 @@ code {
 <p>They can also be accessed from the <em>Vector-&gt;Shape Tools-&gt;Create geodesic shapes</em> menu.</p>
 <div style="text-align:center"><img src="doc/menu-shapes.jpg" alt="Create geodesic shapes"></div>
 
-<p>Ellipses, lines of bearing, points along a line of bearing, pie wedges, donuts, arc wedges, multi-sided polygons, stars, ellipse roses, hypocycloids, polyfoils, epicycloids, radial lines, and hearts can be created from parameters in the layer data or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
+<p>The various shapes can be created from the feature's attributes or from default parameters in the <em>Create Shapes</em> tool. Note that if the output layer uses a temporary layer, it will not be saved with the QGIS project. You need to manually save the layer or use the <a href="http://plugins.qgis.org/plugins/MemoryLayerSaver/">Memory Layer Saver</a> plugin.</p>
 <p>The following are details for creating each shape. All of the shapes are created centered around a point feature or from a point feature. Common elements are:</p>
 <ul>
 <li><strong>Input layer</strong> - Select the desired point vector layer.</li>
@@ -120,32 +120,34 @@ code {
 <li><strong>Distance between points</strong> - This is the stepping distance between rendered points. The value must be greater than 0.</li>
 <li><strong>Distance units</strong> - The unit of distance measurements of the above parameters.</li>
 </ul>
-<h3>Pie Wedge</h3>
-<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.</p>
+<h3>Arc wedge</h3>
+<p>In essence this takes a wedge of a donut shape. The parameters are similar to <strong>Pie wedge</strong> and <strong>Donut</strong>.</p>
 <h3>Circle</h3>
 <p>Create a circle shape. The circle radius is specified from the default value, from the attribute table, or from an expression. <strong>Number of drawing segments</strong> defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.</p>
 <h3>Donut</h3>
 <p>Create a donut shape. The inner and outer radius are specified from the default values, from the attribute table, or expression. If the inner radius is 0 then a solid circle is drawn. <strong>Number of drawing segments</strong> defines how many line segments it uses to create the circle. A larger value will produce a smoother circle, but will take more time to draw.</p>
-<h3>Arc wedge</h3>
-<p>In essence this takes a wedge of a donut shape. The parameters are similar to <strong>Pie wedge</strong> and <strong>Donut</strong>.</p>
-<h3>Polygon</h3>
-<p>Create an N-sided polygon centered on the vector point. The vertices of the polygon lie on a circle of the default radius.</p>
-<h3>Star</h3>
-<p>Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.</p>
 <h3>Ellipse Rose</h3>
 <p>Create an N-petal rose. The distance from the center to the outer petals are defined by the radius.</p>
-<h3>Hypocycloid</h3>
-<p>Create an N-pointed hypocycloid. A hypocycloid is defined as the curve traced by a point on the circumference of a circle that is rolling on the interior of another circle. The distance from the center to the outer cusps are defined by the radius.</p>
-<h3>Polyfoil</h3>
-<p>Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.</p>
 <h3>Epicycloid</h3>
 <p>Create an N-leafed epicycloid. The distance from the center to the outer edge is defined by the radius.</p>
-<h3>Heart</h3>
-<p>Create a mathematical heart which fits within the circle defined by its radius.</p>
-<h3>Radial lines</h3>
-<p>Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.</p>
 <h3>Gear</h3>
 <p>Create an N-toothed shape that look like a gear.</p>
+<h3>Heart</h3>
+<p>Create a mathematical heart which fits within the circle defined by its radius.</p>
+<h3>Hypocycloid</h3>
+<p>Create an N-pointed hypocycloid. A hypocycloid is defined as the curve traced by a point on the circumference of a circle that is rolling on the interior of another circle. The distance from the center to the outer cusps are defined by the radius.</p>
+<h3>Pie Wedge</h3>
+<p>If <strong>Azimuth mode</strong> it is set to <em>Use beginning and ending azimuths</em>, then the pie wedge focal point starts at the point layer's geometry extending out to the specified radius. It starts at the <strong>Starting azimuth</strong> going in a clockwise direction to the <strong>Ending azimuth</strong>. If <strong>Azimuth mode</strong> is set to <em>Use center azimuth and width</em>, then a center azimuth is specified which becomes the center of the pie wedge with an arc length of <strong>Azimuth width</strong>. The pie wedge can either be defined from the point vector layer and the selected parameters or the override to the right allows selection of an attribute to derive the values or an expression. <strong>Drawing segments</strong> is the number of line segments that would be used to draw a full circle. A wedge will use a proportionally smaller number of segments. Making this larger will give smoother results, but will be slower rendering the shapes. If the azimuth width is 360 degrees, the a donut is created.</p>
+<h3>Polyfoil</h3>
+<p>Create an N-leafed polyfoil. The distance from the center to the outer leafs are defined by the radius.</p>
+<h3>Polygon</h3>
+<p>Create an N-sided polygon centered on the vector point. The vertices of the polygon lie on a circle of the default radius.</p>
+<h3>Radial lines</h3>
+<p>Create N-radial lines equally spaced around the point starting from the inner radius and extending out to the outer radius.</p>
+<h3>Rings with radial lines</h3>
+<p>Create N-rings around a point. The number or rings, inner ring radius and distance between rings can be specified from the dialog box or from parameters in each feature. N-radial lines can be drawn from the center point to the outer ring.</p>
+<h3>Star</h3>
+<p>Create an N-pointed star with the outer vertices located on a circle defined by the outer radius. The inner vertices are located along the circle defined by the inner radius. One of the radius' can be negative which gives an interesting shape.</p>
 <h2><a name="interactive-shapes"></a> <img src="images/concentricrings.png" width="24"> Interactive Geodesic Shapes</h2>
 <p>The <strong><em>Interactive geodesic shapes</em></strong> algorithms allow the user to click on the map canvas to capture a coordinate and then generate a single shape as defined from the processing dialog box centered around the coordinate. So far there are two shapes that can be created. These can be accessed from the QGIS menu at <em>Vector-&gt;Shape Tools-&gt;Interactive geodesic shapes</em> or from the processing tool box like this.</p>
 <div style="text-align:center"><img src="doc/processing-interactive.jpg" alt="Interactive geodesic shapes"></div>
@@ -306,7 +308,7 @@ code {
 <ul>
 <li><img alt="Flip horizontal" src="images/flipHorizontal.svg" /> <strong>Flip horizontal</strong> flips a vector feature horizontally about its centroid.</li>
 <li><img alt="Flip vertical" src="images/flipVertical.svg" /> <strong>Flip vertical</strong> flips a vector feature vertically about its centroid.</li>
-<li><img alt="Rotate 180" src="images/rotate180.svg" /> <strong>Rotate 180&deg; </strong> rotates a vector feature by 180 degrees.</li>
+<li><img alt="Rotate 180" src="images/rotate180.svg" /> **Rotate 180&deg; ** rotates a vector feature by 180 degrees.</li>
 <li><img alt="Rotate 90 CW" src="images/rotatecw.svg" /> <strong>Rotate 90&deg; CW</strong> rotates a vector feature by 90 degrees clockwise.</li>
 <li><img alt="Rotate 90 CCW" src="images/rotateccw.svg" /> <strong>Rotate 90&deg; CCW</strong> rotates a vector feature by 90 degrees counter-clockwise.</li>
 </ul>
@@ -474,4 +476,5 @@ code {
 <li><strong>Historical Ellipsoids</strong> - This is enabled if <strong>Ellipsoid group</strong> is set to <em>Historical Ellipsoids</em>. Additional historical ellipsoids can be selected.</li>
 </ul>
 </li>
-</ul></body>
+</ul>
+</body>
