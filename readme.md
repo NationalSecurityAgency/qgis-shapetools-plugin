@@ -15,13 +15,14 @@
 * ![Geodesic flip and rotate](images/flip.svg) **Geodesic flip & rotate tools** provide the following geodesic vector transformations: Flip horizontally, flip vertically, rotate by 180 degrees, rotate clockwise by 90 degrees, and rotate counter clockwise by 90 degrees.
 * ![Azimuth, distance digitizer](images/dazdigitize.svg) **Azimuth, distance digitizer** creates a new point at a certain azimuth/bearing and distance or creates a geodesic line from the point clicked to a point in the azimuth direction located at a distance.
 * ![Azimuth distance sequence digitizer](images/linedigitize.svg) **Azimuth distance sequence digitizer** digitizes a sequence of azimuth/bearing, distance pairs to create a series of points, a line, or a polygon.
+
 * **Field Calculator Expression Functions**
-   * st_compass() - Returns the cardinal or compass direction given an azimuth as a string.
-   * st_from_meters() - Convert a length in meters to another unit.
-   * st_to_meters() - Convert a length to meters.
-   * st_geodesic_bearing() - Returns the geodesic azimuth starting from the first coordinate in the direction of the second coordinate.
-   * st_geodesic_distance() - Returns the geodesic distance in meters between two coordinates or two geometry points.
-   * st_geodesic_transform() - Geodesically transfrom a shape (point, line, polygon) using rotation, translation, and scaling.
+    * st_compass() - Returns the cardinal or compass direction given an azimuth as a string.
+    * st_from_meters() - Convert a length in meters to another unit.
+    * st_to_meters() - Convert a length to meters.
+    * st_geodesic_bearing() - Returns the geodesic azimuth starting from the first coordinate in the direction of the second coordinate.
+    * st_geodesic_distance() - Returns the geodesic distance in meters between two coordinates or two geometry points.
+    * st_geodesic_transform() - Geodesically transfrom a shape (point, line, polygon) using rotation, translation, and scaling.
 
 ## Contents
 
