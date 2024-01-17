@@ -79,10 +79,11 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
         maxseglen = self.parameterAsDouble(parameters, self.PrmMaxSegmentLength, context) * 1000  # Make it in meters
 
         wkbtype = source.wkbType()
+        geomtype = QgsWkbTypes.geometryType(wkbtype)
 
-        if wkbtype == QgsWkbTypes.LineString or wkbtype == QgsWkbTypes.MultiLineString:
+        if geomtype == QgsWkbTypes.LineGeometry:
             outputType = QgsWkbTypes.LineString if (
-                wkbtype == QgsWkbTypes.LineString or discardVertices) else QgsWkbTypes.MultiLineString
+                QgsWkbTypes.isSingleType(wkbtype) or discardVertices) else QgsWkbTypes.MultiLineString
 
             (sink, dest_id) = self.parameterAsSink(
                 parameters, self.PrmOutputLayer,
@@ -90,7 +91,7 @@ class GeodesicDensifyAlgorithm(QgsProcessingAlgorithm):
 
             num_bad = processLine(source, sink, feedback, discardVertices, maxseglen)
         else:
-            outputType = QgsWkbTypes.Polygon if wkbtype == QgsWkbTypes.Polygon else QgsWkbTypes.MultiPolygon
+            outputType = QgsWkbTypes.Polygon if QgsWkbTypes.isSingleType(wkbtype) else QgsWkbTypes.MultiPolygon
 
             (sink, dest_id) = self.parameterAsSink(
                 parameters, self.PrmOutputLayer,
