@@ -12,7 +12,7 @@ import os
 from geographiclib.geodesic import Geodesic
 
 from qgis.core import (
-    QgsPoint, QgsGeometry, QgsLineString, QgsMultiLineString, QgsField,
+    QgsPointXY, QgsGeometry, QgsLineString, QgsMultiLineString, QgsField,
     QgsProject, QgsWkbTypes, QgsCoordinateTransform, QgsPropertyDefinition)
 
 from qgis.core import (
@@ -189,7 +189,8 @@ class CreateRadialLinesAlgorithm(QgsProcessingFeatureBasedAlgorithm):
         try:
             line_strings = []
             pt = feature.geometry().asPoint()
-            pt_orig = QgsPoint(pt)
+            pt_orig_x = pt.x()
+            pt_orig_y = pt.y()
             # make sure the coordinates are in EPSG:4326
             if self.geom_to_4326:
                 pt = self.geom_to_4326.transform(pt.x(), pt.y())
@@ -222,15 +223,14 @@ class CreateRadialLinesAlgorithm(QgsProcessingFeatureBasedAlgorithm):
             angle_step = 360.0 / num_lines
             while angle < 360:
                 if inner_rad == 0:
-                    pt_start = pt_orig
+                    pt_start = QgsPointXY(lon, lat)
                 else:
                     g = geod.Direct(lat, lon, angle, inner_rad, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                    pt_start = QgsPoint(g['lon2'], g['lat2'])
-                    if self.to_sink_crs:
-                        pt_start = self.to_sink_crs.transform(pt_start)
+                    pt_start = QgsPointXY(g['lon2'], g['lat2'])
                 g = geod.Direct(lat, lon, angle, outer_rad, Geodesic.LATITUDE | Geodesic.LONGITUDE)
-                pt_end = QgsPoint(g['lon2'], g['lat2'])
+                pt_end = QgsPointXY(g['lon2'], g['lat2'])
                 if self.to_sink_crs:
+                    pt_start = self.to_sink_crs.transform(pt_start)
                     pt_end = self.to_sink_crs.transform(pt_end)
 
                 line_str = QgsLineString([pt_start, pt_end])
@@ -246,8 +246,8 @@ class CreateRadialLinesAlgorithm(QgsProcessingFeatureBasedAlgorithm):
                 feature.setGeometry(QgsGeometry(g))
             if self.export_geom:
                 attr = feature.attributes()
-                attr.append(pt_orig.x())
-                attr.append(pt_orig.y())
+                attr.append(pt_orig_x)
+                attr.append(pt_orig_y)
                 feature.setAttributes(attr)
         except Exception:
             '''s = traceback.format_exc()
