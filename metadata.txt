@@ -4,7 +4,7 @@ qgisMinimumVersion=3.4
 description=Shape Tools is a collection of geodesic shapes and tools. Create circle, ellipse, line of bearing, points along a line of bearing, concentric circles, pie wedge, donut, arc wedge, star, ellipse rose, epicycloid, gear, hypocyloid, polyfoil, polygon, radial line, rings with radial lines, and heart shapes. Tools include "XY to Line" tool, densify lines and polygons along geodesic paths, geodesic line break, geodesic measuring and create a measurement layer, geodesic scale, rotate, flip and translate tools, and digitize points at an azimuth & distance tools.
 version=3.4.19
 author=C Hamilton
-email=adenaculture@gmail.com
+email=TBD
 about=Shape Tools is a collection of geodesic shapes and tools. Shape Tools is installed in the Vector menu.
     "Create Geodesic Shapes" processes a point vector layer to create circles, ellipses, arc wedges, pie wedges, donuts, lines of bearing, points along a line of bearing, ellipse roses, epicycloids, hypocyloids, polyfoils, polygons, radial lines, rings with radial lines, stars, and hearts based on the table's fields and other parameters.
     "Interactive Geodesic Shapes" captures the coordinate of a mouse click on the canvas and draws the selected shape about it.
